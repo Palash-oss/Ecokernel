@@ -1,0 +1,64 @@
+.demand-card {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.demand-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.title-area {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.title-area h3 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0;
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+
+.trend-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 202, 40, 0.15);
+  color: var(--accent-amber);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  border: 1px solid rgba(255, 202, 40, 0.3);
+  box-shadow: 0 0 10px rgba(255, 202, 40, 0.2);
+}
+
+.demand-metric {
+  margin-bottom: 20px;
+}
+
+.demand-metric .value {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #fff;
+  margin-right: 8px;
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+}
+
+.demand-metric .unit {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.demand-chart {
+  /* Give chart explicitly constrained height */
+  height: 120px;
+  width: 100%;
+}

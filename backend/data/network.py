@@ -1,0 +1,158 @@
+"""
+Real logistics network for India.
+
+Builds a networkx graph of Indian logistics hubs with:
+- Real GPS coordinates
+- Real road distances (from ORS or haversine estimates)
+- Rail corridor availability
+- Simulated gradient data (based on terrain knowledge)
+"""
+
+import networkx as nx
+import random
+from typing import Dict, List, Tuple
+from config import CITIES, RAIL_CORRIDORS, TRANSPORT_MODES
+from data.route_service import get_route, _haversine, _road_distance_estimate
+
+
+# Known terrain gradients between Indian cities (approximate %)
+TERRAIN_GRADIENTS = {
+    ("Mumbai", "Pune"): 3.5,       # Western Ghats
+    ("Pune", "Mumbai"): -3.5,
+    ("Bangalore", "Coimbatore"): 2.0,  # Nilgiri foothills
+    ("Coimbatore", "Bangalore"): -2.0,
+    ("Mumbai", "Nagpur"): 1.5,     # Deccan Plateau
+    ("Nagpur", "Mumbai"): -1.5,
+    ("Delhi", "Jaipur"): 0.5,     # Aravalli foothills
+    ("Jaipur", "Delhi"): -0.5,
+    ("Bhopal", "Indore"): 1.8,    # Vindhya Range
+    ("Indore", "Bhopal"): -1.8,
+}
+
+
+def _get_gradient(city_a: str, city_b: str) -> float:
+    """Get real terrain gradient between two cities."""
+    key = (city_a, city_b)
+    if key in TERRAIN_GRADIENTS:
+        return TERRAIN_GRADIENTS[key]
+    # Default: slight random gradient for flatlands
+    random.seed(hash(key) % 10000)
+    return round(random.uniform(-0.5, 0.5), 2)
+
+
+def _get_traffic_speed(city_a: str, city_b: str, base_speed: float = 45.0) -> float:
+    """
+    Estimate average speed considering Indian traffic conditions.
+    Routes through/near mega-cities are slower.
+    """
+    mega_cities = {"Mumbai", "Delhi", "Bangalore", "Kolkata", "Chennai"}
+    
+    speed = base_speed
+    if city_a in mega_cities:
+        speed -= 10  # Slower departure from mega-city
+    if city_b in mega_cities:
+        speed -= 8   # Slower approach to mega-city
+    
+    # Minimum speed
+    return max(speed, 25.0)
+
+
+def build_network() -> nx.Graph:
+    """
+    Build the Indian logistics network graph.
+    
+    Each edge has:
+    - distance_km: real road distance
+    - time_minutes: estimated travel time
+    - has_rail: whether rail freight is available
+    - gradient_percent: terrain gradient
+    - avg_speed_kmh: expected average speed
+    - geometry: route polyline (if available from ORS)
+    """
+    G = nx.Graph()
+    
+    # Add city nodes
+    for name, data in CITIES.items():
+        G.add_node(name, **data)
+    
+    # Build edges between cities within reasonable distance
+    city_names = list(CITIES.keys())
+    rail_set = set()
+    for a, b in RAIL_CORRIDORS:
+        rail_set.add((a, b))
+        rail_set.add((b, a))
+    
+    for i, city_a in enumerate(city_names):
+        for j, city_b in enumerate(city_names):
+            if i >= j:
+                continue
+            
+            # Calculate straight-line distance
+            straight_km = _haversine(
+                CITIES[city_a]["lat"], CITIES[city_a]["lng"],
+                CITIES[city_b]["lat"], CITIES[city_b]["lng"],
+            )
+            
+            # Only connect cities within 1200 km road distance
+            road_km = _road_distance_estimate(straight_km)
+            if road_km > 1200:
+                continue
+            
+            has_rail = (city_a, city_b) in rail_set
+            gradient = _get_gradient(city_a, city_b)
+            avg_speed = _get_traffic_speed(city_a, city_b)
+            time_min = (road_km / avg_speed) * 60.0
+            
+            G.add_edge(
+                city_a, city_b,
+                distance_km=round(road_km, 1),
+                time_minutes=round(time_min, 1),
+                has_rail=has_rail,
+                gradient_percent=gradient,
+                avg_speed_kmh=avg_speed,
+            )
+    
+    return G
+
+
+def enrich_with_ors(G: nx.Graph) -> nx.Graph:
+    """
+    Optionally enrich the network with real ORS distances and geometry.
+    Call this at startup if ORS API key is available.
+    """
+    for u, v, data in G.edges(data=True):
+        try:
+            route = get_route(u, v)
+            data["distance_km"] = route["distance_km"]
+            data["time_minutes"] = route["time_minutes"]
+            if route.get("geometry"):
+                data["geometry"] = route["geometry"]
+            data["source"] = route["source"]
+        except Exception:
+            data["source"] = "estimate"
+    return G
+
+
+def get_network_data(G: nx.Graph) -> dict:
+    """Serialize network for API response."""
+    nodes = []
+    for name, data in G.nodes(data=True):
+        nodes.append({
+            "name": name,
+            "lat": data["lat"],
+            "lng": data["lng"],
+            "region": data["region"],
+        })
+    
+    edges = []
+    for u, v, data in G.edges(data=True):
+        edges.append({
+            "from_city": u,
+            "to_city": v,
+            "distance_km": data["distance_km"],
+            "time_minutes": data["time_minutes"],
+            "has_rail": data["has_rail"],
+            "gradient_percent": data["gradient_percent"],
+        })
+    
+    return {"nodes": nodes, "edges": edges}

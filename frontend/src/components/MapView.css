@@ -1,0 +1,46 @@
+.map-wrapper {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.leaflet-map {
+  width: 100%;
+  height: 100%;
+  background-color: var(--bg-dark);
+}
+
+/* Custom dark popup */
+.leaflet-popup-content-wrapper {
+  background: var(--bg-panel);
+  color: #fff;
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+
+.leaflet-popup-tip {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-color);
+}
+
+.dark-popup strong {
+  color: var(--accent-green);
+  font-size: 1.05rem;
+}
+
+.dark-popup .text-muted {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+/* Override default controls space */
+.leaflet-control-container .leaflet-bottom {
+  bottom: 20px;
+}
+.leaflet-control-container .leaflet-right {
+  right: 20px;
+}
