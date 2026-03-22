@@ -32,7 +32,7 @@ const Controls = ({
   };
 
   return (
-    <div className="controls-panel glass-panel">
+    <div className="controls-panel panel">
       <div className="panel-header">
         <Settings2 size={18} className="icon-emerald" />
         <h2>Mission Parameters</h2>
@@ -71,28 +71,28 @@ const Controls = ({
 
         <div className="form-row">
           <div className="form-group flex-2">
-            <label>Fleet Assignment</label>
+            <label>FLEET ASSIGNMENT</label>
             <select 
-              className="form-control" 
-              value={vehicleId} 
-              onChange={e => setVehicleId(e.target.value)}
+              className="form-control"
+              value={vehicleId}
+              onChange={(e) => setVehicleId(e.target.value)}
             >
+              <option value="">Select a truck</option>
               {vehicles.map(v => (
-                <option key={v.id} value={v.id}>
-                  {v.name} ({v.max_payload_tonnes}T | {v.fuel_type.replace('_', ' ')})
-                </option>
+                <option key={v.id} value={v.id}>{v.name}</option>
               ))}
             </select>
           </div>
+
           <div className="form-group flex-1">
-            <label>Cargo (Tonnes)</label>
+            <label>CARGO<br/>(TONNES)</label>
             <input 
               type="number" 
-              className="form-control text-right" 
-              value={load} 
-              onChange={e => setLoad(e.target.value)} 
-              min="1" 
-              max="25"
+              className="form-control"
+              value={load}
+              onChange={(e) => setLoad(Number(e.target.value))}
+              min="1"
+              max="50"
             />
           </div>
         </div>

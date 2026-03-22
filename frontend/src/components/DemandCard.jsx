@@ -58,7 +58,7 @@ const DemandCard = ({ forecastData, destination }) => {
   const avgDemand = forecastData.reduce((acc, curr) => acc + curr.predicted_tonnes, 0) / forecastData.length;
 
   return (
-    <div className="demand-card glass-panel">
+    <div className="demand-card panel">
       <div className="demand-header">
         <div className="title-area">
           <Activity size={16} className="icon-emerald" />

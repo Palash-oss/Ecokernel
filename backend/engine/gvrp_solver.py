@@ -294,6 +294,18 @@ def solve_gvrp(
     # ─── Extract Pareto Front ──────────────────────────────
     pareto = tools.sortNondominated(pop, len(pop), first_front_only=True)[0]
     
+    # Deduplicate extremely similar solutions
+    unique_pareto = []
+    seen = set()
+    for ind in pareto:
+        cost, co2 = ind.fitness.values
+        sig = (round(cost, 1), round(co2, 1))
+        if sig not in seen:
+            seen.add(sig)
+            unique_pareto.append(ind)
+            
+    pareto = unique_pareto
+    
     # Apply priority weighting to sort solutions
     def weighted_score(ind):
         cost, co2 = ind.fitness.values

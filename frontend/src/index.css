@@ -1,27 +1,23 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --bg-dark: #050814;
-  --bg-panel: rgba(10, 15, 30, 0.65);
-  --bg-panel-hover: rgba(16, 23, 45, 0.85);
+  --bg-dark: #000000;
+  --bg-panel: #0a0a0a;
+  --bg-panel-hover: #111111;
   
-  --accent-green: #00e676;
-  --accent-green-glow: rgba(0, 230, 118, 0.35);
+  --accent-green: #10b981;
+  --accent-amber: #f59e0b;
+  --accent-red: #ef4444;
+  --accent-blue: #3b82f6;
   
-  --accent-amber: #ffca28;
-  --accent-red: #ff5252;
-  --accent-blue: #448aff;
+  --text-main: #f4f4f5;
+  --text-muted: #a1a1aa;
   
-  --text-main: #f8fafc;
-  --text-muted: #94a3b8;
-  
-  --border-color: rgba(255, 255, 255, 0.1);
-  --border-glow: rgba(0, 230, 118, 0.3);
+  --border-color: #1f1f22;
   
   --font-main: 'Outfit', system-ui, -apple-system, sans-serif;
   
-  --shadow-glow: 0 0 20px var(--accent-green-glow);
-  --shadow-panel: 0 12px 40px rgba(0, 0, 0, 0.6);
+  --shadow-panel: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
 }
 
 * {
@@ -33,97 +29,85 @@
 body {
   font-family: var(--font-main);
   background-color: var(--bg-dark);
-  background-image: 
-    radial-gradient(circle at 10% 20%, rgba(0, 230, 118, 0.05) 0%, transparent 40%),
-    radial-gradient(circle at 90% 80%, rgba(68, 138, 255, 0.05) 0%, transparent 40%);
   color: var(--text-main);
-  overflow: hidden; /* App is full screen */
+  overflow-y: auto; /* Enable page scroll */
   -webkit-font-smoothing: antialiased;
 }
 
-/* Glassmorphism utility */
-.glass-panel {
+/* Solid Panel utility */
+.panel {
   background: var(--bg-panel);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--border-color);
-  border-radius: 16px;
+  border-radius: 8px; /* sharp, minimal corners */
   box-shadow: var(--shadow-panel);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: border-color 0.2s ease;
 }
 
-.glass-panel:hover {
-  border-color: rgba(255, 255, 255, 0.2);
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.7);
+.panel:hover {
+  border-color: #52525b;
 }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: var(--bg-dark);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 10px;
+  background: #3f3f46;
+  border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: #52525b;
 }
 
 /* Layout wrappers */
 .app-container {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  min-height: 100vh;
   width: 100vw;
+  overflow-x: hidden;
 }
 
 .main-content {
   display: flex;
-  flex: 1;
-  position: relative;
-  overflow: hidden;
+  flex-direction: column;
+  gap: 32px;
+  padding: 32px;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
 }
 
-.sidebar-left {
-  width: 320px;
-  max-height: 100%;
-  overflow-y: auto;
-  z-index: 10;
-  padding: 16px;
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 350px 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+.left-column {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  pointer-events: none; /* Let clicks pass through to map where transparent */
+  gap: 24px;
 }
 
-.sidebar-left > * {
-  pointer-events: auto; /* Enable clicks on panels */
+.right-column {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 .map-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 1;
-}
-
-.sidebar-right {
-  position: absolute;
-  right: 16px;
-  top: 16px;
-  width: 380px;
-  max-height: calc(100vh - 90px);
-  overflow-y: auto;
-  z-index: 10;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  height: 500px;
+  position: relative;
+  z-index: 1; /* Keep map below sticky navbar */
 }
 
 /* Shared UI Components */
@@ -154,77 +138,71 @@ body {
 
 /* Buttons */
 .btn-primary {
-  background: linear-gradient(135deg, #00e676 0%, #00b359 100%);
+  background: var(--accent-green);
   color: #000;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: none;
   padding: 12px 20px;
-  border-radius: 12px;
-  font-weight: 700;
+  border-radius: 6px;
+  font-weight: 600;
   font-size: 0.95rem;
   letter-spacing: 0.5px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: background 0.2s ease;
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 10px;
-  box-shadow: 0 4px 15px rgba(0, 230, 118, 0.3);
-  position: relative;
-  overflow: hidden;
-}
-
-.btn-primary::after {
-  content: '';
-  position: absolute;
-  top: 0; left: -100%;
-  width: 50%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-  transform: skewX(-20deg);
-  transition: all 0.5s ease;
 }
 
 .btn-primary:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 230, 118, 0.5);
+  background: #0ea5e9; /* Switch to a solid blue on hover for clear feedback */
+  color: #fff;
 }
 
-.btn-primary:hover:not(:disabled)::after {
-  left: 150%;
+.btn-primary:active:not(:disabled) {
+  transform: translateY(1px);
 }
 
 .btn-primary:disabled {
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--text-muted);
+  background: #27272a;
+  color: #71717a;
   cursor: not-allowed;
-  box-shadow: none;
-  border-color: rgba(255, 255, 255, 0.1);
+  border-color: #3f3f46;
 }
 
 /* Inputs */
 .form-group {
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 
 .form-group label {
   display: block;
   font-size: 0.8rem;
-  color: var(--text-muted);
-  margin-bottom: 4px;
+  color: #d4d4d8;
+  margin-bottom: 6px;
+  font-weight: 500;
 }
 
 .form-control {
   width: 100%;
-  background: rgba(0, 0, 0, 0.4);
+  background: #121212;
   border: 1px solid var(--border-color);
   color: white;
-  padding: 8px 12px;
+  padding: 12px 14px;
   border-radius: 6px;
   font-family: inherit;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
+  transition: border-color 0.2s ease;
 }
 
 .form-control:focus {
   outline: none;
   border-color: var(--accent-green);
+}
+
+.form-control option {
+  background: var(--bg-panel);
+  color: white;
+  padding: 8px;
 }

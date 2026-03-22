@@ -16,10 +16,9 @@
 .leaflet-popup-content-wrapper {
   background: var(--bg-panel);
   color: #fff;
-  backdrop-filter: blur(10px);
   border: 1px solid var(--border-color);
-  border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+  border-radius: 6px;
+  box-shadow: var(--shadow-panel);
 }
 
 .leaflet-popup-tip {

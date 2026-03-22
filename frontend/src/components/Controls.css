@@ -13,22 +13,18 @@
 }
 
 .panel-header h2 {
-  font-size: 1.2rem;
-  font-weight: 700;
-  letter-spacing: 0.5px;
+  font-size: 1.15rem;
+  font-weight: 600;
   margin: 0;
-  color: #fff;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+  color: var(--text-main);
 }
 
 .icon-emerald {
   color: var(--accent-green);
-  filter: drop-shadow(0 0 8px var(--accent-green-glow));
 }
 
 .icon-dest {
   color: var(--accent-amber);
-  filter: drop-shadow(0 0 8px rgba(255, 202, 40, 0.4));
 }
 
 .form-row {
@@ -67,27 +63,25 @@
 
 .form-control {
   width: 100%;
-  background: rgba(0, 0, 0, 0.45);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: white;
+  background: var(--bg-dark);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
   padding: 12px 14px;
-  border-radius: 10px;
+  border-radius: 6px;
   font-family: inherit;
   font-size: 0.95rem;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: border-color 0.2s ease;
 }
 
 .form-control:focus {
   outline: none;
   border-color: var(--accent-green);
-  box-shadow: 0 0 0 3px rgba(0, 230, 118, 0.2), inset 0 2px 4px rgba(0, 0, 0, 0.2);
-  background: rgba(0, 0, 0, 0.6);
+  background: #18181b;
 }
 
 .form-control option {
   background: var(--bg-dark);
-  color: white;
+  color: var(--text-main);
   padding: 8px;
 }
 
@@ -112,18 +106,16 @@
 }
 
 .slider-group {
-  background: rgba(0, 0, 0, 0.3);
-  padding: 20px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.2);
+  background: #18181b;
+  padding: 16px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
 }
 
 .slider-value {
   color: var(--accent-green);
-  font-weight: 700;
+  font-weight: 600;
   font-size: 0.95rem;
-  text-shadow: 0 0 10px var(--accent-green-glow);
 }
 
 .slider-labels {
@@ -138,30 +130,28 @@
 
 .priority-slider {
   -webkit-appearance: none;
+  appearance: none;
   width: 100%;
-  height: 8px;
-  border-radius: 4px;
-  background: linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-amber) 50%, var(--accent-green) 100%);
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-green) 100%);
   outline: none;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .priority-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background: #fff;
   cursor: pointer;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.8), 0 0 5px rgba(255, 255, 255, 0.5);
-  border: 3px solid var(--bg-dark);
+  border: 4px solid var(--bg-dark);
   transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .priority-slider::-webkit-slider-thumb:hover {
-  transform: scale(1.3);
-  background: var(--accent-green);
+  transform: scale(1.2);
 }
 
 /* Spinner */

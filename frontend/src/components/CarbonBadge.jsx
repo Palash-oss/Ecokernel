@@ -15,7 +15,7 @@ const CarbonBadge = ({ gridIntensity }) => {
   const colorClass = `badge-${status}`;
 
   return (
-    <div className={`carbon-badge glass-panel ${colorClass}`}>
+    <div className={`carbon-badge panel ${colorClass}`}>
       <div className="badge-icon">
         {status === 'red' ? <AlertTriangle size={20} /> : <Zap size={20} />}
       </div>

@@ -5,9 +5,9 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: radial-gradient(circle at center, #0a0f25 0%, var(--bg-dark) 100%);
+  background: var(--bg-dark);
   color: #fff;
-  gap: 20px;
+  gap: 24px;
 }
 
 .loader.large {
@@ -15,17 +15,21 @@
   height: 48px;
   border-width: 4px;
   border-top-color: var(--accent-green);
-  box-shadow: 0 0 20px var(--accent-green-glow);
+  border-radius: 50%;
 }
 
 .loading-screen h2 {
   margin: 0;
   font-weight: 700;
   letter-spacing: 1px;
-  background: linear-gradient(90deg, #fff, var(--accent-green));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 30px rgba(0, 230, 118, 0.4);
+  color: #fff;
+}
+
+.results-container {
+  display: grid;
+  grid-template-columns: 350px 1fr;
+  gap: 24px;
+  align-items: start;
 }
 
 .loading-screen p {

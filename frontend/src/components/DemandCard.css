@@ -18,26 +18,23 @@
 }
 
 .title-area h3 {
-  font-size: 0.95rem;
-  font-weight: 700;
+  font-size: 1rem;
+  font-weight: 600;
   margin: 0;
-  color: #fff;
-  letter-spacing: 0.5px;
+  color: var(--text-main);
 }
 
 .trend-badge {
   display: flex;
   align-items: center;
   gap: 6px;
-  background: rgba(255, 202, 40, 0.15);
+  background: rgba(245, 158, 11, 0.1);
   color: var(--accent-amber);
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 0.75rem;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
-  border: 1px solid rgba(255, 202, 40, 0.3);
-  box-shadow: 0 0 10px rgba(255, 202, 40, 0.2);
 }
 
 .demand-metric {
@@ -45,11 +42,10 @@
 }
 
 .demand-metric .value {
-  font-size: 2.2rem;
+  font-size: 2rem;
   font-weight: 700;
-  color: #fff;
+  color: var(--text-main);
   margin-right: 8px;
-  text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
 }
 
 .demand-metric .unit {

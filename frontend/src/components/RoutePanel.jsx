@@ -6,7 +6,7 @@ const RoutePanel = ({ route }) => {
   if (!route) return null;
 
   return (
-    <div className="route-panel glass-panel">
+    <div className="route-panel panel">
       <div className="route-header">
         <div className="route-title">
           <Route size={18} className="icon-blue" />

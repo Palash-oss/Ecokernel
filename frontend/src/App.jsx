@@ -3,14 +3,17 @@ import api from './api/client';
 import Navbar from './components/Navbar';
 import Controls from './components/Controls';
 import MapView from './components/MapView';
-import ParetoChart from './components/ParetoChart';
+import RouteList from './components/RouteList';
 import RoutePanel from './components/RoutePanel';
 import DemandCard from './components/DemandCard';
 import CarbonBadge from './components/CarbonBadge';
+import LandingPage from './components/LandingPage';
 import './App.css';
 
 function App() {
   // Application State
+  const [showDashboard, setShowDashboard] = useState(false);
+  
   const [network, setNetwork] = useState(null);
   const [vehicles, setVehicles] = useState([]);
   const [forecast, setForecast] = useState([]);
@@ -94,47 +97,54 @@ function App() {
   }
 
   // Derive origin and destination from active route if exists
-  const rtOrigin = activeRoute ? activeRoute.segments[0].from_city : "Mumbai";
-  const rtDest = activeRoute ? activeRoute.segments[activeRoute.segments.length - 1].to_city : "Delhi";
+  const rtOrigin = activeRoute ? activeRoute.segments[0].from_city : "Delhi";
+  const rtDest = activeRoute ? activeRoute.segments[activeRoute.segments.length - 1].to_city : "Mumbai";
+
+  if (!showDashboard) {
+    return <LandingPage onEnter={() => setShowDashboard(true)} />;
+  }
 
   return (
     <div className="app-container">
       <Navbar />
       
       <main className="main-content">
-        {/* Background Map Overlay */}
-        <div className="map-container">
-          <MapView 
-            network={network} 
-            origin={rtOrigin} 
-            destination={rtDest}
-            activeRoute={activeRoute}
-          />
-        </div>
-
-        {/* Left Sidebar - Controls & Real-time Data */}
-        <div className="sidebar-left">
-          <Controls 
-            cities={network.nodes} 
-            vehicles={vehicles} 
-            onOptimize={handleOptimize}
-            isOptimizing={isOptimizing}
-          />
-          <DemandCard forecastData={forecast} destination={targetDest} />
-          <CarbonBadge gridIntensity={carbonLevel?.intensity} />
-        </div>
-
-        {/* Right Sidebar - Optimisation Results */}
-        {(paretoFront || isOptimizing) && (
-          <div className="sidebar-right">
-            <ParetoChart 
-              paretoFront={paretoFront} 
-              activeRouteId={activeRouteId}
-              onSelectRoute={handleSelectRoute}
+        <div className="dashboard-grid">
+          {/* Left Sidebar */}
+          <div className="left-column">
+            <Controls 
+              cities={network.nodes} 
+              vehicles={vehicles} 
+              onOptimize={handleOptimize}
+              isOptimizing={isOptimizing}
             />
-            {activeRoute && <RoutePanel route={activeRoute} />}
+            <DemandCard forecastData={forecast} destination={targetDest} />
+            <CarbonBadge gridIntensity={carbonLevel?.intensity} />
           </div>
-        )}
+
+          {/* Right Area */}
+          <div className="right-column">
+            <div className="map-container panel">
+              <MapView 
+                network={network} 
+                origin={rtOrigin} 
+                destination={rtDest}
+                activeRoute={activeRoute}
+              />
+            </div>
+
+            {(paretoFront || isOptimizing) && (
+              <div className="results-container">
+                <RouteList 
+                  solutions={paretoFront?.solutions} 
+                  activeId={activeRouteId}
+                  onSelect={handleSelectRoute}
+                />
+                {activeRoute && <RoutePanel route={activeRoute} />}
+              </div>
+            )}
+          </div>
+        </div>
       </main>
     </div>
   );
