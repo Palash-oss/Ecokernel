@@ -39,27 +39,54 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 16px;
+  gap: 20px;
+  max-width: 800px;
 }
 
 .landing-logo h1 {
-  font-size: 3.5rem;
-  font-weight: 700;
+  font-size: 5.5rem;
+  font-weight: 600;
   margin: 0;
   color: #fff;
-  letter-spacing: -1px;
+  letter-spacing: -2px;
+  line-height: 1.1;
 }
 
-.landing-logo span {
-  font-size: 1.1rem;
-  color: var(--accent-green);
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  font-weight: 600;
+.landing-logo p {
+  font-size: 1.25rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  max-width: 600px;
+  margin: 0;
+}
+
+.landing-actions {
+  display: flex;
+  gap: 24px;
+  align-items: center;
 }
 
 .start-button {
   font-size: 1.1rem;
   padding: 16px 36px;
   border-radius: 8px;
+  background: var(--accent-green) !important;
+  color: #fff !important;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-text {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 16px 20px;
+}
+
+.btn-text:hover {
+  text-decoration: underline;
 }

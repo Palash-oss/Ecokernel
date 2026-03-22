@@ -26,8 +26,8 @@ const LandingPage = ({ onEnter }) => {
             cPolarAngle={90}
             cameraZoom={1}
             color1="#10b981"
-            color2="#000000"
-            color3="#052e16"
+            color2="#097155ff"
+            color3="#06624cff"
             destination="onCanvas"
             embedMode="off"
             envPreset="dawn"
@@ -62,13 +62,15 @@ const LandingPage = ({ onEnter }) => {
       </div>
       <div className="landing-overlay">
         <div className="landing-logo">
-          <Leaf size={48} color="var(--accent-green)" />
-          <h1>EcoKernel</h1>
-          <span>Green Logistics Engine</span>
+          <h1>Accelerating the<br/>power of Green Logistics.</h1>
+          <p>Unlock your sustainable potential. Seamlessly generate, customize, and perfect your supply chain with cutting-edge AI technology.</p>
         </div>
         <div className="landing-actions">
            <button className="btn-primary start-button" onClick={onEnter}>
-             Access Engine
+             Access Engine &rarr;
+           </button>
+           <button className="btn-text">
+             Learn More
            </button>
         </div>
       </div>
