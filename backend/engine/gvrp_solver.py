@@ -221,6 +221,13 @@ def solve_gvrp(
     n_modes = 10  # max segments
     ind_size = n_optional + n_modes
     
+    # ─── Reproducibility Setup ─────────────────────────────
+    # Seed the random number generator using the inputs so that repeated requests
+    # with the same parameters yield the identical Pareto front.
+    seed_str = f"{origin}-{destination}-{'-'.join(waypoints)}-{vehicle_id}-{load_tonnes}-{priority}"
+    seed_hash = sum(ord(c) for c in seed_str)
+    random.seed(seed_hash)
+
     # ─── DEAP Toolbox ──────────────────────────────────────
     toolbox = base.Toolbox()
     toolbox.register("attr_float", random.random)

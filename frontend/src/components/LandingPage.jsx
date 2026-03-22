@@ -113,10 +113,6 @@ const LandingPage = ({ onEnter }) => {
               <button className="btn-start" onClick={onEnter}>
                 Start Optimization <ArrowRight size={18} className="cta-icon"/>
               </button>
-              <div className="cursor-hint">
-                 <span className="cursor-label">GVRP Solver</span>
-                 <Map size={14} />
-              </div>
             </motion.div>
           </div>
 
