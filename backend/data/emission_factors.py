@@ -128,19 +128,45 @@ def calculate_segment_co2(
     load_mult = load_factor(load_tonnes, max_payload_tonnes)
     cold_mult = cold_start_penalty(distance_km)
     
-    co2 = base_factor * distance_km * speed_mult * grad_mult * load_mult * cold_mult
-    return round(co2, 3)
-
-
+    # Base moving emissions
+    moving_co2 = base_factor * distance_km * speed_mult * grad_mult * load_mult * cold_mult
+    
+    # IDLING "GHOST" EMISSIONS (Module 1)
+    # Average HGV idling burns ~2.5kg CO2 per hour (Engine on, stationary)
+    idle_co2_rate = 2.5 
+    
+    # Estimated wait time if speed is very low (< 10km/h)
+    idle_time_hr = 0
+    if speed_kmh < 15.0 and distance_km > 0:
+        # Time taken at restricted speed minus time at normal speed (45km/h)
+        normal_time = distance_km / 45.0
+        actual_time = distance_km / speed_kmh
+        idle_time_hr = max(0, actual_time - normal_time)
+    
+    return round(moving_co2 + (idle_time_hr * idle_co2_rate), 3)
 def calculate_segment_cost(
     distance_km: float,
     mode: str = "road",
     fuel_type: str = "euro6_diesel",
+    from_city: str = None,
+    to_city: str = None,
+    vehicle_type: str = None,
 ) -> float:
     """
     Calculate transport cost in INR for a segment.
-    Uses real Indian trucking/rail rates.
+    Applies Real-World Negotiated Contract Rates if a fleet assignment exists
+    for this exact corridor and vehicle. Otherwise, calculates dynamic real-world toll/fuel rates.
     """
+    # 1. Check for Negotiated Enterprise Flat Rates First
+    if from_city and to_city and vehicle_type:
+        from data.database import get_active_contracts_dict
+        active_contracts = get_active_contracts_dict()
+        contract_cost = active_contracts.get((from_city, to_city, vehicle_type))
+        if contract_cost and mode == "road":
+            # For a direct route that exactly matches the contract, use the flat rate.
+            return float(contract_cost)
+
+    # 2. Dynamic Ad-Hoc Spot Pricing
     from config import TRANSPORT_MODES
     
     mode_data = TRANSPORT_MODES.get(mode, TRANSPORT_MODES["road"])

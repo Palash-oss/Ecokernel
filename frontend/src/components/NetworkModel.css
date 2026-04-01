@@ -1,0 +1,238 @@
+/* NetworkModel.css */
+.network-model-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.network-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.title-group h2 {
+  margin: 0;
+  line-height: 1.2;
+}
+
+.pulse-icon {
+  animation: pulseColor 4s infinite alternate;
+}
+
+@keyframes pulseColor {
+  0% { opacity: 0.7; transform: scale(0.95); }
+  100% { opacity: 1; transform: scale(1.05); }
+}
+
+.live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--accent-green);
+  letter-spacing: 1px;
+}
+
+.live-badge .dot {
+  width: 6px;
+  height: 6px;
+  background-color: var(--accent-green);
+  border-radius: 50%;
+  animation: blink 1.5s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; box-shadow: 0 0 6px var(--accent-green); }
+  50% { opacity: 0.3; box-shadow: none; }
+}
+
+.kpi-banner {
+  display: flex;
+  justify-content: space-around;
+  padding: 24px;
+  margin-bottom: 8px;
+}
+
+.kpi-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.kpi-group.border-right {
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.kpi-val {
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+.kpi-lbl {
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  margin-top: 4px;
+}
+
+.hub-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.hub-module {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  transition: all 0.3s ease;
+  border-top: 2px solid rgba(255, 255, 255, 0.05);
+}
+
+.hub-module.high-load {
+  border-top-color: var(--accent-amber);
+  background: linear-gradient(to bottom, rgba(245, 158, 11, 0.05), rgba(10, 14, 39, 0.4));
+}
+
+.hub-module-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hub-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hub-title h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.region-tag {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.signal-icon.green { color: var(--accent-green); }
+.signal-icon.amber { color: var(--accent-amber); }
+.signal-icon.red { color: var(--accent-red); }
+
+.hub-capacity {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.capacity-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.capacity-bar-bg {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.capacity-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+}
+
+.bg-amber { background-color: var(--accent-amber); }
+.bg-green { background-color: var(--accent-green); }
+.bg-blue { background-color: var(--accent-blue); }
+
+.hub-connections {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.conn-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+  letter-spacing: 0.5px;
+}
+
+.conn-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.conn-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+}
+
+.conn-metrics {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.micro-tag.rail {
+  font-size: 0.6rem;
+  font-weight: 700;
+  background: rgba(16, 185, 129, 0.2);
+  color: var(--accent-green);
+  padding: 1px 4px;
+  border-radius: 2px;
+}
+
+.conn-val {
+  font-family: monospace;
+  font-weight: 600;
+  width: 60px;
+  text-align: right;
+}
+
+.text-emerald { color: #10b981; }
+
+/* Responsive Overrides */
+@media (max-width: 768px) {
+  .kpi-banner {
+    flex-direction: column;
+    gap: 24px;
+    padding: 16px;
+  }
+  
+  .kpi-group.border-right {
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 16px;
+  }
+  
+  .hub-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .hub-module {
+    padding: 16px;
+  }
+}

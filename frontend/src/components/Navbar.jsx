@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Leaf, Navigation } from 'lucide-react';
 import './Navbar.css';
 
-const Navbar = () => {
+const Navbar = ({ currentView = 'dashboard', onViewChange }) => {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -34,9 +34,10 @@ const Navbar = () => {
         </div>
       </div>
       <div className="navbar-links">
-        <a href="#" className="active">Dashboard</a>
-        <a href="#">Network Model</a>
-        <a href="#">Emissions Report</a>
+        <a href="#" className={currentView === 'dashboard' ? 'active' : ''} onClick={(e) => { e.preventDefault(); onViewChange?.('dashboard'); }}>Dashboard</a>
+        <a href="#" className={currentView === 'network' ? 'active' : ''} onClick={(e) => { e.preventDefault(); onViewChange?.('network'); }}>Network Model</a>
+        <a href="#" className={currentView === 'emissions' ? 'active' : ''} onClick={(e) => { e.preventDefault(); onViewChange?.('emissions'); }}>Emissions Report</a>
+        <a href="#" className={currentView === 'contracts' ? 'active' : ''} onClick={(e) => { e.preventDefault(); onViewChange?.('contracts'); }}>Fleet Contracts</a>
       </div>
       <div className="navbar-user">
         <div className="user-avatar">DM</div>

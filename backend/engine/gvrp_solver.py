@@ -166,6 +166,15 @@ def _evaluate(
         
         is_rail = (mode == "rail")
         
+        # MODULE 1: Identify if route is disrupted
+        disruption_penalty = 0
+        if G.has_edge(from_city, to_city):
+            edge = G[from_city][to_city]
+            if edge.get("disruption"):
+                # If disrupted, we penalize the "Wait" scenario to force the GA 
+                # to explore alternative "Divert" paths
+                disruption_penalty = 5000 
+        
         co2 = calculate_segment_co2(
             distance_km=distance,
             fuel_type=fuel_type if not is_rail else "rail_freight",
@@ -180,10 +189,13 @@ def _evaluate(
             distance_km=distance,
             mode=mode,
             fuel_type=fuel_type,
+            from_city=from_city,
+            to_city=to_city,
+            vehicle_type=vehicle.get("id")
         )
         
-        total_cost += cost
-        total_co2 += co2
+        total_cost += cost + disruption_penalty
+        total_co2 += co2 + (disruption_penalty * 0.001)  # Minimal CO2 penalty for wait time simulation
     
     # Penalize very long routes (too many optional stops)
     if len(segments) > 8:
@@ -315,7 +327,6 @@ def solve_gvrp(
         if len(pareto) >= 3:
             # We have enough diverse and valid solutions from the top fronts
             break
-            this 
     # Apply priority weighting to sort solutions
     def weighted_score(ind):
         cost, co2 = ind.fitness.values
@@ -344,12 +355,14 @@ def solve_gvrp(
                 speed = edge.get("avg_speed_kmh", 45)
                 gradient = edge.get("gradient_percent", 0)
                 geometry = edge.get("geometry", None)
+                disruption = edge.get("disruption", None)
             else:
                 dist = 100
                 time = 133
                 speed = 45
                 gradient = 0
                 geometry = None
+                disruption = None
             
             is_rail = (mode == "rail")
             co2 = calculate_segment_co2(
@@ -361,7 +374,14 @@ def solve_gvrp(
                 max_payload_tonnes=vehicle["max_payload_tonnes"],
                 is_rail=is_rail,
             )
-            cost = calculate_segment_cost(dist, mode, vehicle["fuel_type"])
+            cost = calculate_segment_cost(
+                distance_km=dist,
+                mode=mode,
+                fuel_type=vehicle["fuel_type"],
+                from_city=from_city,
+                to_city=to_city,
+                vehicle_type=vehicle["id"]
+            )
             
             route_segments.append({
                 "from_city": from_city,
@@ -372,6 +392,7 @@ def solve_gvrp(
                 "co2_kg": round(co2, 3),
                 "cost_inr": round(cost, 2),
                 "geometry": geometry,
+                "disruption": disruption,
             })
             
             total_dist += dist

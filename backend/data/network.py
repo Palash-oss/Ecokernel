@@ -110,9 +110,55 @@ def build_network() -> nx.Graph:
                 has_rail=has_rail,
                 gradient_percent=gradient,
                 avg_speed_kmh=avg_speed,
+                disruption=None,
             )
+            
+    # -- APPLY REAL-WORLD LIVE DISRUPTIONS --
+    _apply_live_weather(G)
     
     return G
+
+import httpx
+
+def _apply_live_weather(G: nx.Graph):
+    """
+    Fetch real-time weather from Open-Meteo for all active hubs.
+    If there is heavy rain or adverse conditions, dynamically slash route speeds,
+    simulating live 'road blockages' and 'congestion'.
+    """
+    nodes = list(G.nodes(data=True))
+    lats = ",".join(str(n[1]["lat"]) for n in nodes)
+    lngs = ",".join(str(n[1]["lng"]) for n in nodes)
+    
+    try:
+        url = f"https://api.open-meteo.com/v1/forecast?latitude={lats}&longitude={lngs}&current=precipitation,weather_code"
+        resp = httpx.get(url, timeout=5.0)
+        if resp.status_code == 200:
+            data_list = resp.json()
+            if isinstance(data_list, list):
+                for idx, c_data in enumerate(data_list):
+                    city_name = nodes[idx][0]
+                    precip = c_data.get("current", {}).get("precipitation", 0.0)
+                    
+                    # Logic: Even light rain causes 15% slowdown in major Indian cities.
+                    # Heavy rain (> 1.5mm/hr) causes up to 60% massive road blockages.
+                    if precip > 0.0:
+                        severity = precip * 20 # Config map
+                        slowdown_factor = max(0.4, 1.0 - (severity / 100))
+                        
+                        # Apply live congestion to all connected routes
+                        for neighbor in G.neighbors(city_name):
+                            edge = G[city_name][neighbor]
+                            edge["avg_speed_kmh"] = max(15.0, edge["avg_speed_kmh"] * slowdown_factor)
+                            edge["time_minutes"] = (edge["distance_km"] / edge["avg_speed_kmh"]) * 60.0
+                            
+                            # Tag the disruption
+                            if slowdown_factor < 0.6:
+                                edge["disruption"] = f"SEVERE WEATHER ({city_name})"
+                            elif slowdown_factor < 0.85:
+                                edge["disruption"] = f"RAIN DELAY ({city_name})"
+    except Exception as e:
+        print(f"Warning: Could not fetch live weather disruptions: {e}")
 
 
 def enrich_with_ors(G: nx.Graph) -> nx.Graph:
@@ -153,6 +199,8 @@ def get_network_data(G: nx.Graph) -> dict:
             "time_minutes": data["time_minutes"],
             "has_rail": data["has_rail"],
             "gradient_percent": data["gradient_percent"],
+            "avg_speed_kmh": data["avg_speed_kmh"],
+            "disruption": data.get("disruption"),
         })
     
     return {"nodes": nodes, "edges": edges}

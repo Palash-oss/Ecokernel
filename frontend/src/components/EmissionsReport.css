@@ -1,0 +1,293 @@
+/* EmissionsReport.css */
+.emissions-report {
+  display: flex;
+  flex-direction: column;
+}
+
+.emissions-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 40vh;
+  text-align: center;
+}
+
+.report-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.section-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #fff;
+  padding: 0 10px;
+}
+
+.bg-emerald-glow {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--accent-green);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.insight-card.border-blue {
+  border: 1px solid var(--accent-blue);
+  background: rgba(59, 130, 246, 0.05);
+}
+.insight-card.border-amber {
+  border: 1px solid var(--accent-amber);
+  background: rgba(245, 158, 11, 0.05);
+}
+.bg-blue-dim { background: rgba(59, 130, 246, 0.1); }
+.text-blue { color: var(--accent-blue); }
+.text-amber { color: var(--accent-amber); }
+.fw-500 { font-weight: 500; }
+.fw-600 { font-weight: 600; }
+.flex-center { display: flex; align-items: center; justify-content: center; }
+.gap-2 { gap: 8px; }
+
+.history-grid {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 20px;
+}
+
+.history-chart-wrapper {
+  height: 280px;
+  margin-top: 20px;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.list-panel {
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+}
+.px-0 { padding-left: 0; padding-right: 0; }
+
+
+
+.route-context {
+  margin-left: auto;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
+.insight-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.insight-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 28px;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.insight-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--accent-green);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
+
+.insight-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--accent-green);
+  opacity: 0.4;
+}
+
+.insight-card.border-blue::before { background: var(--accent-blue); }
+.insight-card.border-amber::before { background: var(--accent-amber); }
+
+.insight-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.bg-blue-dim { color: var(--accent-blue); }
+.bg-green-dim { color: var(--accent-green); }
+.bg-red-dim { color: var(--accent-red); }
+
+.insight-data {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.insight-data.full-width {
+  width: 100%;
+  align-items: center;
+  text-align: center;
+}
+
+.insight-data .lbl {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.insight-data .val {
+  font-size: 1.8rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.insight-data .sub {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  margin-top: 4px;
+}
+
+.chart-panel {
+  padding: 32px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+}
+
+.chart-panel h3 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 24px;
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.chart-wrapper {
+  padding: 0;
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.chart-wrapper > div {
+  flex: 1;
+  height: 100%;
+}
+
+.table-wrapper {
+  padding: 24px;
+  overflow: hidden; /* Rounded corner respect */
+}
+
+.table-wrapper h3 {
+  margin-bottom: 16px;
+  font-size: 1.1rem;
+}
+
+.report-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.report-table th {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.report-table td {
+  padding: 16px;
+  font-size: 0.9rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.active-row {
+  background: rgba(105, 246, 184, 0.05);
+}
+
+.score-badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.score-badge.high { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); }
+.score-badge.med { background: rgba(245, 158, 11, 0.2); color: var(--accent-amber); }
+.score-badge.low { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); }
+
+.mode-tags {
+  display: flex;
+  gap: 8px;
+}
+.mode-tag {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.mode-tag.road { background: #3f3f46; color: #fff; }
+.mode-tag.rail { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); }
+.mode-tag.multimodal { background: rgba(59, 130, 246, 0.2); color: var(--accent-blue); }
+
+.mb-4 { margin-bottom: 24px; }
+.mt-4 { margin-top: 24px; }
+.text-amber { color: var(--accent-amber); }
+
+/* Responsive Overrides */
+@media (max-width: 1024px) {
+  .insight-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .history-grid {
+    grid-template-columns: 1fr; /* Stack graphs on tablet */
+  }
+}
+
+@media (max-width: 768px) {
+  .insight-cards {
+    grid-template-columns: 1fr; /* Full stack on mobile */
+  }
+  .report-header {
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 24px;
+  }
+  .table-wrapper {
+    overflow-x: auto;
+  }
+  .report-table th, .report-table td {
+    white-space: nowrap;
+  }
+}

@@ -133,39 +133,79 @@ def _train_model(data: np.ndarray, epochs: int = 30) -> DemandLSTM:
     return model
 
 
+import httpx
+import datetime
+
 # ─── Forecast API ──────────────────────────────────────────
 
 _model_cache: Dict[str, DemandLSTM] = {}
+_live_holidays_cache = []
+_last_holiday_fetch = None
 
+def _get_live_indian_holidays():
+    """Fetch real upcoming Indian holidays from Nager.Date API."""
+    global _live_holidays_cache, _last_holiday_fetch
+    now = datetime.datetime.now()
+    if _last_holiday_fetch and (now - _last_holiday_fetch).total_seconds() < 86400:
+        return _live_holidays_cache
+
+    try:
+        # Fetch holidays for current year
+        year = now.year
+        resp = httpx.get(f"https://date.nager.at/api/v3/PublicHolidays/{year}/IN", timeout=5.0)
+        if resp.status_code == 200:
+            _live_holidays_cache = resp.json()
+            _last_holiday_fetch = now
+    except Exception as e:
+        print(f"Warning: Could not fetch live holidays: {e}")
+        _live_holidays_cache = []
+        
+    return _live_holidays_cache
 
 def get_demand_forecast(cities: List[str] = None, forecast_days: int = 7) -> List[dict]:
     """
     Generate 7-day demand forecasts for each city.
-    
-    Returns list of:
-    {
-        "city": str,
-        "region": str,
-        "day": int (1-7),
-        "predicted_demand": float,
-        "confidence_low": float,
-        "confidence_high": float,
-    }
+    Integrates LIVE Indian holiday data to provide accurate real-world spikes.
     """
     if cities is None:
         cities = list(CITIES.keys())
     
     results = []
     
+    # Fetch real-world holidays
+    live_holidays = _get_live_indian_holidays()
+    today = datetime.date.today()
+    
+    # Map next 7 days to see if any are holidays
+    upcoming_holiday_spikes = {}
+    for day_offset in range(forecast_days):
+        target_date = today + datetime.timedelta(days=day_offset)
+        date_str = target_date.strftime("%Y-%m-%d")
+        
+        # Check if this date is a real public holiday
+        holiday_match = next((h for h in live_holidays if h.get("date") == date_str), None)
+        if holiday_match:
+            # 60% surge in demand for real festival
+            upcoming_holiday_spikes[day_offset] = {
+                "mult": 1.6,
+                "name": holiday_match.get("name")
+            }
+        else:
+            # Check if it's the day BEFORE a holiday (pre-festival logistics rush)
+            next_day_str = (target_date + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+            if any(h.get("date") == next_day_str for h in live_holidays):
+                upcoming_holiday_spikes[day_offset] = {
+                    "mult": 1.8, # Massive rush day before
+                    "name": "Pre-Festival Rush"
+                }
+
     for city in cities:
-        # Get or train model
         if city not in _model_cache:
             data = _generate_demand_data(city)
             _model_cache[city] = _train_model(data, epochs=20)
         
         model = _model_cache[city]
         
-        # Generate recent data for prediction
         data = _generate_demand_data(city)
         recent = data[-30:]
         normalized = (recent - model._mean) / model._std
@@ -175,13 +215,35 @@ def get_demand_forecast(cities: List[str] = None, forecast_days: int = 7) -> Lis
         with torch.no_grad():
             prediction = model(input_tensor).squeeze().numpy()
         
-        # Denormalize
         prediction = prediction * model._std + model._mean
-        
         region = CITIES.get(city, {}).get("region", "Unknown")
         
+        # Generate historical data for the past 7 days
+        # We know `recent` contains the last 30 days. Let's take the last 7 days.
+        past_7_days = recent[-7:]
+        
+        for i, val in enumerate(past_7_days):
+            day_idx = i - 7 # -7 to -1
+            results.append({
+                "city": city,
+                "region": region,
+                "day": day_idx,
+                "predicted_demand": round(val, 1),
+                "confidence_low": round(val, 1), # Exact history
+                "confidence_high": round(val, 1),
+                "live_event": None
+            })
+            
         for day in range(min(forecast_days, len(prediction))):
             pred_val = max(float(prediction[day]), 0)
+            
+            # ─── APPLY REAL WORLD LIVE SPIKES ───
+            spike_data = upcoming_holiday_spikes.get(day)
+            event_name = None
+            if spike_data:
+                pred_val *= spike_data["mult"]
+                event_name = spike_data["name"]
+                
             results.append({
                 "city": city,
                 "region": region,
@@ -189,6 +251,7 @@ def get_demand_forecast(cities: List[str] = None, forecast_days: int = 7) -> Lis
                 "predicted_demand": round(pred_val, 1),
                 "confidence_low": round(pred_val * 0.85, 1),
                 "confidence_high": round(pred_val * 1.15, 1),
+                "live_event": event_name  # Frontend can use this if needed
             })
     
     return results

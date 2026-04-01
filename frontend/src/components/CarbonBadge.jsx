@@ -11,7 +11,7 @@ const CarbonBadge = ({ gridIntensity }) => {
     return 'red';
   };
 
-  const status = getStatusColor(gridIntensity.intensity_gco2_kwh);
+  const status = getStatusColor(gridIntensity.current_intensity);
   const colorClass = `badge-${status}`;
 
   return (
@@ -22,7 +22,7 @@ const CarbonBadge = ({ gridIntensity }) => {
       <div className="badge-info">
         <span className="badge-label">Live Grid Carbon Intensity</span>
         <div className="badge-value">
-          {gridIntensity.intensity_gco2_kwh} <span>gCO₂/kWh</span>
+          {gridIntensity.current_intensity} <span>gCO₂/kWh</span>
         </div>
       </div>
       <div className="badge-status">

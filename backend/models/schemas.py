@@ -30,7 +30,7 @@ class OptimizeRequest(BaseModel):
     destination: str = Field(..., description="Destination city name")
     waypoints: List[str] = Field(default=[], description="Optional intermediate stops")
     vehicle_type: str = Field(default="ashok_leyland_euro6")
-    load_tonnes: float = Field(default=10.0, ge=0, le=25, description="Cargo load in tonnes")
+    load_tonnes: float = Field(default=10.0, ge=0, description="Cargo load in tonnes")
     priority: float = Field(
         default=0.5, ge=0.0, le=1.0,
         description="0.0 = pure cost, 1.0 = pure green"
@@ -49,6 +49,7 @@ class RouteSegment(BaseModel):
     co2_kg: float
     cost_inr: float
     geometry: Optional[List[List[float]]] = None  # [[lng, lat], ...]
+    disruption: Optional[str] = None
 
 
 class RouteSolution(BaseModel):
@@ -85,6 +86,7 @@ class NetworkEdge(BaseModel):
     time_minutes: float
     has_rail: bool
     gradient_percent: float
+    disruption: Optional[str] = None
 
 
 class NetworkResponse(BaseModel):
@@ -99,6 +101,15 @@ class DemandForecastItem(BaseModel):
     predicted_demand: float
     confidence_low: float
     confidence_high: float
+    live_event: Optional[str] = None
+
+class ContractCreate(BaseModel):
+    origin: str
+    destination: str
+    vehicle_type: str
+    fixed_cost_inr: float
+    expiry_date: str
+    contract_type: str
 
 
 class DemandForecastResponse(BaseModel):

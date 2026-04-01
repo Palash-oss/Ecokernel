@@ -17,6 +17,7 @@ from models.schemas import (
     DemandForecastResponse, DemandForecastItem,
     VehicleInfo, CarbonIntensityResponse,
 )
+from models import schemas
 from models.vehicle import get_all_vehicles
 from data.network import build_network, get_network_data
 from data.carbon_api import get_current_intensity
@@ -119,6 +120,7 @@ async def optimize_route(request: OptimizeRequest):
                 co2_kg=s["co2_kg"],
                 cost_inr=s["cost_inr"],
                 geometry=s.get("geometry"),
+                disruption=s.get("disruption"),
             )
             for s in sol["segments"]
         ]
@@ -204,3 +206,38 @@ async def carbon_intensity():
         index=data["index"],
         timestamp=data["timestamp"],
     )
+
+@app.on_event("startup")
+async def startup_event_db():
+    import data.database as db
+    db.init_db()
+
+
+# ─── New Fleet Contracts API ──────────────────────────────
+
+@app.get("/api/contracts")
+async def get_contracts():
+    import data.database as db
+    return {"contracts": db.get_all_contracts()}
+
+@app.post("/api/contracts")
+async def create_contract(contract: schemas.ContractCreate):
+    import data.database as db
+    try:
+        cid = db.add_contract(
+            origin=contract.origin,
+            destination=contract.destination,
+            vehicle_type=contract.vehicle_type,
+            fixed_cost_inr=contract.fixed_cost_inr,
+            expiry_date=contract.expiry_date,
+            contract_type=contract.contract_type
+        )
+        return {"id": cid, "message": "Contract added successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.delete("/api/contracts/{contract_id}")
+async def delete_contract(contract_id: int):
+    import data.database as db
+    db.delete_contract(contract_id)
+    return {"message": "Contract deleted successfully"}

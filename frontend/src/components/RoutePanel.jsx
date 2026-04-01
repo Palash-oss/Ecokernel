@@ -36,6 +36,13 @@ const RoutePanel = ({ route }) => {
           <div className="metric-val">{route.total_co2_kg.toFixed(1)} kg</div>
           <div className="metric-lbl">CO₂ Emission</div>
         </div>
+
+        {/* CARBON TAX PREDICTOR (Module 2) */}
+        <div className="metric-box tax-box">
+          <IndianRupee size={16} />
+          <div className="metric-val">₹{Math.round(route.total_co2_kg * 0.85)}</div>
+          <div className="metric-lbl">Est. Carbon Tax</div>
+        </div>
       </div>
 
       <div className="segments-list">

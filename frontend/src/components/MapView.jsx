@@ -66,10 +66,14 @@ const MapView = ({ network, origin, destination, activeRoute }) => {
         color = '#00d97e'; // Green for rail
         dashArray = '5, 10'; // Dashed line for rail
         weight = 5;
+      } else if (segment.disruption) {
+        color = '#ef4444'; // Bright red for severe disruption
+        dashArray = '10, 10'; // Thick dashes
+        weight = 5;
       } else {
         // Road color based on CO2 intensity (kg per km)
         const intensity = segment.co2_kg / segment.distance_km;
-        if (intensity > 0.4) color = '#ff4d4f'; // High emissions (red)
+        if (intensity > 0.4) color = '#f97316'; // High emissions (orange)
         else if (intensity > 0.2) color = '#f7c948'; // Med emissions (yellow)
         else if (intensity <= 0.0) color = '#00d97e'; // EV
       }
@@ -144,7 +148,8 @@ const MapView = ({ network, origin, destination, activeRoute }) => {
               <strong>{line.info.from_city} → {line.info.to_city}</strong><br/>
               Dist: {line.info.distance_km} km<br/>
               Mode: {line.info.mode.toUpperCase()}<br/>
-              CO₂: {line.info.co2_kg} kg
+              CO₂: {line.info.co2_kg} kg<br/>
+              {line.info.disruption && <span style={{color: '#ef4444'}}>⚠ {line.info.disruption}</span>}
             </Popup>
           </Polyline>
         ))}

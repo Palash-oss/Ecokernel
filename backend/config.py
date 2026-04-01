@@ -32,6 +32,15 @@ CITIES = {
     "Bhopal":         {"lat": 23.2599, "lng": 77.4126, "region": "Central"},
     "Visakhapatnam":  {"lat": 17.6868, "lng": 83.2185, "region": "East"},
     "Coimbatore":     {"lat": 11.0168, "lng": 76.9558, "region": "South"},
+    "Surat":          {"lat": 21.1702, "lng": 72.8311, "region": "West"},
+    "Kanpur":         {"lat": 26.4499, "lng": 80.3319, "region": "North"},
+    "Patna":          {"lat": 25.5941, "lng": 85.1376, "region": "East"},
+    "Kochi":          {"lat": 9.9312, "lng": 76.2673, "region": "South"},
+    "Guwahati":       {"lat": 26.1445, "lng": 91.7362, "region": "East"},
+    "Chandigarh":     {"lat": 30.7333, "lng": 76.7794, "region": "North"},
+    "Nashik":         {"lat": 19.9975, "lng": 73.7898, "region": "West"},
+    "Vijayawada":     {"lat": 16.5062, "lng": 80.6480, "region": "South"},
+    "Ludiana":        {"lat": 30.9010, "lng": 75.8573, "region": "North"},
 }
 
 # ─── Rail Corridors (major Indian freight routes) ──────────
@@ -50,6 +59,16 @@ RAIL_CORRIDORS = [
     ("Chennai", "Coimbatore"),
     ("Bhopal", "Nagpur"),
     ("Indore", "Bhopal"),
+    ("Mumbai", "Surat"),
+    ("Delhi", "Kanpur"),
+    ("Kanpur", "Patna"),
+    ("Patna", "Kolkata"),
+    ("Bangalore", "Kochi"),
+    ("Chennai", "Vijayawada"),
+    ("Delhi", "Chandigarh"),
+    ("Chandigarh", "Ludiana"),
+    ("Mumbai", "Nashik"),
+    ("Lucknow", "Guwahati"),
 ]
 
 # ─── DEFRA 2024 Emission Factors (kg CO₂/km) ──────────────

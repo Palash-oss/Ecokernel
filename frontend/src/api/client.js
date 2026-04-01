@@ -21,6 +21,12 @@ export const api = {
   getCarbonIntensity: () => apiClient.get('/carbon-intensity').then(res => res.data),
   
   optimizeRoute: (payload) => apiClient.post('/optimize', payload).then(res => res.data),
+
+  getContracts: () => apiClient.get('/contracts').then(res => res.data),
+
+  addContract: (payload) => apiClient.post('/contracts', payload).then(res => res.data),
+
+  deleteContract: (id) => apiClient.delete(`/contracts/${id}`).then(res => res.data),
 };
 
 export default api;

@@ -1,11 +1,9 @@
 .pareto-chart {
-  padding: 20px;
+  /* Inherit from .panel globally */
+  padding: 32px;
   display: flex;
   flex-direction: column;
-  height: 320px;
-  background: var(--bg-panel);
-  border-radius: 16px;
-  box-shadow: var(--shadow-panel);
+  height: 480px; /* Matched with other report charts */
 }
 
 .pareto-chart.empty-state {
@@ -18,22 +16,24 @@
 }
 
 .chart-header {
-  margin-bottom: 16px;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-  padding-bottom: 12px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  padding-bottom: 16px;
 }
 
 .chart-header h3 {
-  font-size: 1.1rem;
-  font-weight: 700;
-  margin: 0 0 4px 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+  margin: 0;
   color: #fff;
-  text-shadow: 0 0 10px rgba(255,255,255,0.2);
+  letter-spacing: -0.02em;
 }
 
 .chart-header .subtitle {
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   color: var(--text-muted);
+  display: block;
+  margin-top: 4px;
 }
 
 .chart-container {
