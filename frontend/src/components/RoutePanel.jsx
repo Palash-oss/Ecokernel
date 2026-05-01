@@ -46,7 +46,7 @@ const RoutePanel = ({ route }) => {
       </div>
 
       <div className="segments-list">
-        <h3>Leg-by-Leg Breakdown</h3>
+        <h3>Segment Breakdown</h3>
         <div className="segments-scroll">
           {route.segments.map((seg, idx) => (
             <div key={idx} className="segment-card">

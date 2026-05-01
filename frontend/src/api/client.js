@@ -21,12 +21,22 @@ export const api = {
   getCarbonIntensity: () => apiClient.get('/carbon-intensity').then(res => res.data),
   
   optimizeRoute: (payload) => apiClient.post('/optimize', payload).then(res => res.data),
+  
+  optimizeRouteV1: (payload) => apiClient.post('/v1/route-data', payload).then(res => res.data),
+
+  optimizeFast: (payload) => apiClient.post('/optimize/fast', payload).then(res => res.data),
 
   getContracts: () => apiClient.get('/contracts').then(res => res.data),
 
   addContract: (payload) => apiClient.post('/contracts', payload).then(res => res.data),
 
   deleteContract: (id) => apiClient.delete(`/contracts/${id}`).then(res => res.data),
+
+  searchPlaces: (query, limit = 8) => apiClient.get('/geocode/suggest', { params: { q: query, limit } })
+    .then(res => res.data.results),
+
+  reverseGeocode: (lat, lng) => apiClient.get('/geocode/reverse', { params: { lat, lng } })
+    .then(res => res.data),
 };
 
 export default api;

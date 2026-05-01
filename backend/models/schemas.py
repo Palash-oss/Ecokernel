@@ -28,6 +28,10 @@ class TransportMode(str, Enum):
 class OptimizeRequest(BaseModel):
     origin: str = Field(..., description="Origin city name")
     destination: str = Field(..., description="Destination city name")
+    origin_lat: Optional[float] = Field(None, description="Exact origin latitude")
+    origin_lng: Optional[float] = Field(None, description="Exact origin longitude")
+    dest_lat: Optional[float] = Field(None, description="Exact destination latitude")
+    dest_lng: Optional[float] = Field(None, description="Exact destination longitude")
     waypoints: List[str] = Field(default=[], description="Optional intermediate stops")
     vehicle_type: str = Field(default="ashok_leyland_euro6")
     load_tonnes: float = Field(default=10.0, ge=0, description="Cargo load in tonnes")
@@ -36,6 +40,19 @@ class OptimizeRequest(BaseModel):
         description="0.0 = pure cost, 1.0 = pure green"
     )
     max_solutions: int = Field(default=10, ge=1, le=50)
+
+
+class LocationCoord(BaseModel):
+    address: str
+    lat: Optional[float] = None
+    lng: Optional[float] = None
+
+class RouteDataRequest(BaseModel):
+    origin: LocationCoord
+    destination: LocationCoord
+    vehicle_type: str
+    load_tonnes: float
+    priority: float = 0.5
 
 
 # ─── Response Models ───────────────────────────────────────

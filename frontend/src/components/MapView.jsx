@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -22,7 +22,6 @@ const createCustomIcon = (color) => {
   });
 };
 
-const hubIcon = createCustomIcon('#3b82f6');
 const originIcon = createCustomIcon('#f7c948');
 const destIcon = createCustomIcon('#ff4d4f');
 
@@ -41,13 +40,13 @@ const FitBounds = ({ routePoints }) => {
   useEffect(() => {
     if (routePoints && routePoints.length > 0) {
       const bounds = L.latLngBounds(routePoints);
-      map.fitBounds(bounds, { padding: [50, 50] });
+      map.fitBounds(bounds, { padding: [30, 30], animate: true, duration: 1.5 });
     }
   }, [routePoints, map]);
   return null;
 };
 
-const MapView = ({ network, origin, destination, activeRoute }) => {
+const MapView = ({ network, origin, destination, activeRoute, optimisationParams }) => {
   const defaultCenter = [21.1458, 79.0882]; // Center of India
   const defaultZoom = 5;
 
@@ -55,7 +54,11 @@ const MapView = ({ network, origin, destination, activeRoute }) => {
   let routeLines = [];
   let routePointsForBounds = [];
 
-  if (activeRoute && activeRoute.segments && network) {
+  // Use custom markers if available from optimisation params
+  const customOrigin = optimisationParams?.origin_lat ? { lat: optimisationParams.origin_lat, lng: optimisationParams.origin_lng, name: optimisationParams.origin } : null;
+  const customDest = optimisationParams?.dest_lat ? { lat: optimisationParams.dest_lat, lng: optimisationParams.dest_lng, name: optimisationParams.destination } : null;
+
+  if (activeRoute && activeRoute.segments) {
     activeRoute.segments.forEach(segment => {
       // Determine segment color based on green score/mode
       let color = '#3b82f6'; // default blue
@@ -86,10 +89,10 @@ const MapView = ({ network, origin, destination, activeRoute }) => {
         routePointsForBounds.push(...latLngs);
       } else {
         // Fallback straight line
-        const nodeA = network.nodes.find(n => n.name === segment.from_city);
-        const nodeB = network.nodes.find(n => n.name === segment.to_city);
-        if (nodeA && nodeB) {
-          const latLngs = [[nodeA.lat, nodeA.lng], [nodeB.lat, nodeB.lng]];
+        const latALngA = customOrigin && segment.from_city === customOrigin.name ? [customOrigin.lat, customOrigin.lng] : null;
+        const latBLngB = customDest && segment.to_city === customDest.name ? [customDest.lat, customDest.lng] : null;
+        if (latALngA && latBLngB) {
+          const latLngs = [latALngA, latBLngB];
           routeLines.push({ positions: latLngs, color, weight, dashArray, info: segment });
           routePointsForBounds.push(...latLngs);
         }
@@ -114,24 +117,67 @@ const MapView = ({ network, origin, destination, activeRoute }) => {
           attribution={mapAttribution}
         />
         
-        {network && network.nodes.map(node => {
-          let icon = hubIcon;
-          if (node.name === origin) icon = originIcon;
-          if (node.name === destination) icon = destIcon;
+        {/* Render markers for the active route start and end points */}
+        {activeRoute && activeRoute.segments && activeRoute.segments.length > 0 && (() => {
+          const firstSeg = activeRoute.segments[0];
+          const lastSeg = activeRoute.segments[activeRoute.segments.length - 1];
+          
+          // Try to get coordinates from geometry first for absolute precision
+          let startPos = null;
+          let endPos = null;
+          
+          if (firstSeg.geometry && firstSeg.geometry.length > 0) {
+            startPos = [firstSeg.geometry[0][1], firstSeg.geometry[0][0]];
+          } else {
+            // Fallback to hub or custom search params
+            if (customOrigin) startPos = [customOrigin.lat, customOrigin.lng];
+          }
+          
+          if (lastSeg.geometry && lastSeg.geometry.length > 0) {
+            endPos = [lastSeg.geometry[lastSeg.geometry.length - 1][1], lastSeg.geometry[lastSeg.geometry.length - 1][0]];
+          } else {
+            if (customDest) endPos = [customDest.lat, customDest.lng];
+          }
 
           return (
-            <Marker 
-              key={node.name} 
-              position={[node.lat, node.lng]}
-              icon={icon}
-            >
-              <Popup className="dark-popup">
-                <strong>{node.name}</strong><br/>
-                <span className="text-muted">{node.region} Reg.</span>
-              </Popup>
-            </Marker>
+            <>
+              {startPos && (
+                <Marker position={startPos} icon={originIcon}>
+                  <Popup className="dark-popup">
+                    <strong>{firstSeg.from_city}</strong><br/>
+                    <span className="text-muted">Origin Point</span>
+                  </Popup>
+                </Marker>
+              )}
+              {endPos && (
+                <Marker position={endPos} icon={destIcon}>
+                  <Popup className="dark-popup">
+                    <strong>{lastSeg.to_city}</strong><br/>
+                    <span className="text-muted">Destination Point</span>
+                  </Popup>
+                </Marker>
+              )}
+            </>
           );
-        })}
+        })()}
+
+        {/* Fallback markers if no route is active */}
+        {!activeRoute && customOrigin && (
+          <Marker position={[customOrigin.lat, customOrigin.lng]} icon={originIcon}>
+            <Popup className="dark-popup">
+              <strong>{customOrigin.name}</strong><br/>
+              <span className="text-muted">Starting Point</span>
+            </Popup>
+          </Marker>
+        )}
+        {!activeRoute && customDest && (
+          <Marker position={[customDest.lat, customDest.lng]} icon={destIcon}>
+            <Popup className="dark-popup">
+              <strong>{customDest.name}</strong><br/>
+              <span className="text-muted">Destination Point</span>
+            </Popup>
+          </Marker>
+        )}
 
         {routeLines.map((line, idx) => (
           <Polyline 
@@ -144,13 +190,13 @@ const MapView = ({ network, origin, destination, activeRoute }) => {
               opacity: 0.8
             }}
           >
-            <Popup className="dark-popup">
-              <strong>{line.info.from_city} → {line.info.to_city}</strong><br/>
-              Dist: {line.info.distance_km} km<br/>
-              Mode: {line.info.mode.toUpperCase()}<br/>
-              CO₂: {line.info.co2_kg} kg<br/>
-              {line.info.disruption && <span style={{color: '#ef4444'}}>⚠ {line.info.disruption}</span>}
-            </Popup>
+              <Popup className="dark-popup">
+                <strong>Origin → Destination</strong><br/>
+                Dist: {line.info.distance_km} km<br/>
+                Mode: {line.info.mode.toUpperCase()}<br/>
+                CO₂: {line.info.co2_kg} kg<br/>
+                {line.info.disruption && <span style={{color: '#ef4444'}}>⚠ {line.info.disruption}</span>}
+              </Popup>
           </Polyline>
         ))}
 

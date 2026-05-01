@@ -7,7 +7,7 @@ const WarpTransition = ({ onComplete }) => {
   const [logs, setLogs] = useState([]);
   const fullLogs = [
     "Initializing Deep Logistics Engine...",
-    "Syncing Regional Hub Data (Mumbai-Delhi)...",
+    "Syncing live routing data...",
     "Loading Vehicle Emission Coefficients...",
     "Building Neural Routing Matrix...",
     "Fetching Optimized Green Routes...",

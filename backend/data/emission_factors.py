@@ -92,6 +92,7 @@ def calculate_segment_co2(
     load_tonnes: float = 10.0,
     max_payload_tonnes: float = 16.0,
     is_rail: bool = False,
+    include_cold_start: bool = False,
 ) -> float:
     """
     Calculate CO₂ emissions (kg) for a route segment using real models.
@@ -100,6 +101,16 @@ def calculate_segment_co2(
     CO₂ = base_factor × distance × speed_multiplier × gradient_mult × load_mult × cold_start
     
     For rail: CO₂ = rail_factor × distance × load_tonnes
+    
+    Args:
+        distance_km: Route distance
+        fuel_type: Vehicle fuel type
+        speed_kmh: Average speed (km/h)
+        gradient_percent: Average road gradient
+        load_tonnes: Cargo load
+        max_payload_tonnes: Max vehicle capacity
+        is_rail: Is this a rail segment?
+        include_cold_start: Apply cold-start penalty (default False for OSRM routes)
     """
     if is_rail:
         # Rail freight: ~0.005 kg CO₂ per tonne-km (Indian Railways avg)
@@ -126,7 +137,7 @@ def calculate_segment_co2(
     speed_mult = copert_speed_multiplier(speed_kmh, vehicle_class)
     grad_mult = gradient_multiplier(gradient_percent)
     load_mult = load_factor(load_tonnes, max_payload_tonnes)
-    cold_mult = cold_start_penalty(distance_km)
+    cold_mult = cold_start_penalty(distance_km) if include_cold_start else 1.0
     
     # Base moving emissions
     moving_co2 = base_factor * distance_km * speed_mult * grad_mult * load_mult * cold_mult

@@ -6,7 +6,7 @@ Provides real-time route optimization, demand forecasting,
 and environmental impact analysis.
 """
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import time
@@ -21,7 +21,8 @@ from models import schemas
 from models.vehicle import get_all_vehicles
 from data.network import build_network, get_network_data
 from data.carbon_api import get_current_intensity
-from engine.gvrp_solver import solve_gvrp
+from data.geocode_service import search_places_async, reverse_geocode_async
+from engine.gvrp_solver import solve_gvrp, solve_direct_routes
 from engine.demand_forecast import get_demand_forecast
 
 
@@ -36,6 +37,13 @@ async def lifespan(app: FastAPI):
     print("🌿 EcoKernel: Building Indian logistics network...")
     network_graph = build_network()
     print(f"✅ Network ready: {network_graph.number_of_nodes()} cities, {network_graph.number_of_edges()} routes")
+    # Initialize database connection/state
+    try:
+        import data.database as db
+        db.init_db()
+        print("✅ Database initialized")
+    except Exception as _e:
+        print(f"⚠️ Database init failed: {_e}")
     yield
     print("🛑 EcoKernel: Shutting down.")
 
@@ -79,13 +87,20 @@ async def optimize_route(request: OptimizeRequest):
     if network_graph is None:
         raise HTTPException(status_code=503, detail="Network not initialized")
     
-    # Validate cities
+    # Validate cities - allowing custom ones if coordinates are provided
     from config import CITIES
-    if request.origin not in CITIES:
-        raise HTTPException(status_code=400, detail=f"Unknown origin: {request.origin}")
-    if request.destination not in CITIES:
-        raise HTTPException(status_code=400, detail=f"Unknown destination: {request.destination}")
-    if request.origin == request.destination:
+    
+    # If coordinates are provided, we don't strictly need the name to be in CITIES
+    has_custom_origin = request.origin_lat is not None and request.origin_lng is not None
+    has_custom_dest = request.dest_lat is not None and request.dest_lng is not None
+
+    if not has_custom_origin and request.origin not in CITIES:
+        raise HTTPException(status_code=400, detail=f"Unknown origin: {request.origin}. Provide coordinates for custom locations.")
+    
+    if not has_custom_dest and request.destination not in CITIES:
+        raise HTTPException(status_code=400, detail=f"Unknown destination: {request.destination}. Provide coordinates for custom locations.")
+
+    if request.origin == request.destination and not (has_custom_origin or has_custom_dest):
         raise HTTPException(status_code=400, detail="Origin and destination must be different")
     
     # Use the vehicle ID directly from the frontend
@@ -102,6 +117,10 @@ async def optimize_route(request: OptimizeRequest):
         load_tonnes=request.load_tonnes,
         priority=request.priority,
         max_solutions=request.max_solutions,
+        origin_lat=request.origin_lat,
+        origin_lng=request.origin_lng,
+        dest_lat=request.dest_lat,
+        dest_lng=request.dest_lng,
     )
     
     elapsed = round(time.time() - start_time, 2)
@@ -147,6 +166,162 @@ async def optimize_route(request: OptimizeRequest):
         best_green=best_green,
         origin=request.origin,
         destination=request.destination,
+    )
+
+
+@app.post("/api/v1/route-data", response_model=ParetoFront)
+async def route_data_v1(request: schemas.RouteDataRequest):
+    """
+    V1 endpoint for high-accuracy coordinate-based routing.
+    Accepts full address objects and routes via OSRM/ORS.
+    """
+    if network_graph is None:
+        raise HTTPException(status_code=503, detail="Network not initialized")
+    
+    start_time = time.time()
+    
+    solutions = solve_direct_routes(
+        origin=request.origin.address,
+        destination=request.destination.address,
+        origin_lat=request.origin.lat,
+        origin_lng=request.origin.lng,
+        dest_lat=request.destination.lat,
+        dest_lng=request.destination.lng,
+        vehicle_id=request.vehicle_type,
+        load_tonnes=request.load_tonnes,
+        priority=request.priority,
+    )
+    
+    # Reuse formatting logic or call optimize_route internal helper
+    # For brevity, we implement the solution mapping here
+    route_solutions = []
+    for sol in solutions:
+        segments = [
+            RouteSegment(
+                from_city=s["from_city"],
+                to_city=s["to_city"],
+                distance_km=s["distance_km"],
+                time_minutes=s["time_minutes"],
+                mode=s["mode"],
+                co2_kg=s["co2_kg"],
+                cost_inr=s["cost_inr"],
+                geometry=s.get("geometry")
+            )
+            for s in sol["segments"]
+        ]
+        route_solutions.append(RouteSolution(
+            id=sol["id"],
+            segments=segments,
+            total_distance_km=sol["total_distance_km"],
+            total_time_minutes=sol["total_time_minutes"],
+            total_co2_kg=sol["total_co2_kg"],
+            total_cost_inr=sol["total_cost_inr"],
+            green_score=sol["green_score"],
+            vehicle_type=sol["vehicle_type"],
+            modes_used=sol["modes_used"]
+        ))
+    
+    return ParetoFront(
+        solutions=route_solutions,
+        best_cost=min(route_solutions, key=lambda s: s.total_cost_inr) if route_solutions else None,
+        best_green=min(route_solutions, key=lambda s: s.total_co2_kg) if route_solutions else None,
+        origin=request.origin.address,
+        destination=request.destination.address
+    )
+
+
+@app.get("/api/geocode/suggest")
+async def geocode_suggest(
+    q: str = Query(..., min_length=2),
+    limit: int = Query(8, ge=1, le=20),
+):
+    # Use cached geocode function to improve latency for address suggestions
+    results = search_places_async(q, limit=limit)
+    return {"results": results}
+
+
+@app.get("/api/geocode/reverse")
+async def geocode_reverse(
+    lat: float = Query(...),
+    lng: float = Query(...),
+):
+    result = reverse_geocode_async(lat, lng)
+    if not result:
+        raise HTTPException(status_code=404, detail="Address not found")
+    return result
+
+
+@app.post("/api/optimize/fast", response_model=ParetoFront)
+async def optimize_fast(request: schemas.RouteDataRequest):
+    """
+    Fast optimizer for coordinate-accurate origin/destination.
+    Uses OSRM alternatives to generate 1..N road routes quickly and ranks them.
+    """
+    def resolve_coords(location: schemas.LocationCoord):
+        if location.lat is not None and location.lng is not None:
+            return float(location.lat), float(location.lng)
+
+        results = search_places_async(location.address, limit=1)
+        if not results:
+            raise HTTPException(status_code=400, detail=f"Could not geocode address: {location.address}")
+
+        first = results[0]
+        lat = first.get("lat")
+        lng = first.get("lng")
+        if lat is None or lng is None:
+            raise HTTPException(status_code=400, detail=f"Could not geocode address: {location.address}")
+        return float(lat), float(lng)
+
+    origin_lat, origin_lng = resolve_coords(request.origin)
+    dest_lat, dest_lng = resolve_coords(request.destination)
+
+    solutions = solve_direct_routes(
+        origin=request.origin.address,
+        destination=request.destination.address,
+        origin_lat=origin_lat,
+        origin_lng=origin_lng,
+        dest_lat=dest_lat,
+        dest_lng=dest_lng,
+        vehicle_id=request.vehicle_type,
+        load_tonnes=request.load_tonnes,
+        priority=request.priority,
+        max_solutions=5,
+    )
+
+    # Map to response models
+    route_solutions = []
+    for sol in solutions:
+        segments = [
+            RouteSegment(
+                from_city=s["from_city"],
+                to_city=s["to_city"],
+                distance_km=s["distance_km"],
+                time_minutes=s["time_minutes"],
+                mode=s["mode"],
+                co2_kg=s["co2_kg"],
+                cost_inr=s["cost_inr"],
+                geometry=s.get("geometry")
+            )
+            for s in sol["segments"]
+        ]
+        route_solutions.append(RouteSolution(
+            id=sol["id"],
+            segments=segments,
+            total_distance_km=sol["total_distance_km"],
+            total_time_minutes=sol["total_time_minutes"],
+            total_co2_kg=sol["total_co2_kg"],
+            total_cost_inr=sol["total_cost_inr"],
+            green_score=sol["green_score"],
+            vehicle_type=sol["vehicle_type"],
+            modes_used=sol["modes_used"],
+        ))
+
+    return ParetoFront(
+        solutions=route_solutions,
+        best_cost=min(route_solutions, key=lambda s: s.total_cost_inr) if route_solutions else None,
+        best_green=min(route_solutions, key=lambda s: s.total_co2_kg) if route_solutions else None,
+        origin=request.origin.address,
+        destination=request.destination.address,
     )
 
 
@@ -207,10 +382,7 @@ async def carbon_intensity():
         timestamp=data["timestamp"],
     )
 
-@app.on_event("startup")
-async def startup_event_db():
-    import data.database as db
-    db.init_db()
+# Database initialization moved into the lifespan handler above.
 
 
 # ─── New Fleet Contracts API ──────────────────────────────
@@ -241,3 +413,9 @@ async def delete_contract(contract_id: int):
     import data.database as db
     db.delete_contract(contract_id)
     return {"message": "Contract deleted successfully"}
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=False)

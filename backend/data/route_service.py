@@ -47,29 +47,43 @@ def _get_client() -> Optional[openrouteservice.Client]:
     return None
 
 
-def get_route(origin: str, destination: str) -> dict:
+import requests
+
+# We optionally accept dynamic coords bypassing CITIES
+def get_route(origin: str, destination: str, origin_coords_override=None, dest_coords_override=None) -> dict:
     """
-    Get real route between two cities.
-    
-    Returns: {
-        "distance_km": float,
-        "time_minutes": float,
-        "geometry": [[lng, lat], ...],
-        "source": "ors" | "estimate"
-    }
+    Get real route between two cities or accurate coordinates.
     """
     cache_key = f"{origin}->{destination}"
+    if origin_coords_override and dest_coords_override:
+        cache_key = f"{origin_coords_override}->{dest_coords_override}"
+        
     if cache_key in _route_cache:
         return _route_cache[cache_key]
     
-    origin_data = CITIES.get(origin)
-    destination_data = CITIES.get(destination)
-    
-    if not origin_data or not destination_data:
-        raise ValueError(f"Unknown city: {origin} or {destination}")
-    
-    origin_coords = [origin_data["lng"], origin_data["lat"]]
-    dest_coords = [destination_data["lng"], destination_data["lat"]]
+    if origin_coords_override:
+        origin_coords = origin_coords_override
+        origin_lat = origin_coords[1]
+        origin_lng = origin_coords[0]
+    else:
+        origin_data = CITIES.get(origin)
+        if not origin_data:
+            raise ValueError(f"Unknown origin: {origin}")
+        origin_coords = [origin_data["lng"], origin_data["lat"]]
+        origin_lat = origin_data["lat"]
+        origin_lng = origin_data["lng"]
+        
+    if dest_coords_override:
+        dest_coords = dest_coords_override
+        dest_lat = dest_coords[1]
+        dest_lng = dest_coords[0]
+    else:
+        destination_data = CITIES.get(destination)
+        if not destination_data:
+            raise ValueError(f"Unknown destination: {destination}")
+        dest_coords = [destination_data["lng"], destination_data["lat"]]
+        dest_lat = destination_data["lat"]
+        dest_lng = destination_data["lng"]
     
     # Try ORS first
     client = _get_client()
@@ -92,21 +106,37 @@ def get_route(origin: str, destination: str) -> dict:
             _route_cache[cache_key] = result
             return result
         except Exception:
-            pass  # Fall back to estimate
+            pass
+            
+    # Try Public OSRM API (reliable free fallback for geometries)
+    try:
+        url = f"http://router.project-osrm.org/route/v1/driving/{origin_coords[0]},{origin_coords[1]};{dest_coords[0]},{dest_coords[1]}?overview=full&geometries=geojson"
+        response = requests.get(url, timeout=5)
+        if response.status_code == 200:
+            data = response.json()
+            if data["code"] == "Ok":
+                route = data["routes"][0]
+                result = {
+                    "distance_km": round(route["distance"] / 1000, 1),
+                    "time_minutes": round(route["duration"] / 60, 1),
+                    "geometry": route["geometry"]["coordinates"],
+                    "source": "osrm",
+                }
+                _route_cache[cache_key] = result
+                return result
+    except Exception:
+        pass  # Fall back to estimate
     
     # Fallback: haversine-based estimate
-    straight_km = _haversine(
-        origin_data["lat"], origin_data["lng"],
-        destination_data["lat"], destination_data["lng"],
-    )
+    straight_km = _haversine(origin_lat, origin_lng, dest_lat, dest_lng)
     road_km = _road_distance_estimate(straight_km)
     
     # Estimate time at average 45 km/h (Indian highway average)
     time_min = (road_km / 45.0) * 60.0
     
     # Generate simple geometry (straight line with midpoint)
-    mid_lat = (origin_data["lat"] + destination_data["lat"]) / 2
-    mid_lng = (origin_data["lng"] + destination_data["lng"]) / 2
+    mid_lat = (origin_lat + dest_lat) / 2
+    mid_lng = (origin_lng + dest_lng) / 2
     geometry = [origin_coords, [mid_lng, mid_lat], dest_coords]
     
     result = {
@@ -117,6 +147,62 @@ def get_route(origin: str, destination: str) -> dict:
     }
     _route_cache[cache_key] = result
     return result
+
+
+def get_route_alternatives(
+    origin_coords: List[float],
+    dest_coords: List[float],
+    max_alternatives: int = 3,
+) -> List[dict]:
+    """
+    Get multiple road alternatives between two coordinates using OSRM.
+    Falls back to a single best-effort route if alternatives are unavailable.
+    """
+    cache_key = f"alts:{origin_coords}->{dest_coords}:{max_alternatives}"
+    if cache_key in _route_cache:
+        return _route_cache[cache_key]
+
+    try:
+        url = (
+            "http://router.project-osrm.org/route/v1/driving/"
+            f"{origin_coords[0]},{origin_coords[1]};{dest_coords[0]},{dest_coords[1]}"
+            "?overview=full&geometries=geojson&alternatives=true&steps=false"
+        )
+        response = requests.get(url, timeout=7)
+        if response.status_code == 200:
+            data = response.json()
+            if data.get("code") == "Ok":
+                results = []
+                seen = set()
+                for route in data.get("routes", []):
+                    dist_km = round(route.get("distance", 0) / 1000, 1)
+                    time_min = round(route.get("duration", 0) / 60, 1)
+                    sig = (dist_km, time_min)
+                    if sig in seen:
+                        continue
+                    seen.add(sig)
+                    results.append({
+                        "distance_km": dist_km,
+                        "time_minutes": time_min,
+                        "geometry": route.get("geometry", {}).get("coordinates", []),
+                        "source": "osrm",
+                    })
+
+                if results:
+                    _route_cache[cache_key] = results[:max_alternatives]
+                    return _route_cache[cache_key]
+    except Exception:
+        pass
+
+    # Fallback to a single route estimate
+    single = get_route(
+        "Custom Origin",
+        "Custom Destination",
+        origin_coords_override=origin_coords,
+        dest_coords_override=dest_coords,
+    )
+    _route_cache[cache_key] = [single]
+    return _route_cache[cache_key]
 
 
 def get_distance_matrix() -> Dict[str, Dict[str, float]]:

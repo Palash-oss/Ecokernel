@@ -16,6 +16,7 @@ from deap import base, creator, tools, algorithms
 from typing import List, Tuple, Dict, Optional
 from config import GA_POPULATION_SIZE, GA_GENERATIONS, GA_CROSSOVER_PROB, GA_MUTATION_PROB
 from data.emission_factors import calculate_segment_co2, calculate_segment_cost
+from data.route_service import get_route
 from engine.green_score import calculate_green_score
 from models.vehicle import get_vehicle
 
@@ -206,6 +207,97 @@ def _evaluate(
     return (total_cost, total_co2)
 
 
+def solve_direct_routes(
+    origin: str,
+    destination: str,
+    origin_lat: float,
+    origin_lng: float,
+    dest_lat: float,
+    dest_lng: float,
+    vehicle_id: str = "ashok_leyland_euro6",
+    load_tonnes: float = 10.0,
+    priority: float = 0.5,
+    max_solutions: int = 3,
+) -> List[dict]:
+    """
+    Direct, address-accurate routing using OSRM alternatives.
+    Returns multiple road-only solutions ranked by green/cost preference.
+    Uses real-world OSRM routing data for accurate CO2 and cost calculations.
+    """
+    from data.route_service import get_route_alternatives
+
+    vehicle = get_vehicle(vehicle_id)
+    routes = get_route_alternatives(
+        [origin_lng, origin_lat],
+        [dest_lng, dest_lat],
+        max_alternatives=max_solutions,
+    )
+
+    solutions = []
+    for idx, route in enumerate(routes):
+        dist = float(route.get("distance_km", 0.0))
+        time_min = float(route.get("time_minutes", 0.0))
+
+        # Calculate average speed from OSRM data
+        avg_speed = 45.0
+        if time_min > 0:
+            avg_speed = max(15.0, min(80.0, dist / (time_min / 60.0)))
+
+        # Calculate CO2 without cold-start penalty (OSRM already accounts for realistic speeds)
+        co2 = calculate_segment_co2(
+            distance_km=dist,
+            fuel_type=vehicle["fuel_type"],
+            speed_kmh=avg_speed,
+            gradient_percent=0.0,
+            load_tonnes=load_tonnes,
+            max_payload_tonnes=vehicle["max_payload_tonnes"],
+            is_rail=False,
+        )
+        
+        # Calculate realistic cost: fuel + operational overhead + tolls
+        cost = calculate_segment_cost(
+            distance_km=dist,
+            mode="road",
+            fuel_type=vehicle["fuel_type"],
+            from_city=origin,
+            to_city=destination,
+            vehicle_type=vehicle["id"],
+        )
+
+        green = calculate_green_score(co2, dist, vehicle["fuel_type"])
+
+        solutions.append({
+            "id": idx + 1,
+            "segments": [{
+                "from_city": origin,
+                "to_city": destination,
+                "distance_km": round(dist, 1),
+                "time_minutes": round(time_min, 1),
+                "mode": "road",
+                "co2_kg": round(co2, 3),
+                "cost_inr": round(cost, 2),
+                "geometry": route.get("geometry"),
+                "disruption": None,
+            }],
+            "total_distance_km": round(dist, 1),
+            "total_time_minutes": round(time_min, 1),
+            "total_co2_kg": round(co2, 2),
+            "total_cost_inr": round(cost, 2),
+            "green_score": green,
+            "vehicle_type": vehicle["name"],
+            "modes_used": ["road"],
+        })
+
+    def weighted_score(sol: dict) -> float:
+        return (1 - priority) * sol["total_cost_inr"] + priority * sol["total_co2_kg"] * 1000
+
+    solutions.sort(key=weighted_score)
+    for idx, sol in enumerate(solutions):
+        sol["id"] = idx + 1
+
+    return solutions
+
+
 def solve_gvrp(
     G: nx.Graph,
     origin: str,
@@ -215,6 +307,10 @@ def solve_gvrp(
     load_tonnes: float = 10.0,
     priority: float = 0.5,
     max_solutions: int = 10,
+    origin_lat: Optional[float] = None,
+    origin_lng: Optional[float] = None,
+    dest_lat: Optional[float] = None,
+    dest_lng: Optional[float] = None,
 ) -> List[dict]:
     """
     Solve the Green Vehicle Routing Problem using NSGA-II.
@@ -226,6 +322,91 @@ def solve_gvrp(
     if waypoints is None:
         waypoints = []
     
+    # SHORT-RANGE BYPASS: For local/regional logistics (< 300km), prioritize direct road routing
+    # This prevents the GA from suggesting absurd detours to rail hubs for short trips.
+    if origin_lat is not None and dest_lat is not None:
+        from data.route_service import _haversine, get_route
+        direct_dist = _haversine(origin_lat, origin_lng, dest_lat, dest_lng)
+        
+        if direct_dist < 300: 
+             vehicle = get_vehicle(vehicle_id)
+             try:
+                 real_route = get_route(origin, destination, origin_coords_override=[origin_lng, origin_lat], dest_coords_override=[dest_lng, dest_lat])
+                 dist = real_route["distance_km"]
+                 time_min = real_route["time_minutes"]
+                 
+                 # Calculate emissions based on real road distance
+                 co2 = calculate_segment_co2(dist, vehicle["fuel_type"], 45, 0, load_tonnes, vehicle["max_payload_tonnes"], False)
+                 cost = calculate_segment_cost(dist, "road", vehicle["fuel_type"], origin, destination, vehicle_id)
+                 
+                 total_co2 = co2
+                 total_cost = cost
+                 
+                 return [{
+                     "id": 1,
+                     "segments": [{
+                         "from_city": origin,
+                         "to_city": destination,
+                         "distance_km": round(dist, 1),
+                         "time_minutes": round(time_min, 1),
+                         "mode": "road",
+                         "co2_kg": round(co2, 3),
+                         "cost_inr": round(cost, 2),
+                         "geometry": real_route.get("geometry")
+                     }],
+                     "total_distance_km": round(dist, 1),
+                     "total_time_minutes": round(time_min, 1),
+                     "total_co2_kg": round(total_co2, 2),
+                     "total_cost_inr": round(total_cost, 2),
+                     "green_score": calculate_green_score(total_co2, dist, vehicle["fuel_type"]),
+                     "vehicle_type": vehicle["name"],
+                     "modes_used": ["road"]
+                 }]
+             except Exception as e:
+                 print(f"Bypass failed: {e}")
+                 pass
+    def add_dynamic_node(node_name, lat, lng):
+        from data.route_service import get_route, _haversine
+        G.add_node(node_name, lat=lat, lng=lng, region="Custom")
+        
+        # FAST HEURISTIC: First find the 3 closest cities using straight-line distance (no API calls)
+        candidate_hubs = []
+        for n, data in G.nodes(data=True):
+            if n == node_name or "Custom" in n:
+                continue
+            dist_straight = _haversine(lat, lng, data["lat"], data["lng"])
+            candidate_hubs.append((dist_straight, n))
+        
+        candidate_hubs.sort()
+        nearest_hubs = [h[1] for h in candidate_hubs[:3]]
+        
+        # Now only call the slow API for the 3 most promising hubs
+        distances = []
+        for hub_name in nearest_hubs:
+            try:
+                route = get_route(hub_name, node_name, dest_coords_override=[lng, lat])
+                distances.append((route["distance_km"], route["time_minutes"], hub_name, route.get("geometry")))
+            except:
+                continue
+                
+        distances.sort()
+        # Connect to 2 nearest hubs with real data
+        for dist_km, time_min, n, geom in distances[:2]:
+            G.add_edge(node_name, n, distance_km=dist_km, time_minutes=time_min, has_rail=False, gradient_percent=0.0, avg_speed_kmh=45.0, geometry=geom)
+            G.add_edge(n, node_name, distance_km=dist_km, time_minutes=time_min, has_rail=False, gradient_percent=0.0, avg_speed_kmh=45.0, geometry=geom)
+
+    dynamic_origin = origin
+    if origin_lat is not None and origin_lng is not None:
+        dynamic_origin = "Custom Origin"
+        add_dynamic_node(dynamic_origin, origin_lat, origin_lng)
+        origin = dynamic_origin
+        
+    dynamic_dest = destination
+    if dest_lat is not None and dest_lng is not None:
+        dynamic_dest = "Custom Destination"
+        add_dynamic_node(dynamic_dest, dest_lat, dest_lng)
+        destination = dynamic_dest
+        
     vehicle = get_vehicle(vehicle_id)
     must_visit, optional = _get_path_cities(G, origin, destination, waypoints)
     
@@ -348,20 +529,32 @@ def solve_gvrp(
         modes_used = set()
         
         for from_city, to_city, mode in segments:
-            if G.has_edge(from_city, to_city):
-                edge = G[from_city][to_city]
-                dist = edge["distance_km"]
-                time = edge["time_minutes"]
-                speed = edge.get("avg_speed_kmh", 45)
-                gradient = edge.get("gradient_percent", 0)
-                geometry = edge.get("geometry", None)
-                disruption = edge.get("disruption", None)
-            else:
+            # Fetch real route paths via API for the final output
+            from_coords = None
+            to_coords = None
+            if "Custom" in from_city and G.has_node(from_city):
+                from_coords = [G.nodes[from_city]["lng"], G.nodes[from_city]["lat"]]
+            if "Custom" in to_city and G.has_node(to_city):
+                to_coords = [G.nodes[to_city]["lng"], G.nodes[to_city]["lat"]]
+                
+            try:
+                real_route = get_route(from_city, to_city, origin_coords_override=from_coords, dest_coords_override=to_coords)
+                dist = real_route.get("distance_km", 100)
+                time = real_route.get("time_minutes", 133)
+                geometry = real_route.get("geometry", None)
+            except Exception as e:
                 dist = 100
                 time = 133
+                geometry = None
+                
+            if G.has_edge(from_city, to_city):
+                edge = G[from_city][to_city]
+                speed = edge.get("avg_speed_kmh", 45)
+                gradient = edge.get("gradient_percent", 0)
+                disruption = edge.get("disruption", None)
+            else:
                 speed = 45
                 gradient = 0
-                geometry = None
                 disruption = None
             
             is_rail = (mode == "rail")

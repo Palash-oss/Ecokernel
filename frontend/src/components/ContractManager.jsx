@@ -4,13 +4,13 @@ import { motion } from 'framer-motion';
 import api from '../api/client';
 import './ContractManager.css';
 
-const ContractManager = ({ vehicles, cities }) => {
+const ContractManager = ({ vehicles }) => {
   const [contracts, setContracts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   
   // Form State
-  const [origin, setOrigin] = useState('Mumbai');
-  const [destination, setDestination] = useState('Delhi');
+  const [origin, setOrigin] = useState('');
+  const [destination, setDestination] = useState('');
   const [vehicleType, setVehicleType] = useState(vehicles[0]?.id || 'ashok_leyland_euro6');
   const [cost, setCost] = useState('');
   const [expiry, setExpiry] = useState('');
@@ -68,8 +68,6 @@ const ContractManager = ({ vehicles, cities }) => {
     alert("Enterprise Feature: This would parse a CSV of bulk lanes and push to the DB in production.");
   };
 
-  const citiesList = cities ? cities.map(c => c.name) : ["Mumbai", "Delhi", "Bangalore", "Chennai", "Pune", "Jaipur", "Kolkata"];
-
   return (
     <div className="contract-manager">
       <div className="cm-header">
@@ -77,7 +75,7 @@ const ContractManager = ({ vehicles, cities }) => {
           <FileText size={28} className="icon-blue" />
           <div>
             <h2>Fleet Contracts & SLAs</h2>
-            <p>Upload and manage pre-negotiated line-haul pricing for the AI Routing Engine.</p>
+            <p>Upload and manage pre-negotiated lane pricing for the route engine.</p>
           </div>
         </div>
         <button className="btn-secondary" onClick={handleCSVUpload}>
@@ -92,16 +90,12 @@ const ContractManager = ({ vehicles, cities }) => {
           <form onSubmit={handleAddContract}>
             <div className="form-group row">
               <div className="col">
-                <label>Origin Hub</label>
-                <select className="form-control" value={origin} onChange={e => setOrigin(e.target.value)}>
-                  {citiesList.map(city => <option key={`orig_${city}`} value={city}>{city}</option>)}
-                </select>
+                <label>Origin Address / Lane Start</label>
+                <input className="form-control" value={origin} onChange={e => setOrigin(e.target.value)} placeholder="e.g. pickup address" />
               </div>
               <div className="col">
-                <label>Destination Hub</label>
-                <select className="form-control" value={destination} onChange={e => setDestination(e.target.value)}>
-                  {citiesList.map(city => <option key={`dest_${city}`} value={city}>{city}</option>)}
-                </select>
+                <label>Destination Address / Lane End</label>
+                <input className="form-control" value={destination} onChange={e => setDestination(e.target.value)} placeholder="e.g. drop address" />
               </div>
             </div>
 
