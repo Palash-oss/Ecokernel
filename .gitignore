@@ -5,6 +5,9 @@ backend/.venv/
 frontend/.venv/
 env/
 
+# Test files
+test_routes.py
+
 # Python compiled files
 __pycache__/
 *.py[cod]

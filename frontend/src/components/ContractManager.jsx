@@ -65,7 +65,7 @@ const ContractManager = ({ vehicles }) => {
 
   // Mock CSV upload interaction
   const handleCSVUpload = () => {
-    alert("Enterprise Feature: This would parse a CSV of bulk lanes and push to the DB in production.");
+    alert("Bulk CSV import is for real contract lanes only. Demo contracts are excluded from discounted pricing.");
   };
 
   return (
@@ -147,7 +147,7 @@ const ContractManager = ({ vehicles }) => {
 
           <div className="ai-notice">
             <AlertCircle size={14} />
-            <p>The routing engine will override Spot Pricing and strictly enforce these flat rates if a matching corridor is evaluated before expiration.</p>
+            <p>Only non-demo contracts override spot pricing. Seeded example contracts stay visible for testing, but they do not reduce live pricing.</p>
           </div>
         </div>
 

@@ -14,6 +14,21 @@ const RouteList = ({ solutions, activeId, onSelect }) => {
       <div className="list-scroll">
         {solutions.map((route, idx) => {
           const isActive = route.id === activeId;
+          
+          // Determine badge label based on strategy or position
+          let badgeLabel = null;
+          let badgeClass = '';
+          if (route.strategy === 'greenest' || route.is_greenest) {
+            badgeLabel = 'Lowest CO₂';
+            badgeClass = 'badge-best-green';
+          } else if (route.strategy === 'fastest') {
+            badgeLabel = 'Fastest';
+            badgeClass = 'badge-best-time';
+          } else if (route.total_cost_inr === Math.min(...solutions.map(s => s.total_cost_inr))) {
+            badgeLabel = 'Lowest Cost';
+            badgeClass = 'badge-best-cost';
+          }
+          
           return (
             <div 
               key={route.id} 
@@ -23,11 +38,10 @@ const RouteList = ({ solutions, activeId, onSelect }) => {
               <div className="route-item-main">
                 <div className="route-item-title">
                   Option {idx + 1}
-                  {idx === 0 && <span className="badge-best-green">Lowest CO₂</span>}
-                  {idx === solutions.length - 1 && idx !== 0 && <span className="badge-best-cost">Lowest Cost</span>}
+                  {badgeLabel && <span className={badgeClass}>{badgeLabel}</span>}
                 </div>
                 <div className="route-item-modes">
-                  {route.modes_used.join(' + ')}
+                  {route.modes_used.join(' + ')} · {Math.round(route.total_time_minutes)} min
                 </div>
               </div>
               <div className="route-item-metrics">
@@ -37,7 +51,7 @@ const RouteList = ({ solutions, activeId, onSelect }) => {
                 </div>
                 <div className="metric">
                   <IndianRupee size={14} className={isActive ? 'text-white' : 'text-amber'} />
-                  <span>{route.total_cost_inr.toLocaleString()}</span>
+                  <span>₹{route.total_cost_inr.toLocaleString()}</span>
                 </div>
               </div>
             </div>
