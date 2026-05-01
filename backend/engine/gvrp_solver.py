@@ -295,6 +295,24 @@ def solve_direct_routes(
     for idx, sol in enumerate(solutions):
         sol["id"] = idx + 1
 
+    # Mark fastest and greenest solutions explicitly to help the UI present
+    if solutions:
+        min_time = min(solutions, key=lambda s: s["total_time_minutes"]) ["total_time_minutes"]
+        min_co2 = min(solutions, key=lambda s: s["total_co2_kg"]) ["total_co2_kg"]
+
+        for sol in solutions:
+            sol["is_fastest"] = sol["total_time_minutes"] == min_time
+            sol["is_greenest"] = sol["total_co2_kg"] == min_co2
+            # Heuristic label: if both fastest and greenest (rare), call balanced
+            if sol["is_fastest"] and sol["is_greenest"]:
+                sol["strategy"] = "balanced"
+            elif sol["is_fastest"]:
+                sol["strategy"] = "fastest"
+            elif sol["is_greenest"]:
+                sol["strategy"] = "greenest"
+            else:
+                sol["strategy"] = "balanced"
+
     return solutions
 
 

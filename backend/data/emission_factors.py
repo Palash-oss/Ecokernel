@@ -114,46 +114,59 @@ def calculate_segment_co2(
     """
     if is_rail:
         # Rail freight: ~0.005 kg CO₂ per tonne-km (Indian Railways avg)
-        # This is significantly lower than road transport
         rail_factor = 0.005
         return round(rail_factor * distance_km * load_tonnes, 3)
-    
-    base_factor = DEFRA_EMISSION_FACTORS.get(fuel_type, 0.168)
-    
+
     if fuel_type == "electric":
-        # EV: zero direct, but can account for grid emissions later
+        # EV: zero direct tailpipe emissions
         return 0.0
-    
-    # Determine COPERT vehicle class
+
+    # Map fuel_type to COPERT vehicle class and fuel physical properties
     if fuel_type in ("euro6_diesel", "euro4_diesel", "hgv_artic", "hgv_rigid"):
         vehicle_class = "diesel_hgv"
+        # diesel properties
+        fuel_density_kg_per_l = 0.832
+        co2_kg_per_liter = 2.68
     elif fuel_type == "petrol":
         vehicle_class = "petrol_lcv"
+        fuel_density_kg_per_l = 0.745
+        co2_kg_per_liter = 2.31
     elif fuel_type == "cng":
         vehicle_class = "cng_truck"
+        # approximate: CNG per kg CO2 intensity and density differs; use a conservative factor
+        fuel_density_kg_per_l = 0.72
+        co2_kg_per_liter = 2.0
     else:
         vehicle_class = "diesel_hgv"
-    
-    speed_mult = copert_speed_multiplier(speed_kmh, vehicle_class)
+        fuel_density_kg_per_l = 0.832
+        co2_kg_per_liter = 2.68
+
+    # COPERT gives fuel consumption in g/km. Use COPERT baseline and adjust for gradients/load
+    fc_g_per_km = copert_fuel_consumption(speed_kmh, vehicle_class)
+
+    # Apply gradient and load multipliers to fuel consumption
     grad_mult = gradient_multiplier(gradient_percent)
     load_mult = load_factor(load_tonnes, max_payload_tonnes)
     cold_mult = cold_start_penalty(distance_km) if include_cold_start else 1.0
-    
-    # Base moving emissions
-    moving_co2 = base_factor * distance_km * speed_mult * grad_mult * load_mult * cold_mult
-    
+
+    adjusted_fc_g_per_km = fc_g_per_km * grad_mult * load_mult * cold_mult
+
+    # Convert g/km -> liters/km: (g/km) / 1000 = kg/km; liters/km = kg/km / density_kg_per_l
+    liters_per_km = (adjusted_fc_g_per_km / 1000.0) / fuel_density_kg_per_l
+
+    # CO2 per km (kg) = liters_per_km * co2_kg_per_liter
+    co2_per_km = liters_per_km * co2_kg_per_liter
+
+    moving_co2 = co2_per_km * distance_km
+
     # IDLING "GHOST" EMISSIONS (Module 1)
-    # Average HGV idling burns ~2.5kg CO2 per hour (Engine on, stationary)
-    idle_co2_rate = 2.5 
-    
-    # Estimated wait time if speed is very low (< 10km/h)
+    idle_co2_rate = 2.5
     idle_time_hr = 0
     if speed_kmh < 15.0 and distance_km > 0:
-        # Time taken at restricted speed minus time at normal speed (45km/h)
         normal_time = distance_km / 45.0
-        actual_time = distance_km / speed_kmh
+        actual_time = distance_km / max(speed_kmh, 1.0)
         idle_time_hr = max(0, actual_time - normal_time)
-    
+
     return round(moving_co2 + (idle_time_hr * idle_co2_rate), 3)
 def calculate_segment_cost(
     distance_km: float,

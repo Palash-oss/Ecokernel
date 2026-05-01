@@ -79,6 +79,10 @@ class RouteSolution(BaseModel):
     green_score: float = Field(ge=0, le=100)
     vehicle_type: str
     modes_used: List[str]
+    # Optional UI strategy hints
+    strategy: Optional[str] = None  # 'fastest' | 'greenest' | 'balanced'
+    is_fastest: Optional[bool] = None
+    is_greenest: Optional[bool] = None
 
 
 class ParetoFront(BaseModel):

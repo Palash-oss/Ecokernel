@@ -154,6 +154,9 @@ async def optimize_route(request: OptimizeRequest):
             green_score=sol["green_score"],
             vehicle_type=sol["vehicle_type"],
             modes_used=sol["modes_used"],
+            strategy=sol.get("strategy"),
+            is_fastest=sol.get("is_fastest"),
+            is_greenest=sol.get("is_greenest"),
         ))
     
     # Identify best cost and best green
@@ -218,7 +221,10 @@ async def route_data_v1(request: schemas.RouteDataRequest):
             total_cost_inr=sol["total_cost_inr"],
             green_score=sol["green_score"],
             vehicle_type=sol["vehicle_type"],
-            modes_used=sol["modes_used"]
+            modes_used=sol["modes_used"],
+            strategy=sol.get("strategy"),
+            is_fastest=sol.get("is_fastest"),
+            is_greenest=sol.get("is_greenest"),
         ))
     
     return ParetoFront(
@@ -314,6 +320,9 @@ async def optimize_fast(request: schemas.RouteDataRequest):
             green_score=sol["green_score"],
             vehicle_type=sol["vehicle_type"],
             modes_used=sol["modes_used"],
+            strategy=sol.get("strategy"),
+            is_fastest=sol.get("is_fastest"),
+            is_greenest=sol.get("is_greenest"),
         ))
 
     return ParetoFront(
