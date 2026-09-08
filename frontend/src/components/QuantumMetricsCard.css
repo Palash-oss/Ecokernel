@@ -1,0 +1,128 @@
+.quantum-card {
+  margin-top: 1rem;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(105, 246, 184, 0.25);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  border-radius: 18px;
+  padding: 1.25rem;
+  backdrop-filter: blur(16px);
+  transition: all 0.3s ease;
+}
+
+.quantum-card:hover {
+  border-color: rgba(105, 246, 184, 0.5);
+  transform: translateY(-2px);
+}
+
+.quantum-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.85rem;
+}
+
+.quantum-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #dee5ff;
+}
+
+.badge-pulse {
+  background: rgba(6, 183, 127, 0.15);
+  color: #69f6b8;
+  border: 1px solid rgba(105, 246, 184, 0.3);
+  font-size: 0.7rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 20px;
+  font-weight: 700;
+  animation: pulse-glow 2s infinite ease-in-out;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.8; box-shadow: 0 0 4px rgba(105, 246, 184, 0.2); }
+  50% { opacity: 1; box-shadow: 0 0 14px rgba(105, 246, 184, 0.5); }
+}
+
+.quantum-stats-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.q-lbl {
+  font-size: 0.76rem;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.q-val-row {
+  display: flex;
+  gap: 0.5rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.88rem;
+  font-weight: 700;
+  margin: 0.25rem 0;
+}
+
+.q-divider {
+  color: #64748b;
+}
+
+.q-bar-track {
+  display: flex;
+  height: 6px;
+  width: 100%;
+  border-radius: 4px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.q-bar-fill {
+  height: 100%;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bg-cyan { background: #38bdf8; }
+.bg-emerald { background: #10b981; }
+.text-cyan { color: #38bdf8; }
+.text-emerald { color: #10b981; }
+.text-amber { color: #f59e0b; }
+
+.physics-equations-box {
+  margin-top: 0.85rem;
+  padding: 0.75rem;
+  background: rgba(4, 8, 20, 0.6);
+  border-radius: 10px;
+  border-left: 3px solid #69f6b8;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.phys-tag {
+  font-size: 0.68rem;
+  color: #69f6b8;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+.phys-code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.74rem;
+  color: #e2e8f0;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.phys-sub {
+  font-size: 0.7rem;
+  color: #94a3b8;
+}
+
+.spin-slow {
+  animation: spin 12s linear infinite;
+}
+
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}

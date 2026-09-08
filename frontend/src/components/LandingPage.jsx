@@ -108,7 +108,7 @@ const RippleMesh = () => {
 
   useFrame((state) => {
     if (materialRef.current) {
-      const time = state.clock.elapsedTime;
+      const time = performance.now() * 0.001;
       materialRef.current.uniforms.uTime.value = time;
       materialRef.current.uniforms.uAspect.value = window.innerWidth / window.innerHeight;
       
@@ -155,6 +155,12 @@ const LiquidBackgroundCanvas = () => {
 };
 
 const LandingPage = ({ onEnter }) => {
+  const [monthlyTrips, setMonthlyTrips] = useState(250);
+  const [avgPayload, setAvgPayload] = useState(15);
+
+  const avoidedCo2Tonnes = Math.round((monthlyTrips * avgPayload * 0.42));
+  const fuelSavingsInr = Math.round((monthlyTrips * 3400));
+  const carbonTaxSaved = Math.round(avoidedCo2Tonnes * 850);
 
   return (
     <div className="landing-screen-wrapper">
@@ -164,49 +170,53 @@ const LandingPage = ({ onEnter }) => {
 
           <nav className="nav-container">
             <div className="nav-brand">
-               <span className="brand-logo"><Leaf size={24} color="#69f6b8"/></span>
+               <span className="brand-logo"><Leaf size={24} color="#00f5a0"/></span>
                <span>EcoKernel</span>
             </div>
             <div className="nav-links">
-              <a href="#" className="roll-link"><span className="roll-text" data-text="Platform">Platform</span></a>
-              <a href="#" className="roll-link"><span className="roll-text" data-text="Optimizer">Optimizer</span></a>
-              <a href="#" className="roll-link"><span className="roll-text" data-text="Impact">Impact</span></a>
-              <a href="#" className="roll-link"><span className="roll-text" data-text="Enterprise">Enterprise</span></a>
+              <a href="#matrix" className="nav-pill-link">Vs Consumer Maps</a>
+              <a href="#calculator" className="nav-pill-link">ROI Estimator</a>
+              <a href="#" className="nav-pill-link" onClick={onEnter}>Weekly AI Radar</a>
             </div>
             <div className="nav-actions">
-              <a href="#" className="login-link roll-link"><span className="roll-text" data-text="Log In">Log In</span></a>
               <button className="access-btn" onClick={onEnter}>
-                Access Engine
+                Access Engine <ArrowRight size={16} />
               </button>
             </div>
           </nav>
 
           <main className="landing-content">
             <div className="text-section">
+              <div className="eyebrow-badge">
+                <Leaf size={14} />
+                <span>ENTERPRISE FREIGHT INTELLIGENCE • Scope 3 ESG Solver</span>
+              </div>
               <motion.h1 
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
               >
-                Unlock the Greenest<br/>Routes You Thought<br/>Were Impossible –<br/>Now Just One Click<br/>Away!
+                The Green Logistics Engine<br/>Purpose-Built For<br/>Enterprise Freight.
               </motion.h1>
               <motion.p
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
               >
-                Seamlessly balance SLAs and Carbon Neutrality. Generate,<br/>customize, and perfect your supply chain with our deep AI multi-<br/>objective optimizer.
+                Standard consumer maps only calculate distance. EcoKernel optimizes multi-modal rail & road corridors, Scope 3 DEFRA carbon compliance, elevation drag physics, and pre-negotiated SLA contracts.
               </motion.p>
               
-              <motion.button 
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-                className="start-opt-btn"
-                onClick={onEnter}
-              >
-                Start Optimization <ArrowRight size={20} />
-              </motion.button>
+              <div className="hero-actions">
+                <motion.button 
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.6, delay: 0.4 }}
+                  className="start-opt-btn"
+                  onClick={onEnter}
+                >
+                  Launch Route Optimizer <ArrowRight size={20} />
+                </motion.button>
+              </div>
             </div>
 
              <div className="visual-section">
@@ -224,19 +234,17 @@ const LandingPage = ({ onEnter }) => {
                  <motion.div 
                     className="center-core"
                  >
-                    <span className="core-percent">11%</span>
-                    <span className="core-text">LOGISTICS<br/>EMISSIONS</span>
+                    <span className="core-percent">38%</span>
+                    <span className="core-text">AVOIDED<br/>CO₂ EMISSIONS</span>
                  </motion.div>
 
                  {/* Orbiting Icons */}
                  <div className="orbiting-nodes">
-                    {/* Inner Track */}
                     <div className="node-wrapper nw5">
                        <div className="node-position p5">
                           <div className="node-icon"><Truck size={18} strokeWidth={2.5} /></div>
                        </div>
                     </div>
-                    {/* Middle Track */}
                     <div className="node-wrapper nw1">
                        <div className="node-position p1">
                            <div className="node-icon"><Train size={18} strokeWidth={2.5} /></div>
@@ -247,7 +255,6 @@ const LandingPage = ({ onEnter }) => {
                           <div className="node-icon"><Leaf size={18} strokeWidth={2.5} /></div>
                        </div>
                     </div>
-                    {/* Outer Track */}
                     <div className="node-wrapper nw2">
                        <div className="node-position p2">
                           <div className="node-icon"><Zap size={18} strokeWidth={2.5} /></div>
@@ -262,6 +269,104 @@ const LandingPage = ({ onEnter }) => {
                </motion.div>
             </div>
           </main>
+
+          {/* SECTION: Why EcoKernel vs Google Maps */}
+          <section id="matrix" className="matrix-section">
+            <div className="section-header">
+              <h2>Why Standard Consumer Maps Don't Work For Logistics</h2>
+              <p>Google Maps and consumer navigation engines treat 16-tonne HGVs like passenger cars. Here is why enterprise logistics requires EcoKernel:</p>
+            </div>
+
+            <div className="matrix-grid">
+              <div className="matrix-card consumer-card">
+                <div className="m-card-badge text-muted">Consumer Maps (Google / MapmyIndia)</div>
+                <h3>Standard Point-to-Point</h3>
+                <ul className="matrix-list">
+                  <li>❌ Only calculates single-vehicle road distance</li>
+                  <li>❌ No Scope 3 DEFRA ESG compliance reporting</li>
+                  <li>❌ Ignores elevation grade drag (F_drag + F_roll + F_grade)</li>
+                  <li>❌ Ignores pre-negotiated SLA contract lane rates</li>
+                  <li>❌ No 7-day repeated weekly dispatch forecast</li>
+                </ul>
+              </div>
+
+              <div className="matrix-card ecokernel-card border-green">
+                <div className="m-card-badge text-emerald">EcoKernel Green Logistics Engine</div>
+                <h3>Multi-Objective Enterprise Engine</h3>
+                <ul className="matrix-list text-light">
+                  <li>✅ Multi-Modal Intermodal Optimization (Rail + Road + EV)</li>
+                  <li>✅ Audit-Grade Scope 3 ESG Emissions Reports</li>
+                  <li>✅ QIGA-PIEP Physics Solver (F_drag + F_roll + F_grade)</li>
+                  <li>✅ Pre-Negotiated Contract SLA Engine Override</li>
+                  <li>✅ 7-Day Weekly AI Dispatch Radar & Disruption Alerts</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          {/* SECTION: Interactive Fleet ROI Estimator */}
+          <section id="calculator" className="calc-section panel">
+            <div className="calc-header">
+              <h2>Interactive Fleet ROI & Carbon Savings Estimator</h2>
+              <p>Adjust your operational scale to see instant projected monthly environmental and financial savings.</p>
+            </div>
+
+            <div className="calc-body-grid">
+              <div className="calc-sliders">
+                <div className="slider-group">
+                  <div className="flex-between mb-2">
+                    <label>MONTHLY FREIGHT TRIPS</label>
+                    <span className="slider-val">{monthlyTrips} Trips / Mo</span>
+                  </div>
+                  <input 
+                    type="range" 
+                    min="20" 
+                    max="2000" 
+                    step="10" 
+                    value={monthlyTrips} 
+                    onChange={e => setMonthlyTrips(Number(e.target.value))} 
+                    className="calc-range"
+                  />
+                </div>
+
+                <div className="slider-group mt-4">
+                  <div className="flex-between mb-2">
+                    <label>AVERAGE CARGO PAYLOAD</label>
+                    <span className="slider-val">{avgPayload} Tonnes</span>
+                  </div>
+                  <input 
+                    type="range" 
+                    min="2" 
+                    max="40" 
+                    step="1" 
+                    value={avgPayload} 
+                    onChange={e => setAvgPayload(Number(e.target.value))} 
+                    className="calc-range"
+                  />
+                </div>
+              </div>
+
+              <div className="calc-results-card">
+                <div className="res-item">
+                  <span className="res-lbl">Avoided Monthly CO₂</span>
+                  <span className="res-val text-green">-{avoidedCo2Tonnes.toLocaleString()} Tonnes</span>
+                </div>
+                <div className="res-item">
+                  <span className="res-lbl">Estimated Fuel & Toll Savings</span>
+                  <span className="res-val text-cyan">₹{fuelSavingsInr.toLocaleString()}</span>
+                </div>
+                <div className="res-item">
+                  <span className="res-lbl">Carbon Tax Offset Benefit</span>
+                  <span className="res-val text-amber">₹{carbonTaxSaved.toLocaleString()}</span>
+                </div>
+
+                <button className="btn-calc-launch" onClick={onEnter}>
+                  <span>APPLY TO MY FLEET</span>
+                  <ArrowRight size={16} />
+                </button>
+              </div>
+            </div>
+          </section>
        </div>
     </div>
   );

@@ -35,6 +35,7 @@ const Navbar = ({ currentView = 'dashboard', onViewChange }) => {
       </div>
       <div className="navbar-links">
         <a href="#" className={currentView === 'dashboard' ? 'active' : ''} onClick={(e) => { e.preventDefault(); onViewChange?.('dashboard'); }}>Dashboard</a>
+        <a href="#" className={currentView === 'weekly' ? 'active' : ''} onClick={(e) => { e.preventDefault(); onViewChange?.('weekly'); }}>Weekly AI Radar</a>
         <a href="#" className={currentView === 'emissions' ? 'active' : ''} onClick={(e) => { e.preventDefault(); onViewChange?.('emissions'); }}>Emissions Report</a>
         <a href="#" className={currentView === 'contracts' ? 'active' : ''} onClick={(e) => { e.preventDefault(); onViewChange?.('contracts'); }}>Fleet Contracts</a>
       </div>

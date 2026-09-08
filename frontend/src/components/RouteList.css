@@ -1,133 +1,116 @@
 .route-list {
-  padding: 24px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
+  background: rgba(6, 14, 32, 0.85);
+  border-radius: 20px;
+  border: 1px solid rgba(105, 246, 184, 0.2);
+  backdrop-filter: blur(16px);
 }
 
 .list-header {
   display: flex;
   align-items: center;
-  gap: 12px;
-  border-bottom: 1px solid var(--border-color);
-  padding-bottom: 16px;
+  gap: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 12px;
 }
 
 .list-header h2 {
-  font-size: 1.1rem;
-  font-weight: 600;
+  font-size: 1rem;
+  font-weight: 800;
   margin: 0;
-  color: #fff;
+  color: #dee5ff;
+  letter-spacing: 0.04em;
 }
 
 .icon-emerald {
-  color: var(--accent-green);
+  color: #69f6b8;
 }
 
 .list-scroll {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  max-height: 400px;
+  gap: 10px;
+  max-height: 380px;
   overflow-y: auto;
-  padding-right: 8px;
+  padding-right: 4px;
 }
 
 .route-item {
-  background: #18181b; /* slightly lighter than dark bg */
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  padding: 16px;
+  background: rgba(15, 25, 48, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 14px 16px;
   cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  transition: all 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .route-item:hover {
-  border-color: #52525b;
-  background: #27272a;
+  border-color: rgba(105, 246, 184, 0.4);
+  background: rgba(15, 25, 48, 0.95);
+  transform: translateY(-1px);
 }
 
 .route-item.active {
-  background: var(--accent-green);
-  border-color: var(--accent-green);
+  background: rgba(105, 246, 184, 0.15);
+  border: 1px solid #69f6b8;
+  box-shadow: 0 0 16px rgba(105, 246, 184, 0.3);
 }
 
 .route-item-title {
-  font-weight: 600;
+  font-weight: 700;
   color: #fff;
-  font-size: 1rem;
+  font-size: 0.95rem;
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 6px;
-}
-
-.route-item.active .route-item-title {
-  color: #000;
+  gap: 10px;
+  margin-bottom: 4px;
 }
 
 .badge-best-green {
   font-size: 0.65rem;
   background: rgba(16, 185, 129, 0.2);
-  color: var(--accent-green);
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
-.route-item.active .badge-best-green {
-  background: rgba(0,0,0,0.1);
-  color: #000;
+  color: #69f6b8;
+  border: 1px solid rgba(105, 246, 184, 0.3);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 800;
 }
 
 .badge-best-cost {
   font-size: 0.65rem;
   background: rgba(245, 158, 11, 0.2);
-  color: var(--accent-amber);
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
-.route-item.active .badge-best-cost {
-  background: rgba(0,0,0,0.1);
-  color: #000;
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 800;
 }
 
 .badge-best-time {
   font-size: 0.65rem;
-  background: rgba(59, 130, 246, 0.2);
-  color: #3b82f6;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
-.route-item.active .badge-best-time {
-  background: rgba(0,0,0,0.1);
-  color: #000;
+  background: rgba(56, 189, 248, 0.2);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 800;
 }
 
 .route-item-modes {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  text-transform: capitalize;
-}
-
-.route-item.active .route-item-modes {
-  color: rgba(0,0,0,0.7);
+  font-size: 0.78rem;
+  color: #94a3b8;
 }
 
 .route-item-metrics {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
   align-items: flex-end;
 }
 
@@ -135,11 +118,9 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-weight: 600;
-  font-size: 0.9rem;
+  font-weight: 700;
+  font-size: 0.88rem;
 }
 
-.route-item:not(.active) .text-emerald { color: var(--accent-green); }
-.route-item:not(.active) .text-amber { color: var(--accent-amber); }
-.route-item.active .metric { color: #000; }
-.route-item.active .text-white { color: #000; }
+.text-emerald { color: #69f6b8; }
+.text-amber { color: #f59e0b; }

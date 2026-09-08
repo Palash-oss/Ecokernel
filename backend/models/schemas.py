@@ -133,6 +133,25 @@ class ContractCreate(BaseModel):
     contract_type: str
 
 
+class SaveRouteRequest(BaseModel):
+    origin_address: str
+    destination_address: str
+    origin_lat: float
+    origin_lng: float
+    dest_lat: float
+    dest_lng: float
+    vehicle_type: str
+    load_tonnes: float
+    total_distance_km: float
+    total_time_minutes: float
+    total_cost_inr: float
+    total_co2_kg: float
+    green_score: float
+    strategy: Optional[str] = None
+    route_geometry: Optional[List[List[float]]] = None
+    segments: Optional[List[dict]] = None
+
+
 class DemandForecastResponse(BaseModel):
     forecasts: List[DemandForecastItem]
     forecast_days: int

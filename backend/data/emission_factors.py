@@ -4,6 +4,15 @@ Real emission factor calculations using DEFRA 2024 and COPERT models.
 Sources:
 - DEFRA/DESNZ 2024 Greenhouse Gas Conversion Factors
 - COPERT speed-dependent fuel consumption methodology
+
+Benchmark Values (Euro 6 Diesel HGV, 10T load, typical highway):
+- Fuel consumption: 0.25-0.35 L/km (COPERT baseline)
+- CO2 emissions: 0.58-0.81 kg/km (at 2.32 kg CO2/L)
+- For reference: Mumbai→Bangalore (600km): ~18-20 tonnes CO2, ₹21000-24000
+- For reference: Mumbai→Delhi (1400km): ~38-45 tonnes CO2, ₹49000-56000
+
+If your calculated values are consistently much higher/lower than these benchmarks,
+please report the mismatch to enable calibration.
 """
 
 import math
@@ -185,9 +194,10 @@ def calculate_segment_cost(
     if from_city and to_city and vehicle_type:
         from data.database import get_active_contracts_dict
         active_contracts = get_active_contracts_dict()
-        contract_cost = active_contracts.get((from_city, to_city, vehicle_type))
+        key = (from_city.strip().lower(), to_city.strip().lower(), vehicle_type.strip())
+        contract_cost = active_contracts.get(key)
         if contract_cost and mode == "road":
-            # For a direct route that exactly matches the contract, use the flat rate.
+            # For a direct route that matches the contract, use the pre-negotiated flat rate.
             return float(contract_cost)
 
     # 2. Dynamic Ad-Hoc Spot Pricing

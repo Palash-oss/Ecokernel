@@ -8,9 +8,9 @@ import './EmissionsReport.css';
 ChartJS.register(CategoryScale, LinearScale, BarElement, ChartTooltip, Legend);
 
 const EmissionsReport = ({ paretoFront, activeRouteId, runHistory = [] }) => {
-  const totalSavings = runHistory.reduce((acc, run) => acc + run.savings, 0);
-  const totalBaseline = runHistory.reduce((acc, run) => acc + run.baselineCo2, 0);
-  const overallReductionPercent = totalBaseline > 0 ? ((totalSavings / totalBaseline) * 100).toFixed(1) : 0;
+  const totalSavings = runHistory.reduce((acc, run) => acc + (Number(run.savings) || 0), 0);
+  const totalBaseline = runHistory.reduce((acc, run) => acc + (Number(run.baselineCo2) || 0), 0);
+  const overallReductionPercent = totalBaseline > 0 ? ((totalSavings / totalBaseline) * 100).toFixed(1) : '0.0';
 
   const chartData = {
     labels: runHistory.slice().reverse().map((run, i) => `Run ${i + 1}: ${run.origin.substring(0,3)}-${run.destination.substring(0,3)}`),

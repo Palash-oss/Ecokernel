@@ -37,6 +37,65 @@ def _road_distance_estimate(straight_km: float) -> float:
     return straight_km * 1.35
 
 
+def _generate_alternate_geometry(origin: List[float], dest: List[float], variant: str) -> List[float]:
+    """
+    Generate visually distinct alternate geometries for route alternatives.
+    
+    Args:
+        origin: [lon, lat] origin point
+        dest: [lon, lat] destination point
+        variant: 'scenic', 'balanced', or 'express' - determines how to deviate from direct path
+    
+    Returns:
+        List of [lon, lat] coordinate pairs representing the route
+    """
+    origin_lon, origin_lat = origin[0], origin[1]
+    dest_lon, dest_lat = dest[0], dest[1]
+    
+    # Base: start and end points
+    points = [origin]
+    
+    if variant == "scenic":
+        # Scenic: takes a northern detour (adds 20-25% distance)
+        # Interpolate with 2-3 waypoints offset north
+        lat_mid = (origin_lat + dest_lat) / 2
+        lon_mid = (origin_lon + dest_lon) / 2
+        
+        # Northern offset (in degrees, ~1 degree = ~111 km)
+        offset_lat = abs(dest_lat - origin_lat) * 0.3
+        
+        # Add waypoints curving north
+        wp1_lon = origin_lon + (lon_mid - origin_lon) * 0.33
+        wp1_lat = origin_lat + (lat_mid - origin_lat) * 0.33 + offset_lat
+        points.append([wp1_lon, wp1_lat])
+        
+        wp2_lon = origin_lon + (lon_mid - origin_lon) * 0.67
+        wp2_lat = origin_lat + (lat_mid - origin_lat) * 0.67 + offset_lat
+        points.append([wp2_lon, wp2_lat])
+        
+    elif variant == "express":
+        # Express: straighter path with minimal deviations (2-5% distance penalty)
+        # Just 1-2 waypoints slightly offset for realism
+        wp1_lon = origin_lon + (dest_lon - origin_lon) * 0.4
+        wp1_lat = origin_lat + (dest_lat - origin_lat) * 0.4
+        # Slight offset for visual distinction
+        offset_lon = abs(dest_lon - origin_lon) * 0.08
+        points.append([wp1_lon + offset_lon, wp1_lat])
+        
+    else:  # balanced
+        # Balanced: moderate detour, one midpoint
+        wp_lon = origin_lon + (dest_lon - origin_lon) * 0.5
+        wp_lat = origin_lat + (dest_lat - origin_lat) * 0.5
+        # Small offset
+        offset_lon = abs(dest_lon - origin_lon) * 0.12
+        points.append([wp_lon + offset_lon, wp_lat])
+    
+    # Always add destination
+    points.append(dest)
+    
+    return points
+
+
 def _get_client() -> Optional[openrouteservice.Client]:
     """Get ORS client if API key is configured."""
     if ORS_API_KEY and ORS_API_KEY != "your_api_key_here":
@@ -194,15 +253,16 @@ def get_route_alternatives(
                     _route_cache[cache_key] = results[:max_alternatives]
                     return _route_cache[cache_key]
                 elif results:
-                    # Only 1 result from OSRM; synthesize alternatives
+                    # Only 1 result from OSRM; synthesize alternatives with distinct geometries
                     base_route = results[0]
                     alternatives = [base_route]
                     
                     # Alternative 1: "Scenic/Slower" route (time +15%, distance +8%)
+                    # Generate a distinctly different geometry (northern detour)
                     slower = {
                         "distance_km": round(base_route["distance_km"] * 1.08, 1),
                         "time_minutes": round(base_route["time_minutes"] * 1.15, 1),
-                        "geometry": base_route["geometry"],
+                        "geometry": _generate_alternate_geometry(origin_coords, dest_coords, "scenic"),
                         "source": "osrm_synthetic",
                     }
                     alternatives.append(slower)
@@ -212,7 +272,7 @@ def get_route_alternatives(
                         express = {
                             "distance_km": round(base_route["distance_km"] * 1.02, 1),
                             "time_minutes": round(base_route["time_minutes"] * 0.90, 1),
-                            "geometry": base_route["geometry"],
+                            "geometry": _generate_alternate_geometry(origin_coords, dest_coords, "express"),
                             "source": "osrm_synthetic",
                         }
                         alternatives.append(express)
@@ -222,7 +282,7 @@ def get_route_alternatives(
     except Exception:
         pass
 
-    # Fallback: fetch single route and synthesize 2 alternatives around it
+    # Fallback: fetch single route and synthesize 2 alternatives with distinct geometries
     single = get_route(
         "Custom Origin",
         "Custom Destination",
@@ -232,21 +292,21 @@ def get_route_alternatives(
     
     alternatives = [single]
     
-    # Synthetic alternative 1: Slower/scenic
+    # Synthetic alternative 1: Slower/scenic with northern detour
     slower = {
         "distance_km": round(single["distance_km"] * 1.08, 1),
         "time_minutes": round(single["time_minutes"] * 1.15, 1),
-        "geometry": single.get("geometry"),
+        "geometry": _generate_alternate_geometry(origin_coords, dest_coords, "scenic"),
         "source": "estimate_synthetic",
     }
     alternatives.append(slower)
     
-    # Synthetic alternative 2: Faster/express
+    # Synthetic alternative 2: Faster/express with minimal detour
     if len(alternatives) < max_alternatives:
         express = {
             "distance_km": round(single["distance_km"] * 1.02, 1),
             "time_minutes": round(single["time_minutes"] * 0.90, 1),
-            "geometry": single.get("geometry"),
+            "geometry": _generate_alternate_geometry(origin_coords, dest_coords, "express"),
             "source": "estimate_synthetic",
         }
         alternatives.append(express)

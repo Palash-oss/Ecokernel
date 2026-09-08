@@ -4,7 +4,7 @@
   position: absolute;
   top: 0;
   left: 0;
-  background-color: #000;
+  background-color: #030712;
   border-radius: 20px;
   overflow: hidden;
 }
@@ -12,62 +12,111 @@
 .leaflet-map {
   width: 100%;
   height: 100%;
+  background: #030712 !important;
 }
 
-.view-toggle {
+/* Floating Telemetry HUD Overlay */
+.map-hud-overlay {
   position: absolute;
-  top: 20px;
-  right: 20px;
+  top: 16px;
+  left: 16px;
+  right: 16px;
   z-index: 1000;
   display: flex;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(15px);
-  padding: 5px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: none;
 }
 
-.view-toggle button {
+.hud-badge {
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(105, 246, 184, 0.3);
+  padding: 6px 14px;
+  border-radius: 20px;
   display: flex;
   align-items: center;
   gap: 8px;
-  background: transparent;
-  border: none;
-  color: rgba(255, 255, 255, 0.5);
-  padding: 8px 16px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 700;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #69f6b8;
+  letter-spacing: 0.06em;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  pointer-events: auto;
 }
 
-.view-toggle button.active {
-  background: #69f6b8;
-  color: #022014;
-  box-shadow: 0 0 15px rgba(105, 246, 184, 0.3);
+.hud-stats {
+  display: flex;
+  gap: 12px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 6px 16px;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  pointer-events: auto;
 }
 
-.view-toggle button:hover:not(.active) {
+.hud-stat-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.hud-lbl {
+  font-size: 0.6rem;
+  color: #64748b;
+  font-weight: 800;
+}
+
+.hud-val {
+  font-size: 0.85rem;
+  font-weight: 800;
   color: #fff;
-  background: rgba(255, 255, 255, 0.1);
 }
 
 /* Custom dark popup */
 .leaflet-popup-content-wrapper {
-  background: rgba(2, 32, 20, 0.9);
-  backdrop-filter: blur(10px);
-  color: #fff;
-  border: 1px solid rgba(105, 246, 184, 0.2);
-  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.95) !important;
+  backdrop-filter: blur(16px);
+  color: #dee5ff !important;
+  border: 1px solid rgba(105, 246, 184, 0.35);
+  border-radius: 14px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.9);
 }
 
 .leaflet-popup-tip {
-  background: rgba(2, 32, 20, 0.9);
+  background: rgba(15, 23, 42, 0.95) !important;
 }
 
 .dark-popup strong {
   color: #69f6b8;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
 }
+
+.vehicle-sim-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vehicle-pulse-dot {
+  font-size: 22px;
+  width: 36px;
+  height: 36px;
+  background: rgba(105, 246, 184, 0.25);
+  border: 2px solid #69f6b8;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 24px rgba(105, 246, 184, 0.9);
+  animation: vehicle-glow 1.2s infinite alternate ease-in-out;
+}
+
+@keyframes vehicle-glow {
+  0% { transform: scale(0.92); box-shadow: 0 0 10px rgba(105, 246, 184, 0.5); }
+  100% { transform: scale(1.18); box-shadow: 0 0 28px rgba(105, 246, 184, 1.0); }
+}
+
+.text-emerald { color: #69f6b8; }
+.text-amber { color: #f59e0b; }

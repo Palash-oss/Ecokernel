@@ -1,28 +1,32 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
 :root {
-  --bg-dark: #000000;
-  --bg-panel: rgba(10, 10, 10, 0.7);
-  --bg-panel-hover: rgba(20, 20, 20, 0.8);
+  --bg-dark: #07090e;
+  --bg-panel: rgba(14, 18, 26, 0.75);
+  --bg-panel-hover: rgba(22, 28, 40, 0.85);
 
-  --accent-green: #69f6b8;
-  --accent-amber: #f7c948;
-  --accent-red: #ff4757;
-  --accent-blue: #3b82f6;
+  --accent-mint: #00f5a0;
+  --accent-green: #10b981;
+  --accent-cyan: #38bdf8;
+  --accent-amber: #fbbf24;
+  --accent-red: #f87171;
+  --accent-violet: #a855f7;
 
-  --text-main: #ffffff;
-  --text-muted: rgba(255, 255, 255, 0.5);
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
 
-  --border-color: rgba(255, 255, 255, 0.1);
+  --border-color: rgba(255, 255, 255, 0.08);
 
-  --font-main: 'Outfit', system-ui, -apple-system, sans-serif;
+  --font-heading: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
 
-  --shadow-panel: 0 20px 50px rgba(0, 0, 0, 0.4);
-  --shadow-cinematic: 0 30px 60px rgba(0, 0, 0, 0.5);
-  --shadow-neon: 0 0 30px rgba(105, 246, 184, 0.15);
+  --shadow-panel: 0 16px 40px rgba(0, 0, 0, 0.6);
+  --shadow-cinematic: 0 24px 60px rgba(0, 0, 0, 0.85);
+  --shadow-neon: 0 0 30px rgba(0, 245, 160, 0.18);
 
-  --glass-bg: rgba(14, 14, 14, 0.6);
+  --glass-bg: rgba(14, 18, 26, 0.75);
   --glass-blur: blur(20px);
   --glass-border: rgba(255, 255, 255, 0.08);
 }
@@ -34,12 +38,18 @@
 }
 
 body {
-  font-family: var(--font-main);
+  font-family: var(--font-body);
   background-color: var(--bg-dark);
   color: var(--text-main);
   overflow-y: scroll;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
 }
 
 .panel {
@@ -48,20 +58,13 @@ body {
   border: 1px solid var(--glass-border);
   border-radius: 20px;
   box-shadow: var(--shadow-panel);
-  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
 }
 
 .panel:hover {
-  border-color: rgba(105, 246, 184, 0.4);
+  border-color: rgba(0, 245, 160, 0.35);
   box-shadow: var(--shadow-cinematic), var(--shadow-neon);
-}
-
-.glass-panel {
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-border);
-  border-radius: 20px;
 }
 
 /* Custom Scrollbar */
@@ -71,17 +74,34 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg-dark);
+  background: #08090a;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #3f3f46;
+  background: #1f2937;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #52525b;
+  background: #374151;
 }
+
+/* Utility classes */
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.gap-2 { gap: 0.5rem; }
+.gap-3 { gap: 0.75rem; }
+.gap-4 { gap: 1rem; }
 
 /* Layout wrappers */
 .app-container {
@@ -90,29 +110,30 @@ body {
   min-height: 100vh;
   width: 100%;
   overflow-x: hidden;
+  background: radial-gradient(circle at 50% 0%, #111827 0%, #08090a 75%);
 }
 
 .main-content {
   display: flex;
   flex-direction: column;
-  gap: 32px;
-  padding: 32px;
-  max-width: 1400px;
+  gap: 28px;
+  padding: 24px 32px;
+  max-width: 1550px;
   margin: 0 auto;
   width: 100%;
 }
 
 .dashboard-grid {
   display: grid;
-  grid-template-columns: 350px 1fr;
-  gap: 32px;
+  grid-template-columns: 440px 1fr;
+  gap: 28px;
   align-items: start;
 }
 
 .left-column {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 18px;
 }
 
 .right-column {
@@ -124,116 +145,15 @@ body {
 .map-container {
   border-radius: 20px;
   overflow: hidden;
-  height: 600px;
+  height: 630px;
   position: relative;
   z-index: 1;
-}
-
-/* Shared UI Components */
-.metric-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-}
-
-.metric-label {
-  color: var(--text-muted);
-  font-size: 0.85rem;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.metric-value {
-  font-weight: 600;
-  font-size: 0.95rem;
-}
-
-.metric-value.excellent {
-  color: var(--accent-green);
-}
-
-.metric-value.good {
-  color: var(--accent-blue);
-}
-
-.metric-value.warning {
-  color: var(--accent-amber);
-}
-
-.metric-value.poor {
-  color: var(--accent-red);
-}
-
-/* Buttons */
-.btn-primary {
-  background: var(--accent-green);
-  color: #000;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 12px;
-  font-weight: 700;
-  font-size: 0.95rem;
-  letter-spacing: 0.5px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-}
-
-.btn-primary:hover:not(:disabled) {
-  background: #fff;
-  transform: scale(1.02);
-}
-
-.btn-primary:active:not(:disabled) {
-  transform: translateY(1px) scale(0.98);
-}
-
-.btn-primary:disabled {
-  background: #27272a;
-  color: #71717a;
-  cursor: not-allowed;
-  border-color: #3f3f46;
-}
-
-/* Inputs */
-.form-group {
-  margin-bottom: 16px;
-}
-
-.form-group label {
-  display: block;
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.6);
-  margin-bottom: 6px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.form-control {
-  width: 100%;
-  background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  color: white;
-  padding: 12px 14px;
-  border-radius: 10px;
-  font-family: inherit;
-  font-size: 0.95rem;
-  transition: border-color 0.2s ease;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
 }
 
-.form-control:focus {
-  outline: none;
-  border-color: var(--accent-green);
-}
-
-.form-control option {
-  background: #000;
-  color: white;
+@media (max-width: 1100px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
 }
