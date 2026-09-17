@@ -1,23 +1,26 @@
 .pareto-chart {
-  /* Inherit from .panel globally */
-  padding: 32px;
+  padding: 28px;
   display: flex;
   flex-direction: column;
-  height: 480px; /* Matched with other report charts */
+  height: 480px;
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  box-shadow: var(--shadow-card);
 }
 
 .pareto-chart.empty-state {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--text-muted);
+  color: #64748b;
   font-size: 0.95rem;
   letter-spacing: 0.5px;
 }
 
 .chart-header {
   margin-bottom: 24px;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+  border-bottom: 1px solid #f1f5f9;
   padding-bottom: 16px;
 }
 
@@ -25,13 +28,13 @@
   font-size: 1.25rem;
   font-weight: 800;
   margin: 0;
-  color: #fff;
+  color: #0f172a;
   letter-spacing: -0.02em;
 }
 
 .chart-header .subtitle {
   font-size: 0.85rem;
-  color: var(--text-muted);
+  color: #64748b;
   display: block;
   margin-top: 4px;
 }
@@ -44,7 +47,8 @@
 
 .chart-footer {
   margin-top: 10px;
-  font-size: 0.7rem;
-  color: var(--text-muted);
+  font-size: 0.72rem;
+  color: #64748b;
   text-align: center;
 }
+

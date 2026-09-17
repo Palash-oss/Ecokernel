@@ -1,18 +1,11 @@
 """
-Real emission factor calculations using DEFRA 2024 and COPERT models.
+Real emission factor calculations using DEFRA 2024, COPERT 5.5, and ISO 14083 / GLEC v3.2 standards.
 
 Sources:
+- ISO 14083:2023 Transport Chain Emissions Quantification Standard
+- GLEC Framework v3.2 Global Logistics Emissions Council
 - DEFRA/DESNZ 2024 Greenhouse Gas Conversion Factors
-- COPERT speed-dependent fuel consumption methodology
-
-Benchmark Values (Euro 6 Diesel HGV, 10T load, typical highway):
-- Fuel consumption: 0.25-0.35 L/km (COPERT baseline)
-- CO2 emissions: 0.58-0.81 kg/km (at 2.32 kg CO2/L)
-- For reference: Mumbai→Bangalore (600km): ~18-20 tonnes CO2, ₹21000-24000
-- For reference: Mumbai→Delhi (1400km): ~38-45 tonnes CO2, ₹49000-56000
-
-If your calculated values are consistently much higher/lower than these benchmarks,
-please report the mismatch to enable calibration.
+- COPERT 5.5 speed-dependent fuel consumption methodology
 """
 
 import math
@@ -72,7 +65,7 @@ def gradient_multiplier(gradient_percent: float) -> float:
 
 def load_factor(load_tonnes: float, max_payload_tonnes: float) -> float:
     """
-    Adjust emissions based on cargo load.
+    Adjust emissions based on cargo load ratio (ISO 14083 Mass Utilization).
     Empty truck emits ~60% of a fully loaded truck.
     """
     if max_payload_tonnes <= 0:
@@ -93,6 +86,98 @@ def cold_start_penalty(distance_km: float) -> float:
     return 1.0
 
 
+def calculate_iso14083_emissions(
+    distance_km: float,
+    fuel_type: str = "euro6_diesel",
+    speed_kmh: float = 50.0,
+    gradient_percent: float = 0.0,
+    load_tonnes: float = 10.0,
+    max_payload_tonnes: float = 16.0,
+    idling_hours: float = 0.0,
+    is_rail: bool = False,
+) -> dict:
+    """
+    Calculate ISO 14083 / GLEC v3.2 compliant Well-to-Wheel (WTW) emissions.
+    
+    Returns breakdown dictionary:
+    - wtw_co2: Total Well-to-Wheel CO2e (kg)
+    - wtt_co2: Well-to-Tank (Upstream energy extraction/refining CO2e)
+    - ttw_co2: Tank-to-Wheel (Direct combustion / tailpipe CO2e)
+    - load_factor_used: Utilized payload percentage
+    - intensity_tkm: Emission intensity per tonne-km (g CO2e/tkm)
+    """
+    if is_rail:
+        # Rail ISO 14083 GLEC default: 7.0 g CO2e/t-km (WTW)
+        wtw_intensity = 0.007  # kg CO2e per t-km
+        ttw_share = 0.75
+        total_wtw = wtw_intensity * distance_km * max(load_tonnes, 1.0)
+        ttw = total_wtw * ttw_share
+        wtt = total_wtw * (1 - ttw_share)
+        return {
+            "wtw_co2": round(total_wtw, 3),
+            "wtt_co2": round(wtt, 3),
+            "ttw_co2": round(ttw, 3),
+            "load_factor_used": round(min(load_tonnes / max(max_payload_tonnes, 1.0), 1.0), 2),
+            "intensity_tkm": round((total_wtw * 1000.0) / max(distance_km * load_tonnes, 1.0), 2),
+        }
+
+    # ISO 14083 Fuel Parameters (WTT, TTW, Density)
+    # GLEC v3.2 defaults for Freight
+    fuel_specs = {
+        "euro6_diesel": {"wtt_kg_l": 0.62, "ttw_kg_l": 2.68, "density": 0.832, "class": "diesel_hgv"},
+        "euro4_diesel": {"wtt_kg_l": 0.65, "ttw_kg_l": 2.68, "density": 0.832, "class": "diesel_hgv"},
+        "hgv_artic": {"wtt_kg_l": 0.62, "ttw_kg_l": 2.68, "density": 0.832, "class": "diesel_hgv"},
+        "petrol": {"wtt_kg_l": 0.58, "ttw_kg_l": 2.31, "density": 0.745, "class": "petrol_lcv"},
+        "cng": {"wtt_kg_kg": 0.45, "ttw_kg_kg": 2.55, "density": 1.0, "class": "cng_truck"},
+        "electric": {"wtt_kg_kwh": 0.78, "ttw_kg_kwh": 0.0, "density": 1.0, "class": "electric_truck"},
+    }
+
+    spec = fuel_specs.get(fuel_type, fuel_specs["euro6_diesel"])
+
+    if fuel_type == "electric":
+        # EV grid energy consumption: ~1.1 kWh/km for heavy freight EV
+        kwh_per_km = 1.1 * load_factor(load_tonnes, max_payload_tonnes)
+        total_kwh = distance_km * kwh_per_km
+        wtt_co2 = total_kwh * spec["wtt_kg_kwh"]
+        ttw_co2 = 0.0
+        wtw_co2 = wtt_co2
+        return {
+            "wtw_co2": round(wtw_co2, 3),
+            "wtt_co2": round(wtt_co2, 3),
+            "ttw_co2": round(ttw_co2, 3),
+            "load_factor_used": round(min(load_tonnes / max(max_payload_tonnes, 1.0), 1.0), 2),
+            "intensity_tkm": round((wtw_co2 * 1000.0) / max(distance_km * load_tonnes, 1.0), 2),
+        }
+
+    # COPERT moving fuel consumption (g/km)
+    fc_g_km = copert_fuel_consumption(speed_kmh, spec["class"])
+    grad_m = gradient_multiplier(gradient_percent)
+    load_m = load_factor(load_tonnes, max_payload_tonnes)
+    
+    adjusted_fc = fc_g_km * grad_m * load_m
+    liters_km = (adjusted_fc / 1000.0) / spec["density"]
+    moving_liters = liters_km * distance_km
+
+    # Idling dwell-time fuel consumption: 2.2 Liters/hour stationary
+    idling_liters = idling_hours * 2.2
+    total_liters = moving_liters + idling_liters
+
+    ttw_co2 = total_liters * spec["ttw_kg_l"]
+    wtt_co2 = total_liters * spec["wtt_kg_l"]
+    wtw_co2 = ttw_co2 + wtt_co2
+
+    tkm = max(distance_km * max(load_tonnes, 0.5), 1.0)
+    intensity = (wtw_co2 * 1000.0) / tkm
+
+    return {
+        "wtw_co2": round(wtw_co2, 3),
+        "wtt_co2": round(wtt_co2, 3),
+        "ttw_co2": round(ttw_co2, 3),
+        "load_factor_used": round(min(load_tonnes / max(max_payload_tonnes, 1.0), 1.0), 2),
+        "intensity_tkm": round(intensity, 2),
+    }
+
+
 def calculate_segment_co2(
     distance_km: float,
     fuel_type: str,
@@ -104,79 +189,22 @@ def calculate_segment_co2(
     include_cold_start: bool = False,
 ) -> float:
     """
-    Calculate CO₂ emissions (kg) for a route segment using real models.
-    
-    Formula:
-    CO₂ = base_factor × distance × speed_multiplier × gradient_mult × load_mult × cold_start
-    
-    For rail: CO₂ = rail_factor × distance × load_tonnes
-    
-    Args:
-        distance_km: Route distance
-        fuel_type: Vehicle fuel type
-        speed_kmh: Average speed (km/h)
-        gradient_percent: Average road gradient
-        load_tonnes: Cargo load
-        max_payload_tonnes: Max vehicle capacity
-        is_rail: Is this a rail segment?
-        include_cold_start: Apply cold-start penalty (default False for OSRM routes)
+    Backward-compatible method returning direct TTW CO₂ emissions (kg).
     """
-    if is_rail:
-        # Rail freight: ~0.005 kg CO₂ per tonne-km (Indian Railways avg)
-        rail_factor = 0.005
-        return round(rail_factor * distance_km * load_tonnes, 3)
-
     if fuel_type == "electric":
-        # EV: zero direct tailpipe emissions
         return 0.0
+    iso_res = calculate_iso14083_emissions(
+        distance_km=distance_km,
+        fuel_type=fuel_type,
+        speed_kmh=speed_kmh,
+        gradient_percent=gradient_percent,
+        load_tonnes=load_tonnes,
+        max_payload_tonnes=max_payload_tonnes,
+        is_rail=is_rail,
+    )
+    return iso_res["ttw_co2"]
 
-    # Map fuel_type to COPERT vehicle class and fuel physical properties
-    if fuel_type in ("euro6_diesel", "euro4_diesel", "hgv_artic", "hgv_rigid"):
-        vehicle_class = "diesel_hgv"
-        # diesel properties
-        fuel_density_kg_per_l = 0.832
-        co2_kg_per_liter = 2.68
-    elif fuel_type == "petrol":
-        vehicle_class = "petrol_lcv"
-        fuel_density_kg_per_l = 0.745
-        co2_kg_per_liter = 2.31
-    elif fuel_type == "cng":
-        vehicle_class = "cng_truck"
-        # approximate: CNG per kg CO2 intensity and density differs; use a conservative factor
-        fuel_density_kg_per_l = 0.72
-        co2_kg_per_liter = 2.0
-    else:
-        vehicle_class = "diesel_hgv"
-        fuel_density_kg_per_l = 0.832
-        co2_kg_per_liter = 2.68
 
-    # COPERT gives fuel consumption in g/km. Use COPERT baseline and adjust for gradients/load
-    fc_g_per_km = copert_fuel_consumption(speed_kmh, vehicle_class)
-
-    # Apply gradient and load multipliers to fuel consumption
-    grad_mult = gradient_multiplier(gradient_percent)
-    load_mult = load_factor(load_tonnes, max_payload_tonnes)
-    cold_mult = cold_start_penalty(distance_km) if include_cold_start else 1.0
-
-    adjusted_fc_g_per_km = fc_g_per_km * grad_mult * load_mult * cold_mult
-
-    # Convert g/km -> liters/km: (g/km) / 1000 = kg/km; liters/km = kg/km / density_kg_per_l
-    liters_per_km = (adjusted_fc_g_per_km / 1000.0) / fuel_density_kg_per_l
-
-    # CO2 per km (kg) = liters_per_km * co2_kg_per_liter
-    co2_per_km = liters_per_km * co2_kg_per_liter
-
-    moving_co2 = co2_per_km * distance_km
-
-    # IDLING "GHOST" EMISSIONS (Module 1)
-    idle_co2_rate = 2.5
-    idle_time_hr = 0
-    if speed_kmh < 15.0 and distance_km > 0:
-        normal_time = distance_km / 45.0
-        actual_time = distance_km / max(speed_kmh, 1.0)
-        idle_time_hr = max(0, actual_time - normal_time)
-
-    return round(moving_co2 + (idle_time_hr * idle_co2_rate), 3)
 def calculate_segment_cost(
     distance_km: float,
     mode: str = "road",
@@ -190,25 +218,22 @@ def calculate_segment_cost(
     Applies Real-World Negotiated Contract Rates if a fleet assignment exists
     for this exact corridor and vehicle. Otherwise, calculates dynamic real-world toll/fuel rates.
     """
-    # 1. Check for Negotiated Enterprise Flat Rates First
     if from_city and to_city and vehicle_type:
         from data.database import get_active_contracts_dict
         active_contracts = get_active_contracts_dict()
         key = (from_city.strip().lower(), to_city.strip().lower(), vehicle_type.strip())
         contract_cost = active_contracts.get(key)
         if contract_cost and mode == "road":
-            # For a direct route that matches the contract, use the pre-negotiated flat rate.
             return float(contract_cost)
 
-    # 2. Dynamic Ad-Hoc Spot Pricing
     from config import TRANSPORT_MODES
     
     mode_data = TRANSPORT_MODES.get(mode, TRANSPORT_MODES["road"])
     base_cost = mode_data["cost_per_km"] * distance_km
     
-    # Toll approximation: ₹2.5/km on national highways
     if mode == "road":
         toll = 2.5 * distance_km
         base_cost += toll
     
     return round(base_cost, 2)
+

@@ -26,7 +26,7 @@ const Navbar = ({ currentView = 'dashboard', onViewChange }) => {
     <nav className={`navbar panel ${scrolled ? 'scrolled' : ''}`}>
       <div className="navbar-brand">
         <div className="logo-icon">
-          <Leaf size={24} color="var(--accent-green)" />
+          <Leaf size={24} color="#047857" />
         </div>
         <div className="logo-text">
           <h1>EcoKernel</h1>

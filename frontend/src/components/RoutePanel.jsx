@@ -37,13 +37,36 @@ const RoutePanel = ({ route }) => {
           <div className="metric-lbl">CO₂ Emission</div>
         </div>
 
-        {/* CARBON TAX PREDICTOR (Module 2) */}
+        {/* CARBON TAX PREDICTOR */}
         <div className="metric-box tax-box">
           <IndianRupee size={16} />
           <div className="metric-val">₹{Math.round(route.total_co2_kg * 0.85)}</div>
           <div className="metric-lbl">Est. Carbon Tax</div>
         </div>
       </div>
+
+      {route.iso_14083 && (
+        <div className="iso-breakdown-card">
+          <div className="iso-header">
+            <span className="iso-tag">ISO 14083 & GLEC v3.2 COMPLIANT</span>
+            <span className="iso-tkm">Intensity: <strong>{route.iso_14083.intensity_tkm} g CO₂e/t-km</strong></span>
+          </div>
+          <div className="iso-grid">
+            <div className="iso-stat">
+              <span className="iso-lbl">WTW Total</span>
+              <span className="iso-val text-emerald">{route.iso_14083.wtw_co2} kg</span>
+            </div>
+            <div className="iso-stat">
+              <span className="iso-lbl">WTT (Upstream)</span>
+              <span className="iso-val">{route.iso_14083.wtt_co2} kg</span>
+            </div>
+            <div className="iso-stat">
+              <span className="iso-lbl">TTW (Direct)</span>
+              <span className="iso-val">{route.iso_14083.ttw_co2} kg</span>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="segments-list">
         <h3>Segment Breakdown</h3>

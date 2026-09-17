@@ -1,17 +1,16 @@
 .quantum-card {
   margin-top: 1rem;
-  background: rgba(15, 23, 42, 0.85);
-  border: 1px solid rgba(105, 246, 184, 0.25);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
-  border-radius: 18px;
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-card);
+  border-radius: 16px;
   padding: 1.25rem;
-  backdrop-filter: blur(16px);
   transition: all 0.3s ease;
 }
 
 .quantum-card:hover {
-  border-color: rgba(105, 246, 184, 0.5);
-  transform: translateY(-2px);
+  border-color: #a7f3d0;
+  box-shadow: var(--shadow-hover);
 }
 
 .quantum-card-header {
@@ -22,15 +21,15 @@
 }
 
 .quantum-title {
-  font-weight: 700;
+  font-weight: 800;
   font-size: 0.95rem;
-  color: #dee5ff;
+  color: #0f172a;
 }
 
 .badge-pulse {
-  background: rgba(6, 183, 127, 0.15);
-  color: #69f6b8;
-  border: 1px solid rgba(105, 246, 184, 0.3);
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
   font-size: 0.7rem;
   padding: 0.25rem 0.65rem;
   border-radius: 20px;
@@ -39,8 +38,8 @@
 }
 
 @keyframes pulse-glow {
-  0%, 100% { opacity: 0.8; box-shadow: 0 0 4px rgba(105, 246, 184, 0.2); }
-  50% { opacity: 1; box-shadow: 0 0 14px rgba(105, 246, 184, 0.5); }
+  0%, 100% { opacity: 0.8; box-shadow: 0 0 4px rgba(4, 120, 87, 0.2); }
+  50% { opacity: 1; box-shadow: 0 0 14px rgba(4, 120, 87, 0.4); }
 }
 
 .quantum-stats-grid {
@@ -51,7 +50,7 @@
 
 .q-lbl {
   font-size: 0.76rem;
-  color: #94a3b8;
+  color: #64748b;
   font-weight: 600;
 }
 
@@ -65,7 +64,7 @@
 }
 
 .q-divider {
-  color: #64748b;
+  color: #cbd5e1;
 }
 
 .q-bar-track {
@@ -74,7 +73,7 @@
   width: 100%;
   border-radius: 4px;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.08);
+  background: #e2e8f0;
 }
 
 .q-bar-fill {
@@ -82,18 +81,18 @@
   transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.bg-cyan { background: #38bdf8; }
-.bg-emerald { background: #10b981; }
-.text-cyan { color: #38bdf8; }
-.text-emerald { color: #10b981; }
-.text-amber { color: #f59e0b; }
+.bg-cyan { background: #0284c7; }
+.bg-emerald { background: #047857; }
+.text-cyan { color: #0284c7; }
+.text-emerald { color: #047857; }
+.text-amber { color: #d97706; }
 
 .physics-equations-box {
   margin-top: 0.85rem;
   padding: 0.75rem;
-  background: rgba(4, 8, 20, 0.6);
+  background: #f8fafc;
   border-radius: 10px;
-  border-left: 3px solid #69f6b8;
+  border-left: 3px solid #047857;
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
@@ -101,22 +100,22 @@
 
 .phys-tag {
   font-size: 0.68rem;
-  color: #69f6b8;
+  color: #047857;
   font-weight: 800;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
 }
 
 .phys-code {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.74rem;
-  color: #e2e8f0;
+  color: #0f172a;
   line-height: 1.4;
   word-break: break-word;
 }
 
 .phys-sub {
   font-size: 0.7rem;
-  color: #94a3b8;
+  color: #64748b;
 }
 
 .spin-slow {
@@ -126,3 +125,4 @@
 @keyframes spin {
   100% { transform: rotate(360deg); }
 }
+

@@ -122,10 +122,9 @@ const MapView = ({ network, origin, destination, activeRoute, optimisationParams
     });
   }
 
-  // 100% Free, Zero-Watermark Esri World Dark Gray Vector Maps
-  const esriDarkBaseUrl = "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}";
-  const esriDarkRefUrl = "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}";
-  const mapAttribution = '&copy; <a href="https://www.esri.com/">Esri</a>, DeLorme, NAVTEQ';
+  // CartoDB Positron Light Tiles
+  const lightMapTileUrl = "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
+  const mapAttribution = '&copy; <a href="https://carto.com/">CARTO</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
 
   return (
     <div className="map-wrapper">
@@ -159,18 +158,11 @@ const MapView = ({ network, origin, destination, activeRoute, optimisationParams
         className="leaflet-map"
         zoomControl={false}
       >
-        {/* Esri Dark Gray Canvas Base Layer */}
+        {/* CartoDB Positron Light Tile Layer */}
         <TileLayer
-          url={esriDarkBaseUrl}
+          url={lightMapTileUrl}
           attribution={mapAttribution}
-          maxZoom={16}
-        />
-        {/* Esri Dark Gray English Labels Overlay */}
-        <TileLayer
-          url={esriDarkRefUrl}
-          attribution=""
-          maxZoom={16}
-          opacity={0.8}
+          maxZoom={18}
         />
 
         {activeRoute && activeRoute.segments && activeRoute.segments.length > 0 && (() => {

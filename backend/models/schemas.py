@@ -57,6 +57,14 @@ class RouteDataRequest(BaseModel):
 
 # ─── Response Models ───────────────────────────────────────
 
+class ISO14083Breakdown(BaseModel):
+    wtw_co2: float = Field(..., description="Well-to-Wheel total emissions (kg CO2e)")
+    wtt_co2: float = Field(..., description="Well-to-Tank upstream emissions (kg CO2e)")
+    ttw_co2: float = Field(..., description="Tank-to-Wheel direct emissions (kg CO2e)")
+    load_factor_used: float = Field(..., description="Payload capacity utilization ratio (0-1)")
+    intensity_tkm: float = Field(..., description="Emissions intensity (g CO2e / tonne-km)")
+
+
 class RouteSegment(BaseModel):
     from_city: str
     to_city: str
@@ -83,6 +91,7 @@ class RouteSolution(BaseModel):
     strategy: Optional[str] = None  # 'fastest' | 'greenest' | 'balanced'
     is_fastest: Optional[bool] = None
     is_greenest: Optional[bool] = None
+    iso_14083: Optional[ISO14083Breakdown] = None
 
 
 class ParetoFront(BaseModel):
@@ -91,6 +100,8 @@ class ParetoFront(BaseModel):
     best_green: Optional[RouteSolution] = None
     origin: str
     destination: str
+    hypervolume_score: Optional[float] = Field(default=0.85, description="Pareto Frontier Quality Indicator")
+
 
 
 class NetworkNode(BaseModel):

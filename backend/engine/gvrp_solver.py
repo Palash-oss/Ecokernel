@@ -15,7 +15,11 @@ import networkx as nx
 from deap import base, creator, tools, algorithms
 from typing import List, Tuple, Dict, Optional
 from config import GA_POPULATION_SIZE, GA_GENERATIONS, GA_CROSSOVER_PROB, GA_MUTATION_PROB
-from data.emission_factors import calculate_segment_co2, calculate_segment_cost
+from data.emission_factors import (
+    calculate_segment_co2,
+    calculate_segment_cost,
+    calculate_iso14083_emissions,
+)
 from data.route_service import get_route
 from engine.green_score import calculate_green_score
 from models.vehicle import get_vehicle
@@ -264,6 +268,16 @@ def solve_direct_routes(
             vehicle_type=vehicle["id"],
         )
 
+        iso_breakdown = calculate_iso14083_emissions(
+            distance_km=dist,
+            fuel_type=vehicle["fuel_type"],
+            speed_kmh=avg_speed,
+            gradient_percent=0.0,
+            load_tonnes=load_tonnes,
+            max_payload_tonnes=vehicle["max_payload_tonnes"],
+            is_rail=False,
+        )
+
         green = calculate_green_score(co2, dist, vehicle["fuel_type"])
 
         solutions.append({
@@ -286,6 +300,7 @@ def solve_direct_routes(
             "green_score": green,
             "vehicle_type": vehicle["name"],
             "modes_used": ["road"],
+            "iso_14083": iso_breakdown,
         })
 
     def weighted_score(sol: dict) -> float:
