@@ -1,14 +1,19 @@
 """
-OpenRouteService API client for real road distances and route geometry.
+OpenRouteService / OSRM route service.
 
-Uses the free ORS API (2,000 requests/day) built on OpenStreetMap data.
-Results are cached in-memory to avoid hitting rate limits.
+Priority order for routing geometry:
+  1. ORS API (if key configured, highest accuracy)
+  2. Public OSRM API (free, real road geometry, two attempts)
+  3. 20-point great-circle arc interpolation (smooth fallback)
+
+All results are cached in-memory to avoid repeated API calls.
 """
 
 import openrouteservice
 from typing import Dict, List, Tuple, Optional
 from config import ORS_API_KEY, CITIES
 import math
+import time
 
 # In-memory cache for route results
 _route_cache: Dict[str, dict] = {}
@@ -27,6 +32,36 @@ def _haversine(lat1: float, lng1: float, lat2: float, lng2: float) -> float:
         * math.sin(dlng / 2) ** 2
     )
     return R * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
+
+def _great_circle_arc(lat1: float, lng1: float, lat2: float, lng2: float, steps: int = 20) -> List:
+    """
+    Generate a smooth great-circle arc between two coordinates.
+    Returns a list of [lon, lat] pairs (GeoJSON order) suitable for map display.
+    This replaces the ugly 3-point straight-line fallback.
+    """
+    to_rad = math.radians
+    to_deg = math.degrees
+    phi1, lam1 = to_rad(lat1), to_rad(lng1)
+    phi2, lam2 = to_rad(lat2), to_rad(lng2)
+    d = 2 * math.asin(math.sqrt(
+        math.sin((phi2 - phi1) / 2) ** 2 +
+        math.cos(phi1) * math.cos(phi2) * math.sin((lam2 - lam1) / 2) ** 2
+    ))
+    if d < 1e-6:
+        return [[lng1, lat1], [lng2, lat2]]
+    pts = []
+    for i in range(steps + 1):
+        f = i / steps
+        A = math.sin((1 - f) * d) / math.sin(d)
+        B = math.sin(f * d) / math.sin(d)
+        x = A * math.cos(phi1) * math.cos(lam1) + B * math.cos(phi2) * math.cos(lam2)
+        y = A * math.cos(phi1) * math.sin(lam1) + B * math.cos(phi2) * math.sin(lam2)
+        z = A * math.sin(phi1) + B * math.sin(phi2)
+        lat = to_deg(math.atan2(z, math.sqrt(x * x + y * y)))
+        lon = to_deg(math.atan2(y, x))
+        pts.append([lon, lat])
+    return pts
 
 
 def _road_distance_estimate(straight_km: float) -> float:
@@ -167,42 +202,48 @@ def get_route(origin: str, destination: str, origin_coords_override=None, dest_c
         except Exception:
             pass
             
-    # Try Public OSRM API (reliable free fallback for geometries)
-    try:
-        url = f"http://router.project-osrm.org/route/v1/driving/{origin_coords[0]},{origin_coords[1]};{dest_coords[0]},{dest_coords[1]}?overview=full&geometries=geojson"
-        response = requests.get(url, timeout=5)
-        if response.status_code == 200:
-            data = response.json()
-            if data["code"] == "Ok":
-                route = data["routes"][0]
-                result = {
-                    "distance_km": round(route["distance"] / 1000, 1),
-                    "time_minutes": round(route["duration"] / 60, 1),
-                    "geometry": route["geometry"]["coordinates"],
-                    "source": "osrm",
-                }
-                _route_cache[cache_key] = result
-                return result
-    except Exception:
-        pass  # Fall back to estimate
+    # Try Public OSRM API with retry (reliable free routing, no key needed)
+    for attempt in range(2):
+        try:
+            url = (
+                f"http://router.project-osrm.org/route/v1/driving/"
+                f"{origin_coords[0]},{origin_coords[1]};"
+                f"{dest_coords[0]},{dest_coords[1]}"
+                f"?overview=full&geometries=geojson&steps=false"
+            )
+            response = requests.get(url, timeout=6 + attempt * 3)
+            if response.status_code == 200:
+                data = response.json()
+                if data.get("code") == "Ok" and data.get("routes"):
+                    route = data["routes"][0]
+                    geom = route["geometry"]["coordinates"]
+                    result = {
+                        "distance_km": round(route["distance"] / 1000, 1),
+                        "time_minutes": round(route["duration"] / 60, 1),
+                        "geometry": geom,
+                        "source": "osrm",
+                    }
+                    _route_cache[cache_key] = result
+                    return result
+            break  # Got a response (even if not Ok) — don't retry
+        except Exception:
+            if attempt == 0:
+                time.sleep(0.4)  # Brief pause before retry
+            continue
     
-    # Fallback: haversine-based estimate
+    # Fallback: haversine estimate + smooth 20-point great-circle arc geometry
     straight_km = _haversine(origin_lat, origin_lng, dest_lat, dest_lng)
     road_km = _road_distance_estimate(straight_km)
-    
-    # Estimate time at average 45 km/h (Indian highway average)
     time_min = (road_km / 45.0) * 60.0
-    
-    # Generate simple geometry (straight line with midpoint)
-    mid_lat = (origin_lat + dest_lat) / 2
-    mid_lng = (origin_lng + dest_lng) / 2
-    geometry = [origin_coords, [mid_lng, mid_lat], dest_coords]
-    
+
+    # 20-point great-circle arc — visually clean, no ugly zigzag
+    geometry = _great_circle_arc(origin_lat, origin_lng, dest_lat, dest_lng, steps=20)
+
     result = {
         "distance_km": round(road_km, 1),
         "time_minutes": round(time_min, 1),
         "geometry": geometry,
-        "source": "estimate",
+        "source": "arc_estimate",
     }
     _route_cache[cache_key] = result
     return result
