@@ -108,6 +108,28 @@
   box-shadow: 0 4px 14px rgba(4, 120, 87, 0.3);
 }
 
+.navbar-import-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--accent-light);
+  color: var(--accent-primary);
+  border: 1px solid var(--accent-subtle);
+  padding: 8px 14px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.navbar-import-btn:hover {
+  background: var(--accent-primary);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(4, 120, 87, 0.3);
+  transform: translateY(-1px);
+}
+
 /* User Avatar */
 .user-avatar {
   background: var(--accent-light);

@@ -1,0 +1,236 @@
+/* ─── Network Importer Modal Styling ────────────────── */
+
+.importer-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 7, 18, 0.85);
+  backdrop-filter: blur(8px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.importer-modal-container {
+  width: 100%;
+  max-width: 640px;
+  background: #0b1329;
+  border: 1px solid rgba(52, 211, 153, 0.25);
+  border-radius: 20px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 0 0 30px rgba(52, 211, 153, 0.15);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.importer-header {
+  padding: 18px 24px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(56, 189, 248, 0.05) 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.importer-close-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.importer-close-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.importer-tabs {
+  display: flex;
+  background: #030712;
+  padding: 6px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  gap: 8px;
+}
+
+.importer-tab {
+  flex: 1;
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  color: #94a3b8;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.importer-tab.active {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(52, 211, 153, 0.3);
+}
+
+.importer-body {
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.importer-dropzone {
+  border: 2px dashed rgba(52, 211, 153, 0.3);
+  border-radius: 16px;
+  padding: 32px 20px;
+  background: rgba(16, 185, 129, 0.02);
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.importer-dropzone:hover {
+  border-color: #34d399;
+  background: rgba(16, 185, 129, 0.06);
+}
+
+.dropzone-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.dropzone-icon {
+  color: #34d399;
+}
+
+.importer-editor-wrap {
+  width: 100%;
+}
+
+.importer-textarea {
+  width: 100%;
+  background: #030712;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  color: #34d399;
+  font-family: monospace;
+  font-size: 0.8rem;
+  padding: 12px;
+  resize: vertical;
+}
+
+.importer-status-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.importer-status-banner.success {
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #34d399;
+}
+
+.importer-status-banner.error {
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #f87171;
+}
+
+.importer-preview-table-wrap {
+  max-height: 160px;
+  overflow-y: auto;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+}
+
+.importer-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+  text-align: left;
+}
+
+.importer-table th {
+  background: rgba(255, 255, 255, 0.04);
+  color: #94a3b8;
+  padding: 8px 12px;
+  font-weight: 600;
+}
+
+.importer-table td {
+  padding: 8px 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.importer-badge {
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.importer-footer {
+  padding: 16px 24px;
+  background: #030712;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.importer-reset-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #94a3b8;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.importer-reset-btn:hover {
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.importer-cancel-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  padding: 8px 14px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.importer-deploy-btn {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+  transition: all 0.2s ease;
+}
+
+.importer-deploy-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(16, 185, 129, 0.45);
+}

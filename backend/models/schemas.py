@@ -183,3 +183,50 @@ class CarbonIntensityResponse(BaseModel):
     forecast: str
     index: str  # "very low", "low", "moderate", "high", "very high"
     timestamp: str
+
+
+# ─── Copilot & Importer Schemas ────────────────────────────
+
+class CopilotChatRequest(BaseModel):
+    message: str = Field(..., description="User query for the AI logistics copilot")
+    session_id: Optional[str] = Field(default="default_session")
+    active_route: Optional[dict] = Field(default=None, description="Currently selected route state in UI")
+    active_priority: Optional[float] = Field(default=0.5, description="Optimization priority slider state")
+
+
+class CopilotChatResponse(BaseModel):
+    response: str = Field(..., description="AI copilot message response in markdown")
+    engine: str = Field(..., description="Engine mode used: GEMINI_API or PHYSICS_RAG")
+    referenced_metrics: Optional[dict] = Field(default={}, description="Key metrics cited in response")
+
+
+class NetworkNodeImport(BaseModel):
+    name: str
+    lat: Optional[float] = None
+    lng: Optional[float] = None
+    region: Optional[str] = "custom"
+    capacity_tons: Optional[float] = 100.0
+
+
+class NetworkEdgeImport(BaseModel):
+    from_city: str
+    to_city: str
+    distance_km: Optional[float] = None
+    time_minutes: Optional[float] = None
+    has_rail: Optional[bool] = False
+    gradient_percent: Optional[float] = 0.0
+
+
+class NetworkImportRequest(BaseModel):
+    nodes: List[NetworkNodeImport]
+    edges: List[NetworkEdgeImport]
+    reset_existing: bool = True
+
+
+class NetworkImportResponse(BaseModel):
+    success: bool
+    nodes_added: int
+    edges_added: int
+    geocoded_count: int
+    message: str
+

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MessageSquare, Send, X, Bot, User, Sparkles, ShieldCheck, Zap } from 'lucide-react';
+import { MessageSquare, Send, X, Bot, User, Sparkles, ShieldCheck, Zap, Cpu } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import './CopilotChat.css';
 
@@ -10,20 +10,55 @@ const QUICK_PROMPTS = [
   "Calculate EU CBAM carbon impact"
 ];
 
-const LOGISTICS_KNOWLEDGE = {
-  scope3: "Scope 3 emissions in logistics are reduced by shift to electrified freight rail corridors, adopting Euro-6/CNG heavy goods vehicles, optimizing multi-objective Pareto trade-offs (priority > 0.7), and eliminating cold-start idling penalties.",
-  rail: "Rail Freight emits ~0.005 kg CO₂/tonne-km compared to Road Euro-6 Diesel (~0.168 kg CO₂/tonne-km). Switching intercity line-hauls (e.g., Mumbai→Delhi) to electrified rail reduces carbon footprint by ~85% while cutting long-haul operational cost by 40%.",
-  qiga: "QIGA-PIEP (Quantum-Inspired Genetic Algorithm with Physics Energy Profiling) utilizes quantum bit superposition states (|Ψ⟩ = α|0⟩ + β|1⟩) updated via rotation gates (Δθ) to achieve 4.8x faster convergence on multi-objective cost vs. carbon Pareto frontiers.",
-  cbam: "The EU Carbon Border Adjustment Mechanism (CBAM) levies carbon tariffs on imported goods based on Scope 1, 2, and 3 embedded emissions. EcoKernel's audit-ready reporting helps enterprise supply chains document carbon intensity reductions to mitigate CBAM tax liabilities."
+const renderFormattedText = (text) => {
+  if (!text) return null;
+
+  // Simple markdown-style line renderer
+  const lines = text.split('\n');
+  return lines.map((line, idx) => {
+    let content = line;
+    
+    // Header check
+    if (content.startsWith('### ')) {
+      return <h4 key={idx} className="copilot-md-h4">{content.replace('### ', '')}</h4>;
+    }
+    if (content.startsWith('## ')) {
+      return <h3 key={idx} className="copilot-md-h3">{content.replace('## ', '')}</h3>;
+    }
+
+    // Bold replacement (**text**)
+    const parts = content.split(/(\*\*.*?\*\*|`.*?`)/g);
+    const formattedParts = parts.map((part, pIdx) => {
+      if (part.startsWith('**') && part.endsWith('**')) {
+        return <strong key={pIdx} className="text-emerald-300 font-semibold">{part.slice(2, -2)}</strong>;
+      }
+      if (part.startsWith('`') && part.endsWith('`')) {
+        return <code key={pIdx} className="copilot-code-tag">{part.slice(1, -1)}</code>;
+      }
+      return part;
+    });
+
+    if (content.trim().startsWith('- ') || content.trim().startsWith('1. ') || content.trim().startsWith('2. ')) {
+      return <div key={idx} className="copilot-list-item">{formattedParts}</div>;
+    }
+
+    return <p key={idx} className="copilot-paragraph">{formattedParts}</p>;
+  });
 };
 
 const CopilotChat = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
-    { id: 1, text: "Greetings, Enterprise Logistics Manager. I am EcoCopilot AI. Ask me about Scope 3 compliance, QIGA quantum optimization, or multi-modal fleet strategies.", sender: 'bot' }
+    {
+      id: 1,
+      text: "Greetings! I am **EcoCopilot AI**. Connected to EcoKernel's live logistics telemetry, GLEC v3.0 standards, and EU CBAM regulatory compliance rules. Ask me anything!",
+      sender: 'bot',
+      engine: 'PHYSICS_RAG_ENGINE'
+    }
   ]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [activeEngine, setActiveEngine] = useState("AI COPILOT");
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -39,27 +74,52 @@ const CopilotChat = () => {
     executeSendMessage(promptText);
   };
 
-  const executeSendMessage = (textToSend) => {
+  const executeSendMessage = async (textToSend) => {
     const text = textToSend || input;
-    if (!text.trim()) return;
+    if (!text.trim() || isTyping) return;
 
     const userMsg = { id: Date.now(), text, sender: 'user' };
     setMessages(prev => [...prev, userMsg]);
     setInput("");
     setIsTyping(true);
 
-    setTimeout(() => {
-      let reply = "Analyzing logistics telemetry... For maximum green score, consider increasing optimization priority slider to 80% Green and using multi-modal electrified rail for corridors > 300km.";
-      const lower = text.toLowerCase();
-      if (lower.includes("scope") || lower.includes("emission")) reply = LOGISTICS_KNOWLEDGE.scope3;
-      else if (lower.includes("rail") || lower.includes("diesel")) reply = LOGISTICS_KNOWLEDGE.rail;
-      else if (lower.includes("qiga") || lower.includes("quantum") || lower.includes("algorithm")) reply = LOGISTICS_KNOWLEDGE.qiga;
-      else if (lower.includes("cbam") || lower.includes("tax") || lower.includes("eu")) reply = LOGISTICS_KNOWLEDGE.cbam;
+    try {
+      const response = await fetch('http://localhost:8001/api/copilot/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: text,
+          session_id: "user_session",
+          active_priority: 0.5
+        })
+      });
 
-      const botMsg = { id: Date.now() + 1, text: reply, sender: 'bot' };
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setActiveEngine(data.engine || "AI COPILOT");
+
+      const botMsg = {
+        id: Date.now() + 1,
+        text: data.response,
+        sender: 'bot',
+        engine: data.engine
+      };
       setMessages(prev => [...prev, botMsg]);
+    } catch (err) {
+      console.warn("Copilot API offline, using fallback response:", err);
+      const fallbackMsg = {
+        id: Date.now() + 1,
+        text: "### 🌿 EcoCopilot Offline Mode\nSystem telemetry indicates active optimization runs. Shifting line-hauls from **Euro 6 Diesel** to **Electrified Rail** saves up to **85% CO₂ emissions**.",
+        sender: 'bot',
+        engine: 'OFFLINE_FALLBACK'
+      };
+      setMessages(prev => [...prev, fallbackMsg]);
+    } finally {
       setIsTyping(false);
-    }, 1200);
+    }
   };
 
   return (
@@ -81,9 +141,15 @@ const CopilotChat = () => {
             <div className="copilot-header">
               <div className="flex-center gap-2">
                 <Bot size={20} color="#69f6b8" />
-                <span className="copilot-header-title">EcoCopilot AI Assistant</span>
+                <span className="copilot-header-title">EcoCopilot RAG AI</span>
               </div>
-              <span className="status-dot-active">ONLINE</span>
+              <div className="flex items-center gap-2">
+                <span className="copilot-engine-badge">
+                  <Cpu size={12} className="inline mr-1 text-emerald-400" />
+                  {activeEngine}
+                </span>
+                <span className="status-dot-active">ONLINE</span>
+              </div>
             </div>
             
             <div className="copilot-messages">
@@ -92,13 +158,15 @@ const CopilotChat = () => {
                   <div className="msg-icon">
                     {msg.sender === 'bot' ? <Bot size={14} color="#69f6b8" /> : <User size={14} color="#38bdf8" />}
                   </div>
-                  <div className="msg-text">{msg.text}</div>
+                  <div className="msg-text">
+                    {msg.sender === 'bot' ? renderFormattedText(msg.text) : msg.text}
+                  </div>
                 </div>
               ))}
               {isTyping && (
                 <div className="message-bubble bot typing-indicator">
                   <Bot size={14} color="#69f6b8" />
-                  <span>EcoCopilot is thinking...</span>
+                  <span>EcoCopilot is querying supply chain context...</span>
                 </div>
               )}
               <div ref={messagesEndRef} />
@@ -119,7 +187,7 @@ const CopilotChat = () => {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && executeSendMessage()}
               />
-              <button onClick={() => executeSendMessage()} className="send-btn">
+              <button onClick={() => executeSendMessage()} className="send-btn" disabled={isTyping}>
                 <Send size={16} color="#69f6b8" />
               </button>
             </div>
@@ -131,3 +199,4 @@ const CopilotChat = () => {
 };
 
 export default CopilotChat;
+

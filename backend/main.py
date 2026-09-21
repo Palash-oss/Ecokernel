@@ -26,6 +26,9 @@ from data.geocode_service import search_places_async, reverse_geocode_async
 from engine.gvrp_solver import solve_gvrp, solve_direct_routes
 from engine.qiga_solver import solve_qiga_routes, physics_informed_energy_kg_co2
 from engine.demand_forecast import get_demand_forecast
+from engine.copilot_engine import copilot_engine
+from data.importer import import_custom_network, export_network_data
+
 
 
 # ─── App State ─────────────────────────────────────────────
@@ -348,6 +351,56 @@ async def get_network():
     edges = [NetworkEdge(**e) for e in data["edges"]]
     
     return NetworkResponse(nodes=nodes, edges=edges)
+
+
+@app.post("/api/copilot/chat", response_model=schemas.CopilotChatResponse)
+async def copilot_chat(request: schemas.CopilotChatRequest):
+    """
+    Query the EcoCopilot AI RAG Assistant.
+    Uses Google Gemini 2.0 API with fallback to Physics RAG engine.
+    """
+    res = await copilot_engine.generate_response(
+        user_message=request.message,
+        active_route=request.active_route,
+        active_priority=request.active_priority,
+    )
+    return schemas.CopilotChatResponse(
+        response=res["response"],
+        engine=res["engine"],
+        referenced_metrics=res.get("referenced_metrics", {})
+    )
+
+
+@app.post("/api/network/import", response_model=schemas.NetworkImportResponse)
+async def import_network(request: schemas.NetworkImportRequest):
+    """
+    Import custom supply chain nodes and edges into live EcoKernel network.
+    Performs geocoding and distance calculation automatically.
+    """
+    global network_graph
+    nodes_data = [n.dict() for n in request.nodes]
+    edges_data = [e.dict() for e in request.edges]
+    
+    result = await import_custom_network(nodes_data, edges_data, reset_existing=request.reset_existing)
+    import data.network as net_mod
+    network_graph = net_mod.G
+    
+    return schemas.NetworkImportResponse(**result)
+
+
+@app.post("/api/network/reset")
+async def reset_network():
+    """Reset the logistics network to default hub topology."""
+    global network_graph
+    network_graph = build_network()
+    return {"status": "success", "message": "Network reset to default hubs."}
+
+
+@app.get("/api/network/export")
+async def export_network():
+    """Export current active network topology as JSON."""
+    return export_network_data()
+
 
 
 @app.get("/api/demand-forecast", response_model=DemandForecastResponse)
