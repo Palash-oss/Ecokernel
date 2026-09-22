@@ -150,6 +150,7 @@ const MapView = ({ network, origin, destination, activeRoute, optimisationParams
   const [showParticles, setShowParticles] = useState(true);
   const [showControls, setShowControls] = useState(false);
   const [liveGps, setLiveGps] = useState(null);
+  const [telemetryVehicles, setTelemetryVehicles] = useState([]);
 
   // Live GPS tracking
   useEffect(() => {
@@ -161,6 +162,28 @@ const MapView = ({ network, origin, destination, activeRoute, optimisationParams
     );
     return () => navigator.geolocation.clearWatch(watchId);
   }, []);
+
+  // WebSocket Live Telemetry Stream
+  useEffect(() => {
+    let ws = null;
+    try {
+      ws = new WebSocket('ws://localhost:8001/ws/telemetry');
+      ws.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          if (data.type === 'TELEMETRY_STREAM' && data.vehicles) {
+            setTelemetryVehicles(data.vehicles);
+          }
+        } catch (e) {}
+      };
+      ws.onerror = (err) => console.warn("WebSocket telemetry offline:", err);
+    } catch (err) {}
+
+    return () => {
+      if (ws) ws.close();
+    };
+  }, []);
+
 
   const customOrigin = optimisationParams?.origin_lat
     ? { lat: optimisationParams.origin_lat, lng: optimisationParams.origin_lng, name: optimisationParams.origin }
@@ -176,11 +199,12 @@ const MapView = ({ network, origin, destination, activeRoute, optimisationParams
 
   if (activeRoute?.segments) {
     activeRoute.segments.forEach(segment => {
-      let color = '#38bdf8';
+      let color = '#34d399';
       let weight = 5;
       let dashArray = null;
 
       if (segment.mode === 'rail') { color = '#10b981'; dashArray = '6, 8'; weight = 5; }
+
       else if (segment.mode === 'electric') { color = '#a3e635'; weight = 5; }
       else if (segment.disruption) { color = '#ef4444'; dashArray = '10, 10'; weight = 5; }
       else {
@@ -421,11 +445,31 @@ const MapView = ({ network, origin, destination, activeRoute, optimisationParams
         {liveGps && (
           <Marker position={liveGps} icon={liveGpsIcon} zIndexOffset={1000}>
             <Popup className="dark-popup">
-              <strong>📍 Your Location</strong><br />
-              <span>{liveGps[0].toFixed(5)}°N, {liveGps[1].toFixed(5)}°E</span>
+              <strong>Your Live Location</strong><br />
+              <span>{liveGps[0].toFixed(4)}, {liveGps[1].toFixed(4)}</span>
             </Popup>
           </Marker>
         )}
+
+        {/* ── Live WebSocket Fleet Telemetry Vehicles ─────── */}
+        {telemetryVehicles.map((v, idx) => (
+          <Marker 
+            key={`telemetry-v-${v.id}-${idx}`}
+            position={[v.lat, v.lng]}
+            icon={createCustomIcon(v.type === 'electric' ? '#34d399' : '#f59e0b', true)}
+            zIndexOffset={800}
+          >
+            <Popup className="dark-popup">
+              <div className="text-xs font-bold text-emerald-400 mb-1">🛰️ LIVE OBD-II TELEMETRY</div>
+              <strong>{v.name} ({v.id})</strong><br />
+              Status: <b className="text-emerald-300">{v.status}</b><br />
+              Speed: <b>{v.speed_kmh} km/h</b><br />
+              Battery SOC: <b className={v.soc_percent < 20 ? 'text-red-400' : 'text-emerald-400'}>{v.soc_percent}%</b><br />
+              Motor Temp: <b>{v.motor_temp_c}°C</b> | Load: <b>{v.payload_tonnes} T</b>
+            </Popup>
+          </Marker>
+        ))}
+
 
         {/* ── Auto-fit map to route ────────────────────────── */}
         {routePointsForBounds.length > 0 && <FitBounds routePoints={routePointsForBounds} />}

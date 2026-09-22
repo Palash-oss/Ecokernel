@@ -153,9 +153,9 @@ const NetworkImporter = ({ isOpen, onClose, onNetworkImported }) => {
           exit={{ scale: 0.9, opacity: 0 }}
         >
           <div className="importer-header">
-            <div className="flex items-center gap-2">
-              <Database className="text-emerald-400" size={20} />
-              <span className="font-bold text-lg text-white">Dynamic Supply Chain Importer</span>
+            <div className="importer-title-group">
+              <Database size={20} color="#00e599" />
+              <span className="importer-title-text">Dynamic Supply Chain Importer</span>
             </div>
             <button className="importer-close-btn" onClick={onClose}>
               <X size={18} />
@@ -182,9 +182,9 @@ const NetworkImporter = ({ isOpen, onClose, onNetworkImported }) => {
               <div className="importer-dropzone">
                 <input type="file" accept=".csv,.json" onChange={handleFileUpload} id="csv-input" hidden />
                 <label htmlFor="csv-input" className="dropzone-label">
-                  <Upload className="dropzone-icon" size={36} />
-                  <span className="font-semibold text-white">Click or drag CSV / JSON supply chain dataset</span>
-                  <span className="text-xs text-slate-400">Supports custom hubs, coordinates, capacity & rail routes</span>
+                  <Upload className="dropzone-icon" size={36} color="#00e599" />
+                  <span className="dropzone-main-text">Click or drag CSV / JSON supply chain dataset</span>
+                  <span className="dropzone-sub-text">Supports custom hubs, coordinates, capacity & rail routes</span>
                 </label>
               </div>
             ) : (
@@ -210,9 +210,9 @@ const NetworkImporter = ({ isOpen, onClose, onNetworkImported }) => {
 
             {parsedNodes.length > 0 && (
               <div className="importer-preview-section">
-                <div className="preview-meta flex justify-between text-xs text-emerald-400 font-semibold mb-2">
-                  <span><MapPin size={12} className="inline mr-1" /> {parsedNodes.length} Hubs Parsed</span>
-                  <span><Route size={12} className="inline mr-1" /> {parsedEdges.length} Intermodal Routes</span>
+                <div className="preview-meta-row">
+                  <span><MapPin size={12} className="meta-icon" /> {parsedNodes.length} Hubs Parsed</span>
+                  <span><Route size={12} className="meta-icon" /> {parsedEdges.length} Intermodal Routes</span>
                 </div>
                 <div className="importer-preview-table-wrap">
                   <table className="importer-table">
@@ -227,8 +227,8 @@ const NetworkImporter = ({ isOpen, onClose, onNetworkImported }) => {
                     <tbody>
                       {parsedNodes.slice(0, 5).map((node, idx) => (
                         <tr key={idx}>
-                          <td className="font-semibold text-white">{node.name}</td>
-                          <td className="text-slate-400">
+                          <td className="table-hub-name">{node.name}</td>
+                          <td className="table-hub-coords">
                             {node.lat && node.lng ? `${node.lat.toFixed(2)}, ${node.lng.toFixed(2)}` : 'Auto-Geocode'}
                           </td>
                           <td><span className="importer-badge">{node.region}</span></td>
@@ -242,17 +242,18 @@ const NetworkImporter = ({ isOpen, onClose, onNetworkImported }) => {
             )}
           </div>
 
-          <div className="importer-footer flex justify-between items-center">
+          <div className="importer-footer">
             <button className="importer-reset-btn" onClick={handleResetNetwork} disabled={isLoading}>
-              <RefreshCw size={14} className="inline mr-1" /> Reset to Default Network
+              <RefreshCw size={14} /> Reset to Default Network
             </button>
-            <div className="flex gap-2">
+            <div className="importer-action-btns">
               <button className="importer-cancel-btn" onClick={onClose}>Cancel</button>
               <button className="importer-deploy-btn" onClick={handleDeployNetwork} disabled={isLoading}>
                 {isLoading ? 'Deploying...' : 'Deploy to Active Solvers'}
               </button>
             </div>
           </div>
+
         </motion.div>
       </div>
     </AnimatePresence>

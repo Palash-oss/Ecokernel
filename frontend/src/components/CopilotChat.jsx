@@ -156,8 +156,9 @@ const CopilotChat = () => {
               {messages.map(msg => (
                 <div key={msg.id} className={`message-bubble ${msg.sender}`}>
                   <div className="msg-icon">
-                    {msg.sender === 'bot' ? <Bot size={14} color="#69f6b8" /> : <User size={14} color="#38bdf8" />}
+                    {msg.sender === 'bot' ? <Bot size={14} color="#69f6b8" /> : <User size={14} color="#34d399" />}
                   </div>
+
                   <div className="msg-text">
                     {msg.sender === 'bot' ? renderFormattedText(msg.text) : msg.text}
                   </div>

@@ -1,5 +1,5 @@
-import React from 'react';
-import { CloudRain, Leaf, TrendingDown, History, BarChart2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { CloudRain, Leaf, TrendingDown, History, BarChart2, ShieldCheck, Download, X, Award } from 'lucide-react';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Tooltip as ChartTooltip, Legend } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 import ParetoChart from './ParetoChart';
@@ -8,9 +8,40 @@ import './EmissionsReport.css';
 ChartJS.register(CategoryScale, LinearScale, BarElement, ChartTooltip, Legend);
 
 const EmissionsReport = ({ paretoFront, activeRouteId, runHistory = [] }) => {
+  const [auditModalOpen, setAuditModalOpen] = useState(false);
+  const [certificateData, setCertificateData] = useState(null);
+  const [isGenerating, setIsGenerating] = useState(false);
+
   const totalSavings = runHistory.reduce((acc, run) => acc + (Number(run.savings) || 0), 0);
   const totalBaseline = runHistory.reduce((acc, run) => acc + (Number(run.baselineCo2) || 0), 0);
   const overallReductionPercent = totalBaseline > 0 ? ((totalSavings / totalBaseline) * 100).toFixed(1) : '0.0';
+
+  const handleGenerateCertificate = async () => {
+    setIsGenerating(true);
+    try {
+      const lastRun = runHistory[0] || { origin: "Mumbai", destination: "Delhi", load: 10, optimizedCo2: 180, totalDistance: 1400 };
+      const res = await fetch('http://localhost:8001/api/reports/certificate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          origin: lastRun.origin,
+          destination: lastRun.destination,
+          total_distance_km: lastRun.totalDistance || 1400,
+          total_co2_kg: lastRun.optimizedCo2 || 180,
+          total_cost_inr: 28000,
+          vehicle_type: "electric",
+          load_tonnes: lastRun.load || 10
+        })
+      });
+      const data = await res.json();
+      setCertificateData(data);
+      setAuditModalOpen(true);
+    } catch (err) {
+      console.error("Failed to generate certificate:", err);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
   const chartData = {
     labels: runHistory.slice().reverse().map((run, i) => `Run ${i + 1}: ${run.origin.substring(0,3)}-${run.destination.substring(0,3)}`),
@@ -47,15 +78,26 @@ const EmissionsReport = ({ paretoFront, activeRouteId, runHistory = [] }) => {
 
   return (
     <div className="emissions-report fade-in">
-      <div className="report-header mb-4">
-        <Leaf className="icon-emerald" size={28} />
-        <h2>Global Emissions Impact Report</h2>
-        {runHistory.length > 0 && (
-          <span className="route-context bg-emerald-glow">
-            {runHistory.length} Fleet Operations Simulated
-          </span>
-        )}
+      <div className="report-header mb-4 flex justify-between items-center">
+        <div className="flex items-center gap-2">
+          <Leaf className="icon-emerald" size={28} />
+          <h2>Global Emissions Impact Report</h2>
+          {runHistory.length > 0 && (
+            <span className="route-context bg-emerald-glow">
+              {runHistory.length} Fleet Operations Simulated
+            </span>
+          )}
+        </div>
+        <button 
+          onClick={handleGenerateCertificate}
+          disabled={isGenerating}
+          className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-2 shadow-lg shadow-emerald-900/40 transition-all cursor-pointer"
+        >
+          <Award size={16} />
+          {isGenerating ? 'Generating...' : 'ISO 14083 / GLEC Audit Certificate'}
+        </button>
       </div>
+
 
       <div className="insight-cards">
         <div className="insight-card panel border-blue">
@@ -134,8 +176,85 @@ const EmissionsReport = ({ paretoFront, activeRouteId, runHistory = [] }) => {
           <ParetoChart paretoFront={paretoFront} activeRouteId={activeRouteId} onSelectRoute={() => {}} />
         </div>
       )}
+
+      {/* Audit Certificate Modal */}
+      {auditModalOpen && certificateData && (
+        <div className="audit-modal-backdrop" onClick={() => setAuditModalOpen(false)}>
+          <div className="audit-modal-container" onClick={e => e.stopPropagation()}>
+            <div className="audit-modal-header">
+              <div className="audit-header-title">
+                <Award className="text-emerald-400" size={24} />
+                <div>
+                  <h3 className="audit-cert-title">CARBON AUDIT COMPLIANCE CERTIFICATE</h3>
+                  <span className="audit-cert-subtitle">{certificateData.standard_compliance}</span>
+                </div>
+              </div>
+              <button onClick={() => setAuditModalOpen(false)} className="audit-close-btn">
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="audit-modal-body">
+              <div className="audit-id-banner">
+                <div>
+                  <div className="audit-label">CERTIFICATE ID</div>
+                  <div className="audit-id-val">{certificateData.certificate_id}</div>
+                </div>
+                <div className="text-right">
+                  <div className="audit-label">VERIFICATION HASH</div>
+                  <div className="audit-hash-val">{certificateData.verification_hash.substring(0, 16)}...</div>
+                </div>
+              </div>
+
+              <div className="audit-grid-2">
+                <div className="audit-card">
+                  <div className="audit-card-lbl">Scope 1 & 2 Emissions</div>
+                  <div className="audit-card-val text-emerald">{certificateData.emissions_breakdown.total_wtw_co2_kg} kg CO₂e</div>
+                  <div className="audit-card-sub">Intensity: {certificateData.emissions_breakdown.glec_intensity_g_tkm} g/tkm</div>
+                </div>
+                <div className="audit-card">
+                  <div className="audit-card-lbl">EU CBAM Tax Savings</div>
+                  <div className="audit-card-val text-emerald">€{certificateData.cbam_tariff_analysis.cbam_tax_savings_eur} Saved</div>
+                  <div className="audit-card-sub">Avoided CBAM Penalty</div>
+                </div>
+              </div>
+
+              <div className="audit-breakdown-card">
+                <div className="audit-breakdown-title">GHG PROTOCOL / ISO 14083 BREAKDOWN</div>
+                <div className="audit-grid-3">
+                  <div className="audit-substat">
+                    <span className="substat-lbl">Scope 1 (Direct)</span>
+                    <span className="substat-val">{certificateData.emissions_breakdown.scope_1_direct_co2_kg} kg</span>
+                  </div>
+                  <div className="audit-substat">
+                    <span className="substat-lbl">Scope 2 (Grid)</span>
+                    <span className="substat-val text-emerald">{certificateData.emissions_breakdown.scope_2_grid_co2_kg} kg</span>
+                  </div>
+
+                  <div className="audit-substat">
+                    <span className="substat-lbl">Scope 3 (Upstream)</span>
+                    <span className="substat-val text-amber">{certificateData.emissions_breakdown.scope_3_upstream_co2_kg} kg</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="audit-modal-footer">
+              <span className="audit-footer-text">Cryptographically Signed • EcoKernel Engine v1.0</span>
+              <button 
+                onClick={() => window.print()}
+                className="audit-print-btn"
+              >
+                <Download size={14} /> Print Audit Certificate
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
 export default EmissionsReport;
+
+

@@ -3,14 +3,13 @@ import { AnimatePresence, motion } from 'framer-motion';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { TextPlugin } from 'gsap/TextPlugin';
-import LocomotiveScroll from 'locomotive-scroll';
-import 'locomotive-scroll/dist/locomotive-scroll.css';
 import {
   Leaf, Train, Zap, Globe, Truck, ArrowRight, CheckCircle,
   BarChart3, Shield, Clock, IndianRupee, TrendingDown, Cpu,
   Activity, Navigation, Layers, Wind, Sparkles
 } from 'lucide-react';
 import './LandingPage.css';
+
 
 gsap.registerPlugin(ScrollTrigger, TextPlugin);
 
@@ -189,7 +188,6 @@ const MagneticBtn = ({ children, onClick, className, id }) => {
 /* ─── Main Landing Page ──────────────────────────────────── */
 const LandingPage = ({ onEnter }) => {
   const scrollRef = useRef(null);
-  const locoRef = useRef(null);
   const [scrolled, setScrolled] = useState(false);
   const [monthlyTrips, setMonthlyTrips] = useState(250);
   const [avgPayload, setAvgPayload] = useState(15);
@@ -205,204 +203,135 @@ const LandingPage = ({ onEnter }) => {
     return () => clearInterval(t);
   }, []);
 
-  /* ── Locomotive Scroll + GSAP ScrollTrigger init ───────── */
+  /* ── Native GSAP ScrollTrigger init ───────────────── */
   useLayoutEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-
-    const loco = new LocomotiveScroll({
-      el,
-      smooth: true,
-      smoothMobile: false,
-      multiplier: 0.85,
-      lerp: 0.07,
-      smartphone: { smooth: false },
-      tablet: { smooth: false },
-    });
-    locoRef.current = loco;
-
-    // Bridge Locomotive ↔ GSAP ScrollTrigger
-    loco.on('scroll', ScrollTrigger.update);
-    ScrollTrigger.scrollerProxy(el, {
-      scrollTop(v) {
-        return arguments.length ? loco.scrollTo(v, { duration: 0, disableLerp: true }) : loco.scroll.instance.scroll.y;
-      },
-      getBoundingClientRect() {
-        return { top: 0, left: 0, width: window.innerWidth, height: window.innerHeight };
-      },
-      pinType: el.style.transform ? 'transform' : 'fixed',
-    });
-
-    // Navbar scroll detection
-    loco.on('scroll', ({ scroll }) => setScrolled(scroll.y > 50));
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
 
     /* ── GSAP Animations ─────────────────────────────────── */
+    const ctx = gsap.context(() => {
+      // Hero elements stagger
+      gsap.fromTo('.hero-eyebrow',
+        { y: 30, opacity: 0 },
+        { y: 0, opacity: 1, duration: 1, ease: 'power4.out', delay: 0.2 }
+      );
+      gsap.fromTo('.hero-h1',
+        { y: 60, opacity: 0 },
+        { y: 0, opacity: 1, duration: 1.1, ease: 'power4.out', delay: 0.4 }
+      );
+      gsap.fromTo('.hero-p',
+        { y: 40, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.9, ease: 'power3.out', delay: 0.6 }
+      );
+      gsap.fromTo('.hero-actions',
+        { y: 30, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out', delay: 0.8 }
+      );
+      gsap.fromTo('.hero-visual',
+        { x: 60, opacity: 0 },
+        { x: 0, opacity: 1, duration: 1.2, ease: 'power4.out', delay: 0.4 }
+      );
+      gsap.fromTo('.float-card',
+        { y: 40, opacity: 0, scale: 0.9 },
+        { y: 0, opacity: 1, scale: 1, duration: 0.9, ease: 'back.out(1.5)', stagger: 0.18, delay: 0.8 }
+      );
 
-    // Hero elements stagger
-    gsap.fromTo('.hero-eyebrow',
-      { y: 30, opacity: 0 },
-      { y: 0, opacity: 1, duration: 1, ease: 'power4.out', delay: 0.3 }
-    );
-    gsap.fromTo('.hero-h1',
-      { y: 60, opacity: 0 },
-      { y: 0, opacity: 1, duration: 1.1, ease: 'power4.out', delay: 0.5 }
-    );
-    gsap.fromTo('.hero-p',
-      { y: 40, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.9, ease: 'power3.out', delay: 0.75 }
-    );
-    gsap.fromTo('.hero-actions',
-      { y: 30, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out', delay: 0.95 }
-    );
-    gsap.fromTo('.hero-proof',
-      { y: 20, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.7, ease: 'power2.out', delay: 1.15 }
-    );
-    gsap.fromTo('.hero-visual',
-      { x: 80, opacity: 0 },
-      { x: 0, opacity: 1, duration: 1.3, ease: 'power4.out', delay: 0.4 }
-    );
-    gsap.fromTo('.float-card',
-      { y: 40, opacity: 0, scale: 0.9 },
-      { y: 0, opacity: 1, scale: 1, duration: 0.9, ease: 'back.out(1.5)', stagger: 0.18, delay: 1 }
-    );
+      // Beams slow drift
+      gsap.to('.beam-1', { x: 60, y: 40, duration: 12, ease: 'sine.inOut', yoyo: true, repeat: -1 });
+      gsap.to('.beam-2', { x: -40, y: -30, duration: 9, ease: 'sine.inOut', yoyo: true, repeat: -1 });
+      gsap.to('.beam-3', { x: 30, y: 50, duration: 15, ease: 'sine.inOut', yoyo: true, repeat: -1 });
 
-    // Beams slow drift
-    gsap.to('.beam-1', { x: 60, y: 40, duration: 12, ease: 'sine.inOut', yoyo: true, repeat: -1 });
-    gsap.to('.beam-2', { x: -40, y: -30, duration: 9, ease: 'sine.inOut', yoyo: true, repeat: -1 });
-    gsap.to('.beam-3', { x: 30, y: 50, duration: 15, ease: 'sine.inOut', yoyo: true, repeat: -1 });
-
-    // Stats belt — stagger slide up on scroll
-    gsap.fromTo('.belt-stat',
-      { y: 50, opacity: 0 },
-      {
-        y: 0, opacity: 1, duration: 0.8, ease: 'power3.out', stagger: 0.12,
-        scrollTrigger: { trigger: '.lp-stats-belt', scroller: el, start: 'top 85%' }
-      }
-    );
-
-    // Section headings — slide up
-    gsap.utils.toArray('.section-chip, .section-h2').forEach(el2 => {
-      gsap.fromTo(el2,
+      // Stats belt
+      gsap.fromTo('.belt-stat',
         { y: 40, opacity: 0 },
         {
-          y: 0, opacity: 1, duration: 0.9, ease: 'power3.out',
-          scrollTrigger: { trigger: el2, scroller: el, start: 'top 88%' }
+          y: 0, opacity: 1, duration: 0.8, ease: 'power3.out', stagger: 0.12,
+          scrollTrigger: { trigger: '.lp-stats-belt', start: 'top 85%' }
+        }
+      );
+
+      // Section headings
+      gsap.utils.toArray('.section-chip, .section-h2').forEach(el => {
+        gsap.fromTo(el,
+          { y: 35, opacity: 0 },
+          {
+            y: 0, opacity: 1, duration: 0.8, ease: 'power3.out',
+            scrollTrigger: { trigger: el, start: 'top 88%' }
+          }
+        );
+      });
+
+      // Feature tabs & panels
+      gsap.fromTo('.feature-tab',
+        { x: -30, opacity: 0 },
+        {
+          x: 0, opacity: 1, duration: 0.7, ease: 'power3.out', stagger: 0.1,
+          scrollTrigger: { trigger: '.features-layout', start: 'top 80%' }
+        }
+      );
+      gsap.fromTo('.feature-panel',
+        { x: 40, opacity: 0 },
+        {
+          x: 0, opacity: 1, duration: 0.9, ease: 'power4.out',
+          scrollTrigger: { trigger: '.features-layout', start: 'top 80%' }
+        }
+      );
+
+      // Comparison grid
+      gsap.fromTo('.compare-bad',
+        { x: -50, opacity: 0 },
+        {
+          x: 0, opacity: 1, duration: 0.9, ease: 'power4.out',
+          scrollTrigger: { trigger: '.compare-grid', start: 'top 82%' }
+        }
+      );
+      gsap.fromTo('.compare-good',
+        { x: 50, opacity: 0 },
+        {
+          x: 0, opacity: 1, duration: 0.9, ease: 'power4.out',
+          scrollTrigger: { trigger: '.compare-grid', start: 'top 82%' }
+        }
+      );
+
+      // ROI Calc card
+      gsap.fromTo('.calc-card',
+        { y: 60, opacity: 0 },
+        {
+          y: 0, opacity: 1, duration: 1, ease: 'power4.out',
+          scrollTrigger: { trigger: '.calc-card', start: 'top 85%' }
+        }
+      );
+
+      // Final CTA
+      gsap.fromTo('.final-cta-inner',
+        { y: 50, opacity: 0, scale: 0.95 },
+        {
+          y: 0, opacity: 1, scale: 1, duration: 1, ease: 'power4.out',
+          scrollTrigger: { trigger: '.lp-final-cta', start: 'top 80%' }
         }
       );
     });
 
-    // Feature tabs — slide in from left
-    gsap.fromTo('.feature-tab',
-      { x: -40, opacity: 0 },
-      {
-        x: 0, opacity: 1, duration: 0.7, ease: 'power3.out', stagger: 0.1,
-        scrollTrigger: { trigger: '.features-layout', scroller: el, start: 'top 80%' }
-      }
-    );
-
-    // Feature panel — slide in from right
-    gsap.fromTo('.feature-panel',
-      { x: 50, opacity: 0, scale: 0.96 },
-      {
-        x: 0, opacity: 1, scale: 1, duration: 0.9, ease: 'power4.out',
-        scrollTrigger: { trigger: '.features-layout', scroller: el, start: 'top 80%', delay: 0.2 }
-      }
-    );
-
-    // Comparison cards — flip in from sides
-    gsap.fromTo('.compare-bad',
-      { x: -60, opacity: 0, rotateY: 8 },
-      {
-        x: 0, opacity: 1, rotateY: 0, duration: 0.9, ease: 'power4.out',
-        scrollTrigger: { trigger: '.compare-grid', scroller: el, start: 'top 82%' }
-      }
-    );
-    gsap.fromTo('.compare-good',
-      { x: 60, opacity: 0, rotateY: -8 },
-      {
-        x: 0, opacity: 1, rotateY: 0, duration: 0.9, ease: 'power4.out', delay: 0.1,
-        scrollTrigger: { trigger: '.compare-grid', scroller: el, start: 'top 82%' }
-      }
-    );
-
-    // Compare list items — stagger
-    gsap.fromTo('.compare-list li',
-      { x: -20, opacity: 0 },
-      {
-        x: 0, opacity: 1, duration: 0.5, ease: 'power2.out', stagger: 0.06,
-        scrollTrigger: { trigger: '.compare-grid', scroller: el, start: 'top 75%' }
-      }
-    );
-
-    // Calc card — float up with scale
-    gsap.fromTo('.calc-card',
-      { y: 80, opacity: 0, scale: 0.95 },
-      {
-        y: 0, opacity: 1, scale: 1, duration: 1.1, ease: 'power4.out',
-        scrollTrigger: { trigger: '.calc-card', scroller: el, start: 'top 85%' }
-      }
-    );
-
-    // Calc metrics — stagger in
-    gsap.fromTo('.calc-metric',
-      { x: 40, opacity: 0 },
-      {
-        x: 0, opacity: 1, duration: 0.6, ease: 'power3.out', stagger: 0.1,
-        scrollTrigger: { trigger: '.calc-right', scroller: el, start: 'top 80%' }
-      }
-    );
-
-    // Final CTA — scale pop
-    gsap.fromTo('.final-cta-inner',
-      { y: 60, opacity: 0, scale: 0.93 },
-      {
-        y: 0, opacity: 1, scale: 1, duration: 1.1, ease: 'power4.out',
-        scrollTrigger: { trigger: '.lp-final-cta', scroller: el, start: 'top 80%' }
-      }
-    );
-
-    // Final proof items stagger
-    gsap.fromTo('.final-proof-item',
-      { y: 20, opacity: 0 },
-      {
-        y: 0, opacity: 1, duration: 0.5, stagger: 0.08, ease: 'power2.out',
-        scrollTrigger: { trigger: '.final-proof', scroller: el, start: 'top 88%' }
-      }
-    );
-
-    // Parallax on beams via scroll
-    ScrollTrigger.create({
-      trigger: el,
-      scroller: el,
-      start: 'top top',
-      end: 'bottom bottom',
-      onUpdate: (self) => {
-        gsap.set('.hero-grid-overlay', { y: self.progress * 80 });
-      }
-    });
-
-    ScrollTrigger.addEventListener('refresh', () => loco.update());
-    ScrollTrigger.refresh();
-
     return () => {
-      loco.destroy();
-      locoRef.current = null;
-      ScrollTrigger.getAll().forEach(t => t.kill());
+      window.removeEventListener('scroll', handleScroll);
+      ctx.revert();
     };
   }, []);
 
+
   const features = [
-    { icon: <Cpu size={20}/>, title: 'QIGA-PIEP Physics Engine', tag: 'QUANTUM-INSPIRED', color: '#34d399',
+    { icon: <Cpu size={20}/>, title: 'QIGA-PIEP Physics Engine', tag: 'QUANTUM-INSPIRED', color: '#00e599',
       desc: 'Quantum-Inspired Genetic Algorithm with Physics-Informed Energy Profiling. Models F_drag, F_roll, and F_grade forces in real-time for accurate energy and CO₂ computation. 4.8× faster Pareto convergence.' },
-    { icon: <Shield size={20}/>, title: 'ISO 14083 / GLEC v3.2', tag: 'ESG COMPLIANCE', color: '#60a5fa',
+    { icon: <Shield size={20}/>, title: 'ISO 14083 / GLEC v3.2', tag: 'ESG COMPLIANCE', color: '#34d399',
       desc: 'Audit-grade Scope 3 carbon reporting. Well-to-Wheel (WTW), Well-to-Tank (WTT), and Tank-to-Wheel (TTW) breakdown. Board-ready ESG disclosures generated instantly.' },
-    { icon: <Train size={20}/>, title: 'Multi-Modal Rail + Road', tag: 'INTERMODAL', color: '#a78bfa',
+    { icon: <Train size={20}/>, title: 'Multi-Modal Rail + Road', tag: 'INTERMODAL', color: '#10b981',
       desc: 'Simultaneously evaluates road, Indian Railways freight, and EV corridors on a 24-city national logistics graph with live weather disruption overlays and monsoon alerts.' },
-    { icon: <BarChart3 size={20}/>, title: '7-Day AI Dispatch Radar', tag: 'PREDICTIVE AI', color: '#f59e0b',
+    { icon: <BarChart3 size={20}/>, title: '7-Day AI Dispatch Radar', tag: 'PREDICTIVE AI', color: '#059669',
       desc: 'LSTM-powered demand forecasting with real precipitation data, congestion risk scoring, grid carbon intensity windows, and optimal departure time recommendations for each corridor.' },
   ];
+
 
   return (
     <div className="lp-root" data-scroll-container ref={scrollRef}>
@@ -484,7 +413,7 @@ const LandingPage = ({ onEnter }) => {
               <div><div className="float-card-val">−38%</div><div className="float-card-lbl">CO₂ Reduction</div></div>
             </div>
             <div className="float-card">
-              <div className="float-card-icon" style={{ background: '#60a5fa18' }}><IndianRupee size={15} style={{ color: '#60a5fa' }}/></div>
+              <div className="float-card-icon" style={{ background: '#00e59918' }}><IndianRupee size={15} style={{ color: '#00e599' }}/></div>
               <div><div className="float-card-val">₹3.4K</div><div className="float-card-lbl">Avg Fuel Saved/trip</div></div>
             </div>
           </div>
@@ -499,11 +428,12 @@ const LandingPage = ({ onEnter }) => {
       {/* ── STATS BELT ─────────────────────────────────────── */}
       <section className="lp-stats-belt" data-scroll-section>
         {[
-          { value: 38, suffix: '%', label: 'Avg CO₂ Reduction', color: '#34d399' },
-          { value: 34, suffix: '%', label: 'Fuel Cost Savings', color: '#60a5fa' },
-          { value: 24, suffix: ' hubs', label: 'Indian Cities', color: '#a78bfa' },
-          { value: 4.8, suffix: '×', label: 'Pareto Speedup', color: '#f59e0b', decimals: 1 },
+          { value: 38, suffix: '%', label: 'Avg CO₂ Reduction', color: '#00e599' },
+          { value: 34, suffix: '%', label: 'Fuel Cost Savings', color: '#34d399' },
+          { value: 24, suffix: ' hubs', label: 'Indian Cities', color: '#10b981' },
+          { value: 4.8, suffix: '×', label: 'Pareto Speedup', color: '#059669', decimals: 1 },
         ].map((s, i) => (
+
           <div key={i} className="belt-stat">
             <div className="belt-val" style={{ color: s.color }}>
               <Counter to={s.value} suffix={s.suffix} decimals={s.decimals || 0}/>

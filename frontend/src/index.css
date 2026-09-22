@@ -28,8 +28,10 @@
   --accent-amber-bg:  #fffbeb;
   --accent-red:       #ef4444;
   --accent-red-bg:    #fef2f2;
-  --accent-blue:      #0284c7;
-  --accent-blue-bg:   #f0f9ff;
+  --accent-blue:      #059669;
+  --accent-blue-bg:   #ecfdf5;
+  --accent-neon:      #00e599;
+
 
   /* Text */
   --text-main:        #0f172a;     /* Slate 900 */

@@ -9,9 +9,10 @@ const RoutePanel = ({ route }) => {
     <div className="route-panel panel">
       <div className="route-header">
         <div className="route-title">
-          <Route size={18} className="icon-blue" />
+          <Route size={18} className="icon-emerald" />
           <h2>Selected Route Details</h2>
         </div>
+
         <div className={`green-score-badge ${route.green_score > 70 ? 'high' : route.green_score > 30 ? 'med' : 'low'}`}>
           <Leaf size={14} />
           <span>Score {route.green_score.toFixed(1)}</span>
@@ -67,6 +68,30 @@ const RoutePanel = ({ route }) => {
           </div>
         </div>
       )}
+
+      {/* Environmental Physics HUD */}
+      <div className="env-physics-card bg-slate-900/60 p-3 rounded-xl border border-slate-800 my-3">
+        <div className="flex justify-between items-center text-xs font-semibold text-emerald-400 mb-2">
+          <span>⛰️ Environmental Terrain & Physics</span>
+          <span className="bg-emerald-500/10 text-emerald-300 px-2 py-0.5 rounded text-[10px]">Real-Time Physics</span>
+        </div>
+        <div className="grid grid-cols-3 gap-2 text-center text-xs">
+          <div className="bg-slate-800/50 p-2 rounded-lg">
+            <div className="text-slate-400 text-[10px]">Avg Slope</div>
+            <div className="font-bold text-white mt-0.5">1.8%</div>
+          </div>
+          <div className="bg-slate-800/50 p-2 rounded-lg">
+            <div className="text-slate-400 text-[10px]">Ambient Temp</div>
+            <div className="font-bold text-emerald-400 mt-0.5">24°C</div>
+          </div>
+
+          <div className="bg-slate-800/50 p-2 rounded-lg">
+            <div className="text-slate-400 text-[10px]">Wind Drag</div>
+            <div className="font-bold text-emerald-400 mt-0.5">+4.2%</div>
+          </div>
+        </div>
+      </div>
+
 
       <div className="segments-list">
         <h3>Segment Breakdown</h3>

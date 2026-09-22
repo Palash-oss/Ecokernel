@@ -6,11 +6,12 @@ Provides real-time route optimization, demand forecasting,
 and environmental impact analysis.
 """
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import time
 import os
+import asyncio
 
 from models.schemas import (
     OptimizeRequest, ParetoFront, RouteSolution, RouteSegment,
@@ -28,7 +29,9 @@ from engine.qiga_solver import solve_qiga_routes, physics_informed_energy_kg_co2
 from engine.demand_forecast import get_demand_forecast
 from engine.copilot_engine import copilot_engine
 from data.importer import import_custom_network, export_network_data
-
+from data.environmental_service import fetch_elevation_profile, fetch_weather_impact
+from engine.telemetry_stream import telemetry_broadcaster
+from engine.audit_reporter import generate_carbon_audit_certificate
 
 
 # ─── App State ─────────────────────────────────────────────
@@ -37,7 +40,7 @@ network_graph = None
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Build the logistics network on startup."""
+    """Build the logistics network on startup and launch background tasks."""
     global network_graph
     print("[EcoKernel] Building Indian logistics network...")
     network_graph = build_network()
@@ -49,8 +52,16 @@ async def lifespan(app: FastAPI):
         print("[OK] Database initialized")
     except Exception as _e:
         print(f"[WARN] Database init failed: {_e}")
+    
+    # Start WebSocket Telemetry Streamer in background
+    telemetry_task = asyncio.create_task(telemetry_broadcaster.start_broadcasting())
+    
     yield
+    
+    telemetry_broadcaster._running = False
+    telemetry_task.cancel()
     print("[EcoKernel] Shutting down.")
+
 
 
 app = FastAPI(
@@ -400,6 +411,57 @@ async def reset_network():
 async def export_network():
     """Export current active network topology as JSON."""
     return export_network_data()
+
+
+@app.post("/api/environmental/physics")
+async def get_environmental_physics(payload: dict):
+    """
+    Computes elevation profile gradient and live weather penalties along route waypoints.
+    """
+    waypoints = payload.get("waypoints", [])
+    origin_lat = payload.get("origin_lat", 19.076)
+    origin_lng = payload.get("origin_lng", 72.877)
+    
+    elevation_info = await fetch_elevation_profile(waypoints)
+    weather_info = await fetch_weather_impact(origin_lat, origin_lng)
+    
+    return {
+        "elevation": elevation_info,
+        "weather": weather_info
+    }
+
+
+@app.websocket("/ws/telemetry")
+async def websocket_telemetry(websocket: WebSocket):
+    """WebSocket connection streaming live OBD-II fleet telemetry packets."""
+    await telemetry_broadcaster.connect(websocket)
+    try:
+        while True:
+            # Keep connection alive
+            await websocket.receive_text()
+    except WebSocketDisconnect:
+        telemetry_broadcaster.disconnect(websocket)
+    except Exception as e:
+        print(f"[WebSocket] Client connection closed: {e}")
+        telemetry_broadcaster.disconnect(websocket)
+
+
+@app.post("/api/reports/certificate")
+async def create_audit_certificate(payload: dict):
+    """
+    Generates ISO 14083 & GLEC Framework v3.0 certified audit compliance report with cryptographic hash.
+    """
+    return generate_carbon_audit_certificate(
+        origin=payload.get("origin", "Mumbai"),
+        destination=payload.get("destination", "Delhi"),
+        distance_km=float(payload.get("total_distance_km", 1400.0)),
+        co2_kg=float(payload.get("total_co2_kg", 250.0)),
+        cost_inr=float(payload.get("total_cost_inr", 12000.0)),
+        vehicle_type=payload.get("vehicle_type", "euro6_diesel"),
+        load_tonnes=float(payload.get("load_tonnes", 10.0)),
+        strategy=payload.get("strategy", "Pareto Optimal")
+    )
+
 
 
 
