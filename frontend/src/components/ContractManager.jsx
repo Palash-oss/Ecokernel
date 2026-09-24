@@ -230,7 +230,7 @@ const ContractManager = ({ vehicles = [] }) => {
           </form>
 
           <div className="ai-notice-box">
-            <AlertCircle size={16} className="text-amber" />
+            <AlertCircle size={16} className="text-emerald" />
             <p>Active non-demo contracts automatically override live spot market estimates for matched corridors.</p>
           </div>
         </div>

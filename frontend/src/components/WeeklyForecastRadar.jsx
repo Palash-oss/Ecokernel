@@ -99,15 +99,15 @@ const WeeklyForecastRadar = () => {
           <div className="card-sub font-mono">⚡ Optimized via QIGA Green Departure Windows</div>
         </div>
 
-        <div className="summary-card panel border-cyan">
+        <div className="summary-card panel border-emerald">
           <div className="card-top-lbl">Predicted Fuel & Toll Savings</div>
-          <div className="card-val text-cyan">₹{totalWeeklySavingsInr.toLocaleString()}</div>
+          <div className="card-val text-emerald">₹{totalWeeklySavingsInr.toLocaleString()}</div>
           <div className="card-sub font-mono">Estimated cost reduction vs spot dispatch</div>
         </div>
 
-        <div className="summary-card panel border-amber">
+        <div className="summary-card panel border-emerald">
           <div className="card-top-lbl">Recommended Weekly Departure</div>
-          <div className="card-val text-amber">Thu, 05:00 AM</div>
+          <div className="card-val text-emerald">Thu, 05:00 AM</div>
           <div className="card-sub font-mono">Lowest congestion & highest green grid score</div>
         </div>
       </div>
@@ -154,8 +154,8 @@ const WeeklyForecastRadar = () => {
             <div className="flex-center gap-3">
               <div className={`status-icon-box risk-${activeDay.riskLevel}`}>
                 {activeDay.riskLevel === 'low' && <CheckCircle2 size={22} className="text-emerald" />}
-                {activeDay.riskLevel === 'medium' && <AlertTriangle size={22} className="text-amber" />}
-                {activeDay.riskLevel === 'high' && <ShieldAlert size={22} className="text-red" />}
+                {activeDay.riskLevel === 'medium' && <AlertTriangle size={22} className="text-emerald" />}
+                {activeDay.riskLevel === 'high' && <ShieldAlert size={22} className="text-emerald" />}
               </div>
               <div>
                 <h4>{activeDay.day}, {activeDay.date} — Corridor Risk Analysis</h4>
@@ -186,7 +186,7 @@ const WeeklyForecastRadar = () => {
 
             <div className="metric-box">
               <span className="m-lbl">Estimated Trip Savings</span>
-              <span className="m-val text-cyan">₹{activeDay.fuelSavedInr.toLocaleString()}</span>
+              <span className="m-val text-emerald">₹{activeDay.fuelSavedInr.toLocaleString()}</span>
               <span className="m-sub">Fuel + avoided congestion idling</span>
             </div>
           </div>

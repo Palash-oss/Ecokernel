@@ -21,7 +21,7 @@ const QuantumMetricsCard = () => {
     <div className="quantum-card panel border-cyan-glow fade-in">
       <div className="quantum-card-header">
         <div className="flex-center gap-2">
-          <Atom className="icon-cyan spin-slow" size={20} />
+          <Atom className="icon-emerald spin-slow" size={20} />
           <span className="quantum-title">QIGA-PIEP Quantum Engine</span>
         </div>
         <span className="badge-pulse">4.8x Pareto Speedup</span>
@@ -31,20 +31,20 @@ const QuantumMetricsCard = () => {
         <div className="q-stat">
           <span className="q-lbl">Superposition State |Ψ⟩</span>
           <div className="q-val-row">
-            <span className="q-val text-cyan">|α|² {alphaSq}</span>
+            <span className="q-val text-emerald">|α|² {alphaSq}</span>
             <span className="q-divider">+</span>
             <span className="q-val text-emerald">|β|² {betaSq}</span>
           </div>
           <div className="q-bar-track">
-            <div className="q-bar-fill bg-cyan" style={{ width: `${alphaSq * 100}%` }}></div>
-            <div className="q-bar-fill bg-emerald" style={{ width: `${betaSq * 100}%` }}></div>
+            <div className="q-bar-fill bg-emerald" style={{ width: `${alphaSq * 100}%` }}></div>
+            <div className="q-bar-fill bg-emerald" style={{ width: `${betaSq * 100}%`, opacity: 0.7 }}></div>
           </div>
         </div>
 
         <div className="q-stat mt-2">
           <div className="flex-between">
             <span className="q-lbl">Rotation Gate Shift Δθ</span>
-            <span className="q-val text-amber">{rotationAngle}° / gen</span>
+            <span className="q-val text-emerald">{rotationAngle}° / gen</span>
           </div>
         </div>
       </div>

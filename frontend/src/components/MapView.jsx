@@ -209,7 +209,7 @@ const MapView = ({ network, origin, destination, activeRoute, optimisationParams
       else if (segment.disruption) { color = '#ef4444'; dashArray = '10, 10'; weight = 5; }
       else {
         const intensity = segment.co2_kg / Math.max(segment.distance_km, 1);
-        color = intensity > 0.3 ? '#f97316' : intensity > 0.15 ? '#f59e0b' : '#10b981';
+        color = intensity > 0.3 ? '#047857' : intensity > 0.15 ? '#059669' : '#10b981';
       }
 
       let latLngs = [];
@@ -265,8 +265,8 @@ const MapView = ({ network, origin, destination, activeRoute, optimisationParams
 
   // Region colors for network nodes
   const regionColor = (region) => {
-    const map = { North: '#60a5fa', South: '#34d399', East: '#fbbf24', West: '#a78bfa', Central: '#fb7185' };
-    return map[region] || '#94a3b8';
+    const map = { North: '#047857', South: '#059669', East: '#10b981', West: '#065f46', Central: '#34d399' };
+    return map[region] || '#047857';
   };
 
   return (
@@ -290,7 +290,7 @@ const MapView = ({ network, origin, destination, activeRoute, optimisationParams
             </div>
             <div className="hud-stat-item">
               <span className="hud-lbl">COST</span>
-              <span className="hud-val" style={{ color: '#f59e0b' }}>₹{activeRoute.total_cost_inr?.toLocaleString()}</span>
+              <span className="hud-val" style={{ color: '#047857' }}>₹{activeRoute.total_cost_inr?.toLocaleString()}</span>
             </div>
             <div className="hud-stat-item">
               <span className="hud-lbl">MODE</span>
@@ -436,8 +436,8 @@ const MapView = ({ network, origin, destination, activeRoute, optimisationParams
         {showParticles && allRoutePoints.length > 2 && (
           <>
             <FreightParticle routePoints={allRoutePoints} color="#10b981" delay={0} />
-            <FreightParticle routePoints={allRoutePoints} color="#60a5fa" delay={Math.floor(allRoutePoints.length / 3)} />
-            <FreightParticle routePoints={allRoutePoints} color="#fbbf24" delay={Math.floor(allRoutePoints.length * 2 / 3)} />
+            <FreightParticle routePoints={allRoutePoints} color="#059669" delay={Math.floor(allRoutePoints.length / 3)} />
+            <FreightParticle routePoints={allRoutePoints} color="#34d399" delay={Math.floor(allRoutePoints.length * 2 / 3)} />
           </>
         )}
 
@@ -456,7 +456,7 @@ const MapView = ({ network, origin, destination, activeRoute, optimisationParams
           <Marker 
             key={`telemetry-v-${v.id}-${idx}`}
             position={[v.lat, v.lng]}
-            icon={createCustomIcon(v.type === 'electric' ? '#34d399' : '#f59e0b', true)}
+            icon={createCustomIcon(v.type === 'electric' ? '#047857' : '#10b981', true)}
             zIndexOffset={800}
           >
             <Popup className="dark-popup">
@@ -478,9 +478,9 @@ const MapView = ({ network, origin, destination, activeRoute, optimisationParams
       {/* Legend */}
       <div className="map-legend">
         <div className="legend-item"><span className="legend-dot" style={{ background: '#10b981' }} />Rail / EV</div>
-        <div className="legend-item"><span className="legend-dot" style={{ background: '#38bdf8' }} />Road</div>
-        <div className="legend-item"><span className="legend-dot" style={{ background: '#ef4444' }} />Disrupted</div>
-        {liveGps && <div className="legend-item"><span className="legend-dot gps-blink" style={{ background: '#3b82f6' }} />GPS Live</div>}
+        <div className="legend-item"><span className="legend-dot" style={{ background: '#047857' }} />Road</div>
+        <div className="legend-item"><span className="legend-dot" style={{ background: '#64748b' }} />Disrupted</div>
+        {liveGps && <div className="legend-item"><span className="legend-dot gps-blink" style={{ background: '#10b981' }} />GPS Live</div>}
       </div>
     </div>
   );

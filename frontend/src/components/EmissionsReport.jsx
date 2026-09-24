@@ -91,38 +91,38 @@ const EmissionsReport = ({ paretoFront, activeRouteId, runHistory = [] }) => {
         <button 
           onClick={handleGenerateCertificate}
           disabled={isGenerating}
-          className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-2 shadow-lg shadow-emerald-900/40 transition-all cursor-pointer"
+          className="audit-cert-btn"
         >
           <Award size={16} />
-          {isGenerating ? 'Generating...' : 'ISO 14083 / GLEC Audit Certificate'}
+          <span>{isGenerating ? 'Generating...' : 'ISO 14083 / GLEC Audit Certificate'}</span>
         </button>
       </div>
 
-
       <div className="insight-cards">
-        <div className="insight-card panel border-blue">
-          <div className="insight-icon bg-blue-dim"><History size={24} className="text-blue" /></div>
+        <div className="insight-card panel border-emerald">
+          <div className="insight-icon bg-emerald-dim"><History size={24} className="text-emerald" /></div>
           <div className="insight-data">
             <span className="lbl">Cumulative Baseline CO₂</span>
             <span className="val">{totalBaseline.toFixed(1)} <small>kg</small></span>
             <span className="sub">(Standard logistics routing)</span>
           </div>
         </div>
-        <div className="insight-card panel border-green">
-          <div className="insight-icon bg-green-dim"><Leaf size={24} className="text-green" /></div>
+        <div className="insight-card panel border-emerald">
+          <div className="insight-icon bg-emerald-dim"><Leaf size={24} className="text-emerald" /></div>
           <div className="insight-data">
             <span className="lbl">Total Prevented CO₂</span>
-            <span className="val text-green">{totalSavings.toFixed(1)} <small>kg</small></span>
+            <span className="val text-emerald">{totalSavings.toFixed(1)} <small>kg</small></span>
             <span className="sub">via EcoKernel Engine</span>
           </div>
         </div>
-        <div className="insight-card panel border-amber">
+        <div className="insight-card panel border-emerald">
           <div className="insight-data full-width">
             <span className="lbl">Fleet-Wide Emission Reduction</span>
             <div className="flex-center gap-2 mt-1">
-              <TrendingDown size={32} className="text-amber" />
-              <span className="val text-amber">{overallReductionPercent}%</span>
+              <TrendingDown size={32} className="text-emerald" />
+              <span className="val text-emerald">{overallReductionPercent}%</span>
             </div>
+            <span className="sub">ISO 14083 Verified Decarbonization</span>
           </div>
         </div>
       </div>
@@ -233,7 +233,7 @@ const EmissionsReport = ({ paretoFront, activeRouteId, runHistory = [] }) => {
 
                   <div className="audit-substat">
                     <span className="substat-lbl">Scope 3 (Upstream)</span>
-                    <span className="substat-val text-amber">{certificateData.emissions_breakdown.scope_3_upstream_co2_kg} kg</span>
+                    <span className="substat-val text-emerald">{certificateData.emissions_breakdown.scope_3_upstream_co2_kg} kg</span>
                   </div>
                 </div>
               </div>

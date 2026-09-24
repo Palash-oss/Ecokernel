@@ -68,7 +68,7 @@ const NetworkModel = ({ network }) => {
           <span className="kpi-lbl">Active Logistics Hubs</span>
         </div>
         <div className="kpi-group border-right">
-          <span className="kpi-val text-blue">{network.edges.length}</span>
+          <span className="kpi-val text-emerald">{network.edges.length}</span>
           <span className="kpi-lbl">Monitored Routes</span>
         </div>
         <div className="kpi-group">
@@ -93,21 +93,21 @@ const NetworkModel = ({ network }) => {
               >
                 <div className="hub-module-header">
                   <div className="hub-title">
-                    <MapPin size={16} className={isHighLoad ? 'text-amber' : 'text-blue'} />
+                    <MapPin size={16} className="text-emerald" />
                     <h3>{node.name}</h3>
                     <span className="region-tag">{node.region}</span>
                   </div>
-                  <Wifi size={16} className={`signal-icon ${load < 40 ? 'green' : load < 75 ? 'amber' : 'red'}`} />
+                  <Wifi size={16} className="signal-icon green" />
                 </div>
                 
                 <div className="hub-capacity">
                   <div className="capacity-labels">
                     <span>Processing Load</span>
-                    <span className={isHighLoad ? 'text-amber' : ''}>{load.toFixed(1)}%</span>
+                    <span className="text-emerald">{load.toFixed(1)}%</span>
                   </div>
                   <div className="capacity-bar-bg">
                     <motion.div 
-                      className={`capacity-bar-fill ${isHighLoad ? 'bg-amber' : load < 40 ? 'bg-green' : 'bg-blue'}`}
+                      className="capacity-bar-fill bg-emerald"
                       animate={{ width: `${load}%` }}
                       transition={{ type: "spring", stiffness: 50 }}
                     />

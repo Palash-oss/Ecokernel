@@ -38,10 +38,10 @@ const ParetoChart = ({ paretoFront, activeRouteId, onSelectRoute }) => {
           
           // Color based on Green Score
           const score = context.raw?.score || 0;
-          if (score > 80) return '#00d97e'; // Green
-          if (score > 50) return '#3b82f6'; // Blue
-          if (score > 20) return '#f7c948'; // Amber
-          return '#ff4d4f'; // Red
+          if (score > 80) return '#00e599'; // Bright emerald
+          if (score > 50) return '#10b981'; // Mint emerald
+          if (score > 20) return '#059669'; // Deep emerald
+          return '#047857'; // Forest emerald
         },
         borderColor: (context) => {
           const id = context.raw?.id;

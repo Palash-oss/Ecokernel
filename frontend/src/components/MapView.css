@@ -208,7 +208,7 @@
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  border: 2px solid #60a5fa;
+  border: 2px solid #047857;
   background: rgba(255, 255, 255, 0.85);
   display: flex;
   align-items: center;
@@ -220,7 +220,7 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #60a5fa;
+  background: #047857;
 }
 
 @keyframes network-pulse {
@@ -280,10 +280,10 @@
 .live-gps-dot {
   width: 18px;
   height: 18px;
-  background: #3b82f6;
+  background: #047857;
   border: 3px solid white;
   border-radius: 50%;
-  box-shadow: 0 0 12px #3b82f680;
+  box-shadow: 0 0 12px rgba(4, 120, 87, 0.5);
   position: relative;
 }
 
@@ -294,7 +294,7 @@
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  border: 2px solid #3b82f680;
+  border: 2px solid rgba(4, 120, 87, 0.5);
   animation: gps-ring 2s linear infinite;
 }
 
@@ -357,4 +357,4 @@
 
 /* ─── Utility ──────────────────────────────────────────── */
 .text-emerald { color: #047857; }
-.text-amber { color: #d97706; }
+.text-amber { color: #047857; }

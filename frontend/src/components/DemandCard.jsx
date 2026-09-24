@@ -39,13 +39,13 @@ const DemandCard = ({ forecastData, destination }) => {
           
           if (dayVal < 0) {
             // Historical volume
-            return 'rgba(59, 130, 246, 0.6)'; // Solid blue for the past
+            return 'rgba(16, 185, 129, 0.35)'; // Soft emerald for the past
           } else {
             // Future AI prediction
             const values = context.dataset.data;
             const maxIdx = values.indexOf(Math.max(...values));
-            if (index === maxIdx) return 'rgba(247, 201, 72, 0.8)'; // Golden warning for future summit
-            return 'rgba(0, 217, 126, 0.4)'; // Emerald green for expected future
+            if (index === maxIdx) return 'rgba(4, 120, 87, 0.95)'; // Deep emerald summit
+            return 'rgba(5, 150, 105, 0.6)'; // Vivid emerald green for expected future
           }
         },
         borderRadius: 4,
@@ -59,9 +59,9 @@ const DemandCard = ({ forecastData, destination }) => {
     plugins: {
       legend: { display: false },
       tooltip: {
-        backgroundColor: 'rgba(10, 14, 39, 0.9)',
-        bodyColor: '#fff',
-        titleColor: '#00d97e',
+        backgroundColor: '#064e3b',
+        bodyColor: '#ecfdf5',
+        titleColor: '#34d399',
         displayColors: false,
         callbacks: {
           title: (context) => {
@@ -77,7 +77,7 @@ const DemandCard = ({ forecastData, destination }) => {
     scales: {
       x: {
         grid: { display: false },
-        ticks: { color: '#94a3b8', font: { size: 9 }, maxRotation: 45, minRotation: 45 }
+        ticks: { color: '#64748b', font: { size: 9 }, maxRotation: 45, minRotation: 45 }
       },
       y: {
         display: false,
@@ -106,9 +106,9 @@ const DemandCard = ({ forecastData, destination }) => {
       </div>
       
       {activeEvent ? (
-        <div className="live-event-banner pulse-bg border-amber" style={{ padding: '8px 12px', marginBottom: '10px' }}>
-          <span className="event-label text-amber" style={{fontWeight: 'bold', fontSize: '0.75rem', display: 'block', marginBottom: '2px'}}>⚡ LIVE EVENT SURGE</span>
-          <h4 className="m-0 text-white" style={{ fontSize: '14px' }}>{activeEvent}</h4>
+        <div className="live-event-banner pulse-bg border-emerald" style={{ padding: '8px 12px', marginBottom: '10px' }}>
+          <span className="event-label text-emerald" style={{fontWeight: 'bold', fontSize: '0.75rem', display: 'block', marginBottom: '2px'}}>⚡ LIVE EVENT SURGE</span>
+          <h4 className="m-0 text-emerald" style={{ fontSize: '14px', fontWeight: 600 }}>{activeEvent}</h4>
         </div>
       ) : (
         <div className="demand-metric" style={{ marginBottom: '5px' }}>

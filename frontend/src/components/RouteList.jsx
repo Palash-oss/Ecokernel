@@ -50,7 +50,7 @@ const RouteList = ({ solutions, activeId, onSelect }) => {
                   <span>{route.total_co2_kg} kg</span>
                 </div>
                 <div className="metric">
-                  <IndianRupee size={14} className={isActive ? 'text-white' : 'text-amber'} />
+                  <IndianRupee size={14} className={isActive ? 'text-white' : 'text-emerald'} />
                   <span>₹{route.total_cost_inr.toLocaleString()}</span>
                 </div>
               </div>

@@ -18,7 +18,6 @@ import './App.css';
 function App() {
   // Application State
   const [showDashboard, setShowDashboard] = useState(false);
-  const [isWarping, setIsWarping] = useState(false);
   const [currentView, setCurrentView] = useState('dashboard');
 
   const [network, setNetwork] = useState({ nodes: [], edges: [] });
@@ -159,15 +158,8 @@ function App() {
     if (route) setActiveRoute(route);
   };
 
-  if (isWarping) {
-    return <WarpTransition onComplete={() => {
-      setIsWarping(false);
-      setShowDashboard(true);
-    }} />;
-  }
-
   if (!showDashboard) {
-    return <LandingPage onEnter={() => setIsWarping(true)} />;
+    return <LandingPage onEnter={() => setShowDashboard(true)} />;
   }
 
   const activeParams = runHistory[0] || null;
@@ -176,7 +168,11 @@ function App() {
 
   return (
     <div className="app-container">
-      <Navbar currentView={currentView} onViewChange={setCurrentView} />
+      <Navbar 
+        currentView={currentView} 
+        onViewChange={setCurrentView} 
+        onGoLanding={() => setShowDashboard(false)} 
+      />
 
       <main className="main-content">
         {currentView === 'dashboard' && (

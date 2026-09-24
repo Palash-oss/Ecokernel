@@ -84,9 +84,9 @@
 
 .badge-best-cost {
   font-size: 0.68rem;
-  background: #fffbeb;
-  color: #d97706;
-  border: 1px solid #fde68a;
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
   padding: 3px 10px;
   border-radius: 20px;
   font-weight: 800;
@@ -94,9 +94,9 @@
 
 .badge-best-time {
   font-size: 0.68rem;
-  background: #f0f9ff;
-  color: #0284c7;
-  border: 1px solid #bae6fd;
+  background: #f0fdf4;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
   padding: 3px 10px;
   border-radius: 20px;
   font-weight: 800;
@@ -124,5 +124,5 @@
 }
 
 .text-emerald { color: #047857; }
-.text-amber { color: #d97706; }
+.text-amber { color: #047857; }
 

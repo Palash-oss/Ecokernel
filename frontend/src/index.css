@@ -23,11 +23,11 @@
   --accent-subtle:    #a7f3d0;     /* Emerald 200 */
   --accent-dark:      #064e3b;     /* Emerald 900 */
 
-  /* Semantic Colors */
-  --accent-amber:     #d97706;
-  --accent-amber-bg:  #fffbeb;
-  --accent-red:       #ef4444;
-  --accent-red-bg:    #fef2f2;
+  /* Semantic Colors — Strict White & Emerald Green Only */
+  --accent-amber:     #047857;
+  --accent-amber-bg:  #ecfdf5;
+  --accent-red:       #064e3b;
+  --accent-red-bg:    #f0fdf4;
   --accent-blue:      #059669;
   --accent-blue-bg:   #ecfdf5;
   --accent-neon:      #00e599;
@@ -154,6 +154,12 @@ h1, h2, h3, h4, h5, h6 {
   width: 100%;
 }
 
+.main-content.overview-content {
+  padding: 0;
+  max-width: 100%;
+  gap: 0;
+}
+
 .dashboard-grid {
   display: grid;
   grid-template-columns: 440px 1fr;
@@ -208,9 +214,9 @@ h1, h2, h3, h4, h5, h6 {
 /* Text Utilities */
 .text-emerald  { color: var(--accent-primary); }
 .text-mint     { color: var(--accent-mint); }
-.text-amber    { color: var(--accent-amber); }
-.text-blue     { color: var(--accent-blue); }
-.text-red      { color: var(--accent-red); }
+.text-amber    { color: var(--accent-primary); }
+.text-blue     { color: var(--accent-primary); }
+.text-red      { color: var(--accent-primary); }
 .text-muted    { color: var(--text-muted); }
 .text-dim      { color: var(--text-dim); }
 .text-green    { color: var(--accent-primary); }
@@ -250,8 +256,8 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ─── Border Glow Variants ───────────────────────────────── */
 .border-cyan-glow {
-  border-color: #bae6fd !important;
-  box-shadow: 0 0 0 1px rgba(2, 132, 199, 0.1), var(--shadow-card) !important;
+  border-color: #a7f3d0 !important;
+  box-shadow: 0 0 0 1px rgba(4, 120, 87, 0.1), var(--shadow-card) !important;
 }
 
 .border-green-glow {

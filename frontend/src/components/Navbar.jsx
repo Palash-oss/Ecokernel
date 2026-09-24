@@ -3,7 +3,7 @@ import { Leaf, Navigation, UploadCloud } from 'lucide-react';
 import NetworkImporter from './NetworkImporter';
 import './Navbar.css';
 
-const Navbar = ({ currentView = 'dashboard', onViewChange, onNetworkImported }) => {
+const Navbar = ({ currentView = 'dashboard', onViewChange, onNetworkImported, onGoLanding }) => {
   const [scrolled, setScrolled] = useState(false);
   const [isImporterOpen, setIsImporterOpen] = useState(false);
 
@@ -25,7 +25,12 @@ const Navbar = ({ currentView = 'dashboard', onViewChange, onNetworkImported }) 
   return (
     <>
       <nav className={`navbar panel ${scrolled ? 'scrolled' : ''}`}>
-        <div className="navbar-brand">
+        <div 
+          className="navbar-brand" 
+          onClick={() => onGoLanding ? onGoLanding() : onViewChange?.('dashboard')} 
+          style={{ cursor: 'pointer' }}
+          title="Back to Landing Page"
+        >
           <div className="logo-icon">
             <Leaf size={24} color="#047857" />
           </div>
