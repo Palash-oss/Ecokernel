@@ -1,20 +1,29 @@
+/* ─── Route Panel — Crisp White & Figure Neon Green (#44D62C) ──────────── */
+
 .route-panel {
-  padding: 22px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  background: #ffffff;
-  border-radius: 16px;
+  gap: 22px;
+  background: var(--bg-card);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-radius: var(--radius-lg);
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-card);
+  transition: all 0.25s ease;
+}
+
+.route-panel:hover {
+  border-color: rgba(68, 214, 44, 0.45);
 }
 
 .route-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #f1f5f9;
-  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 14px;
 }
 
 .route-title {
@@ -24,17 +33,16 @@
 }
 
 .route-title h2 {
-  font-size: 1rem;
+  font-size: 1.05rem;
   font-weight: 800;
   margin: 0;
-  color: #0f172a;
+  color: var(--text-main);
   letter-spacing: -0.01em;
 }
 
 .icon-blue {
-  color: #047857;
+  color: #16a34a;
 }
-
 
 .green-score-badge {
   display: flex;
@@ -44,24 +52,26 @@
   border-radius: 20px;
   font-size: 0.8rem;
   font-weight: 800;
+  font-family: var(--font-mono);
 }
 
 .green-score-badge.high {
-  background: #ecfdf5;
-  color: #047857;
-  border: 1px solid #a7f3d0;
+  background: rgba(68, 214, 44, 0.15);
+  color: #15803d;
+  border: 1px solid rgba(68, 214, 44, 0.45);
+  box-shadow: 0 0 12px rgba(68, 214, 44, 0.2);
 }
 
 .green-score-badge.med {
-  background: #f0fdf4;
-  color: #065f46;
-  border: 1px solid #a7f3d0;
+  background: rgba(14, 165, 233, 0.12);
+  color: #0284c7;
+  border: 1px solid rgba(14, 165, 233, 0.35);
 }
 
 .green-score-badge.low {
-  background: #f8fafc;
-  color: #334155;
-  border: 1px solid #cbd5e1;
+  background: rgba(245, 158, 11, 0.12);
+  color: #d97706;
+  border: 1px solid rgba(245, 158, 11, 0.35);
 }
 
 .route-metrics {
@@ -71,54 +81,74 @@
 }
 
 .metric-box {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: #FFFFFF;
+  border: 1px solid var(--border-color);
   border-radius: 14px;
-  padding: 14px 10px;
+  padding: 14px 12px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   gap: 6px;
+  box-shadow: var(--shadow-xs);
+  transition: all 0.2s ease;
+}
+
+.metric-box:hover {
+  border-color: rgba(68, 214, 44, 0.45);
+  transform: translateY(-1px);
 }
 
 .metric-box svg {
-  color: #64748b;
+  color: var(--text-muted);
 }
 
 .metric-box.highlight {
-  border-color: #a7f3d0;
-  background: #ecfdf5;
+  border-color: rgba(68, 214, 44, 0.5);
+  background: rgba(68, 214, 44, 0.08);
+  box-shadow: 0 4px 16px rgba(68, 214, 44, 0.15);
 }
 
 .metric-box.highlight svg {
-  color: #047857;
+  color: #16a34a;
 }
 
 .metric-val {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 1.05rem;
+  font-size: 1.1rem;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--text-main);
+}
+
+.metric-box.highlight .metric-val {
+  color: #15803d;
 }
 
 .metric-lbl {
   font-size: 0.65rem;
-  color: #64748b;
+  color: var(--text-muted);
   text-transform: uppercase;
   font-weight: 800;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
+  font-family: var(--font-mono);
 }
+
+/* Carbon Tax Box */
+.metric-box.tax-box {
+  border-color: rgba(68, 214, 44, 0.4);
+  background: rgba(68, 214, 44, 0.06);
+}
+.metric-box.tax-box svg { color: #16a34a; }
 
 /* ISO 14083 Breakdown Card */
 .iso-breakdown-card {
-  background: #f0fdf4;
-  border: 1px solid #a7f3d0;
+  background: #F8FAFC;
+  border: 1px solid var(--border-color);
   border-radius: 14px;
-  padding: 14px 16px;
+  padding: 16px 18px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .iso-header {
@@ -128,15 +158,20 @@
 }
 
 .iso-tag {
-  font-size: 0.68rem;
+  font-size: 0.7rem;
   font-weight: 800;
-  color: #047857;
-  letter-spacing: 0.04em;
+  color: #15803d;
+  letter-spacing: 0.06em;
+  font-family: var(--font-mono);
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .iso-tkm {
   font-size: 0.76rem;
-  color: #334155;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
 }
 
 .iso-grid {
@@ -148,36 +183,39 @@
 .iso-stat {
   display: flex;
   flex-direction: column;
-  background: #ffffff;
-  padding: 8px 12px;
+  background: #FFFFFF;
+  padding: 10px 14px;
   border-radius: 10px;
-  border: 1px solid #d1fae5;
+  border: 1px solid var(--border-color);
 }
 
 .iso-lbl {
   font-size: 0.62rem;
-  color: #64748b;
+  color: var(--text-muted);
   font-weight: 700;
   text-transform: uppercase;
+  font-family: var(--font-mono);
 }
 
 .iso-val {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.92rem;
+  font-size: 0.95rem;
   font-weight: 800;
-  color: #0f172a;
+  color: #15803d;
+  margin-top: 2px;
 }
 
 .segments-list h3 {
   font-size: 0.85rem;
-  color: #475569;
-  margin-bottom: 10px;
+  color: var(--text-main);
+  margin-bottom: 12px;
   text-transform: uppercase;
   font-weight: 800;
+  letter-spacing: 0.04em;
 }
 
 .segments-scroll {
-  max-height: 220px;
+  max-height: 240px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -189,19 +227,26 @@
   display: flex;
   gap: 14px;
   padding: 12px 16px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: #FFFFFF;
+  border: 1px solid var(--border-color);
   border-radius: 12px;
   align-items: center;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-xs);
+}
+
+.segment-card:hover {
+  border-color: rgba(68, 214, 44, 0.45);
+  background: #F8FAFC;
 }
 
 .seg-icon {
-  background: #ecfdf5;
+  background: rgba(68, 214, 44, 0.12);
   padding: 8px;
   border-radius: 50%;
-  color: #047857;
+  color: #16a34a;
   display: flex;
-  border: 1px solid #a7f3d0;
+  border: 1px solid rgba(68, 214, 44, 0.3);
 }
 
 .seg-details {
@@ -211,26 +256,397 @@
 .seg-path {
   font-weight: 700;
   font-size: 0.9rem;
-  color: #0f172a;
+  color: var(--text-main);
   margin-bottom: 4px;
 }
 
 .seg-stats {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   font-size: 0.76rem;
-  color: #64748b;
+  color: var(--text-muted);
   font-weight: 500;
+  font-family: var(--font-mono);
 }
 
-.text-green { color: var(--accent-primary); }
-.text-red { color: var(--accent-red); }
+.text-green { color: #16a34a !important; }
+.text-red { color: #dc2626 !important; }
 
-/* Carbon Tax Box */
-.metric-box.tax-box {
-  border-color: #a7f3d0;
-  background: #ecfdf5;
+/* ─── Smart Dispatch & Corridor Risk Engine ───────────────── */
+.dispatch-risk-card {
+  background: #FFFFFF;
+  border: 1.5px solid var(--border-color);
+  border-radius: 14px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: var(--shadow-card);
 }
-.metric-box.tax-box svg { color: #047857; }
 
+.dispatch-risk-card.is-curfew {
+  border-color: rgba(239, 68, 68, 0.4);
+  background: #FEF2F2;
+  box-shadow: 0 4px 20px rgba(239, 68, 68, 0.1);
+}
 
+.dispatch-risk-card.is-buffer {
+  border-color: rgba(245, 158, 11, 0.4);
+  background: #FFFBEB;
+  box-shadow: 0 4px 20px rgba(245, 158, 11, 0.1);
+}
+
+.risk-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 10px;
+}
+
+.risk-header-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.risk-title-text {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-family: var(--font-heading);
+}
+
+.risk-status-pill {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-family: var(--font-mono);
+}
+
+.pill-critical {
+  background: rgba(239, 68, 68, 0.15);
+  color: #dc2626;
+  border: 1.5px solid #ef4444;
+}
+
+.pill-elevated {
+  background: rgba(245, 158, 11, 0.15);
+  color: #d97706;
+  border: 1px solid #f59e0b;
+}
+
+.pill-low {
+  background: rgba(68, 214, 44, 0.15);
+  color: #15803d;
+  border: 1px solid #44D62C;
+}
+
+/* Curfew Alert Banner */
+.curfew-alert-banner {
+  background: #FEE2E2;
+  color: #991B1B;
+  border-radius: 12px;
+  padding: 14px 16px;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.curfew-alert-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.curfew-badge {
+  background: #ef4444;
+  color: #ffffff;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 3px 9px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: var(--font-mono);
+}
+
+.risk-level-tag {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #dc2626;
+  font-family: var(--font-mono);
+}
+
+.curfew-headline {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: #7f1d1d;
+}
+
+.curfew-desc {
+  font-size: 0.8rem;
+  color: #450a0a;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Multi-Corridor Badges */
+.multi-curfew-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.multi-curfew-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #FFFFFF;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.76rem;
+}
+
+.m-city {
+  font-weight: 800;
+  color: #0F172A;
+}
+
+.m-window {
+  font-family: var(--font-mono);
+  color: #dc2626;
+  font-weight: 700;
+}
+
+/* Buffer Warning Banner */
+.buffer-warning-banner {
+  background: #FEF3C7;
+  color: #92400E;
+  border-radius: 12px;
+  padding: 14px 16px;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.buffer-badge {
+  background: #f59e0b;
+  color: #000000;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 3px 9px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: var(--font-mono);
+}
+
+.buffer-headline {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: #78350f;
+}
+
+.buffer-desc {
+  font-size: 0.8rem;
+  color: #451a03;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Optimized Dispatch Advisory Box */
+.dispatch-advisory-box {
+  background: #F0FDF4;
+  border: 1.5px solid rgba(68, 214, 44, 0.5);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 4px 14px rgba(68, 214, 44, 0.12);
+}
+
+.advisory-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.advisory-headline {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #15803d;
+  letter-spacing: 0.02em;
+}
+
+.advisory-saving-tag {
+  background: rgba(68, 214, 44, 0.2);
+  color: #15803d;
+  border: 1px solid rgba(68, 214, 44, 0.45);
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-family: var(--font-mono);
+}
+
+.advisory-detail-text {
+  font-size: 0.8rem;
+  color: var(--text-body);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.btn-apply-departure {
+  margin-top: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #44D62C 0%, #2bb815 100%);
+  color: #0F172A;
+  border: none;
+  padding: 9px 18px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: fit-content;
+  box-shadow: 0 4px 14px rgba(68, 214, 44, 0.35);
+}
+
+.btn-apply-departure:hover {
+  background: linear-gradient(135deg, #57F03E 0%, #44D62C 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(68, 214, 44, 0.5);
+}
+
+/* ─── 24-Hour Continuous Corridor Risk Horizon Strip ─────────────── */
+.timeline-24h-box {
+  background: #F8FAFC;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.timeline-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.timeline-title {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: var(--text-main);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-family: var(--font-heading);
+}
+
+.timeline-legend {
+  display: flex;
+  gap: 12px;
+  font-size: 0.64rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+}
+
+.leg-clear { color: #16a34a; }
+.leg-buffer { color: #d97706; }
+.leg-curfew { color: #dc2626; font-weight: 800; }
+
+.timeline-strip-scroll {
+  display: grid;
+  grid-template-columns: repeat(24, 1fr);
+  gap: 3px;
+  padding: 4px 0;
+  overflow-x: auto;
+}
+
+.timeline-slot-btn {
+  border: 1px solid var(--border-color);
+  background: #FFFFFF;
+  border-radius: 6px;
+  padding: 4px 1px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  min-width: 0;
+}
+
+.timeline-slot-btn:hover {
+  border-color: #44D62C;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(68, 214, 44, 0.25);
+}
+
+.timeline-slot-btn.is-selected {
+  border-color: #16a34a;
+  background: rgba(68, 214, 44, 0.15);
+  box-shadow: 0 0 10px rgba(68, 214, 44, 0.3);
+}
+
+.slot-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  line-height: 1;
+}
+
+.timeline-slot-btn.is-selected .slot-num {
+  color: #15803d;
+  font-weight: 800;
+}
+
+.slot-indicator {
+  width: 90%;
+  height: 4px;
+  border-radius: 2px;
+}
+
+.timeline-slot-btn.status-clear .slot-indicator {
+  background: #44D62C;
+}
+
+.timeline-slot-btn.status-buffer_risk .slot-indicator {
+  background: #f59e0b;
+}
+
+.timeline-slot-btn.status-curfew_hit .slot-indicator {
+  background: #ef4444;
+}
+
+.timeline-hint-text {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-top: 2px;
+}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Leaf, Navigation, UploadCloud } from 'lucide-react';
+import { Leaf, LayoutDashboard, Radar, BarChart3, FileCheck, UploadCloud, Radio } from 'lucide-react';
 import NetworkImporter from './NetworkImporter';
 import './Navbar.css';
 
@@ -24,39 +24,77 @@ const Navbar = ({ currentView = 'dashboard', onViewChange, onNetworkImported, on
 
   return (
     <>
-      <nav className={`navbar panel ${scrolled ? 'scrolled' : ''}`}>
-        <div 
-          className="navbar-brand" 
-          onClick={() => onGoLanding ? onGoLanding() : onViewChange?.('dashboard')} 
-          style={{ cursor: 'pointer' }}
-          title="Back to Landing Page"
-        >
-          <div className="logo-icon">
-            <Leaf size={24} color="#047857" />
-          </div>
-          <div className="logo-text">
-            <h1>EcoKernel</h1>
-            <span>Green Logistics Engine</span>
-          </div>
-        </div>
-        <div className="navbar-links">
-          <a href="#" className={currentView === 'dashboard' ? 'active' : ''} onClick={(e) => { e.preventDefault(); onViewChange?.('dashboard'); }}>Dashboard</a>
-          <a href="#" className={currentView === 'weekly' ? 'active' : ''} onClick={(e) => { e.preventDefault(); onViewChange?.('weekly'); }}>Weekly AI Radar</a>
-          <a href="#" className={currentView === 'emissions' ? 'active' : ''} onClick={(e) => { e.preventDefault(); onViewChange?.('emissions'); }}>Emissions Report</a>
-          <a href="#" className={currentView === 'contracts' ? 'active' : ''} onClick={(e) => { e.preventDefault(); onViewChange?.('contracts'); }}>Fleet Contracts</a>
-        </div>
-        <div className="navbar-user flex items-center gap-3">
-          <button 
-            className="navbar-import-btn"
-            onClick={() => setIsImporterOpen(true)}
-            title="Import custom CSV / GeoJSON supply chain network"
+      <header className={`navbar-wrapper ${scrolled ? 'scrolled' : ''}`}>
+        <nav className="navbar">
+          <div 
+            className="navbar-brand" 
+            onClick={() => onGoLanding ? onGoLanding() : onViewChange?.('dashboard')} 
+            style={{ cursor: 'pointer' }}
+            title="Back to Landing Page"
           >
-            <UploadCloud size={15} />
-            <span>Import Network</span>
-          </button>
-          <div className="user-avatar">DM</div>
-        </div>
-      </nav>
+            <div className="logo-icon">
+              <Leaf size={22} className="logo-leaf" />
+            </div>
+            <div className="logo-text">
+              <div className="logo-title-row">
+                <h1>EcoKernel</h1>
+                <span className="logo-version-tag">v3.2</span>
+              </div>
+              <span>Green Logistics Engine</span>
+            </div>
+          </div>
+
+          <div className="navbar-links">
+            <button 
+              type="button"
+              className={`nav-pill ${currentView === 'dashboard' ? 'active' : ''}`} 
+              onClick={() => onViewChange?.('dashboard')}
+            >
+              <LayoutDashboard size={15} />
+              <span>Dashboard</span>
+            </button>
+            <button 
+              type="button"
+              className={`nav-pill ${currentView === 'weekly' ? 'active' : ''}`} 
+              onClick={() => onViewChange?.('weekly')}
+            >
+              <Radar size={15} />
+              <span>Weekly AI Radar</span>
+            </button>
+            <button 
+              type="button"
+              className={`nav-pill ${currentView === 'emissions' ? 'active' : ''}`} 
+              onClick={() => onViewChange?.('emissions')}
+            >
+              <BarChart3 size={15} />
+              <span>Emissions Report</span>
+            </button>
+            <button 
+              type="button"
+              className={`nav-pill ${currentView === 'contracts' ? 'active' : ''}`} 
+              onClick={() => onViewChange?.('contracts')}
+            >
+              <FileCheck size={15} />
+              <span>Fleet Contracts</span>
+            </button>
+          </div>
+
+          <div className="navbar-user">
+            <button 
+              className="navbar-import-btn"
+              onClick={() => setIsImporterOpen(true)}
+              title="Import custom CSV / GeoJSON supply chain network"
+            >
+              <UploadCloud size={15} className="import-icon" />
+              <span>Import Network</span>
+            </button>
+            <div className="user-profile-badge" title="Dispatch Officer Online">
+              <div className="user-avatar">DM</div>
+              <span className="user-status-dot" />
+            </div>
+          </div>
+        </nav>
+      </header>
 
       <NetworkImporter 
         isOpen={isImporterOpen} 

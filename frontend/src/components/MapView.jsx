@@ -5,6 +5,7 @@ import {
 import L from 'leaflet';
 import { Navigation, Zap, Activity, Clock, Layers, Eye, EyeOff, Radio } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
+import { WS_BASE_URL } from '../api/client';
 import './MapView.css';
 
 // ─── Leaflet default icon fix ──────────────────────────────
@@ -167,7 +168,7 @@ const MapView = ({ network, origin, destination, activeRoute, optimisationParams
   useEffect(() => {
     let ws = null;
     try {
-      ws = new WebSocket('ws://localhost:8001/ws/telemetry');
+      ws = new WebSocket(`${WS_BASE_URL}/ws/telemetry`);
       ws.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
@@ -203,13 +204,11 @@ const MapView = ({ network, origin, destination, activeRoute, optimisationParams
       let weight = 5;
       let dashArray = null;
 
-      if (segment.mode === 'rail') { color = '#10b981'; dashArray = '6, 8'; weight = 5; }
-
-      else if (segment.mode === 'electric') { color = '#a3e635'; weight = 5; }
+      if (segment.mode === 'rail') { color = '#44D62C'; dashArray = '6, 8'; weight = 5; }
+      else if (segment.mode === 'electric') { color = '#35c220'; weight = 5; }
       else if (segment.disruption) { color = '#ef4444'; dashArray = '10, 10'; weight = 5; }
       else {
-        const intensity = segment.co2_kg / Math.max(segment.distance_km, 1);
-        color = intensity > 0.3 ? '#047857' : intensity > 0.15 ? '#059669' : '#10b981';
+        color = '#44D62C';
       }
 
       let latLngs = [];
@@ -265,8 +264,8 @@ const MapView = ({ network, origin, destination, activeRoute, optimisationParams
 
   // Region colors for network nodes
   const regionColor = (region) => {
-    const map = { North: '#047857', South: '#059669', East: '#10b981', West: '#065f46', Central: '#34d399' };
-    return map[region] || '#047857';
+    const map = { North: '#44D62C', South: '#35c220', East: '#44D62C', West: '#2bb815', Central: '#57F03E' };
+    return map[region] || '#44D62C';
   };
 
   return (
@@ -274,7 +273,7 @@ const MapView = ({ network, origin, destination, activeRoute, optimisationParams
       {/* HUD Overlay */}
       <div className="map-hud-overlay">
         <div className="hud-badge">
-          <Activity size={14} className="text-emerald" style={{ color: '#10b981' }} />
+          <Activity size={14} className="text-emerald" style={{ color: '#44D62C' }} />
           <span>GIS VECTOR TELEMETRY</span>
           <span className="hud-live-dot" />
         </div>
@@ -286,11 +285,11 @@ const MapView = ({ network, origin, destination, activeRoute, optimisationParams
             </div>
             <div className="hud-stat-item">
               <span className="hud-lbl">CO₂</span>
-              <span className="hud-val" style={{ color: '#10b981' }}>{activeRoute.total_co2_kg} kg</span>
+              <span className="hud-val" style={{ color: '#44D62C' }}>{activeRoute.total_co2_kg} kg</span>
             </div>
             <div className="hud-stat-item">
               <span className="hud-lbl">COST</span>
-              <span className="hud-val" style={{ color: '#047857' }}>₹{activeRoute.total_cost_inr?.toLocaleString()}</span>
+              <span className="hud-val" style={{ color: '#ffffff' }}>₹{activeRoute.total_cost_inr?.toLocaleString()}</span>
             </div>
             <div className="hud-stat-item">
               <span className="hud-lbl">MODE</span>
@@ -456,7 +455,7 @@ const MapView = ({ network, origin, destination, activeRoute, optimisationParams
           <Marker 
             key={`telemetry-v-${v.id}-${idx}`}
             position={[v.lat, v.lng]}
-            icon={createCustomIcon(v.type === 'electric' ? '#047857' : '#10b981', true)}
+            icon={createCustomIcon(v.type === 'electric' ? '#44D62C' : '#35c220', true)}
             zIndexOffset={800}
           >
             <Popup className="dark-popup">
@@ -477,10 +476,10 @@ const MapView = ({ network, origin, destination, activeRoute, optimisationParams
 
       {/* Legend */}
       <div className="map-legend">
-        <div className="legend-item"><span className="legend-dot" style={{ background: '#10b981' }} />Rail / EV</div>
-        <div className="legend-item"><span className="legend-dot" style={{ background: '#047857' }} />Road</div>
-        <div className="legend-item"><span className="legend-dot" style={{ background: '#64748b' }} />Disrupted</div>
-        {liveGps && <div className="legend-item"><span className="legend-dot gps-blink" style={{ background: '#10b981' }} />GPS Live</div>}
+        <div className="legend-item"><span className="legend-dot" style={{ background: '#44D62C' }} />Rail / EV</div>
+        <div className="legend-item"><span className="legend-dot" style={{ background: '#ffffff' }} />Road</div>
+        <div className="legend-item"><span className="legend-dot" style={{ background: '#ef4444' }} />Disrupted</div>
+        {liveGps && <div className="legend-item"><span className="legend-dot gps-blink" style={{ background: '#44D62C' }} />GPS Live</div>}
       </div>
     </div>
   );

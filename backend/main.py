@@ -32,6 +32,7 @@ from data.importer import import_custom_network, export_network_data
 from data.environmental_service import fetch_elevation_profile, fetch_weather_impact
 from engine.telemetry_stream import telemetry_broadcaster
 from engine.audit_reporter import generate_carbon_audit_certificate
+from engine.dispatch_risk_engine import evaluate_dispatch_risk
 
 
 # ─── App State ─────────────────────────────────────────────
@@ -160,6 +161,28 @@ async def optimize_route(request: OptimizeRequest):
             for s in sol["segments"]
         ]
         
+        # Collect route geometry from segments
+        combined_geom = []
+        for s in sol["segments"]:
+            if s.get("geometry"):
+                combined_geom.extend(s["geometry"])
+
+        origin_coords = (request.origin_lat, request.origin_lng) if (request.origin_lat is not None and request.origin_lng is not None) else None
+        dest_coords = (request.dest_lat, request.dest_lng) if (request.dest_lat is not None and request.dest_lng is not None) else None
+
+        # Calculate dispatch risk & curfew analysis
+        risk_profile = evaluate_dispatch_risk(
+            origin=request.origin,
+            destination=request.destination,
+            travel_time_minutes=sol["total_time_minutes"],
+            vehicle_type=sol.get("vehicle_type", vehicle_id),
+            departure_time_str=request.departure_time,
+            geometry=combined_geom if combined_geom else None,
+            origin_coords=origin_coords,
+            dest_coords=dest_coords,
+            target_sla_delivery_time=request.target_sla_delivery_time,
+        )
+        
         route_solutions.append(RouteSolution(
             id=sol["id"],
             segments=segments,
@@ -173,6 +196,8 @@ async def optimize_route(request: OptimizeRequest):
             strategy=sol.get("strategy"),
             is_fastest=sol.get("is_fastest"),
             is_greenest=sol.get("is_greenest"),
+            iso_14083=sol.get("iso_14083"),
+            dispatch_risk=risk_profile,
         ))
     
     # Identify best cost and best green
@@ -228,6 +253,25 @@ async def route_data_v1(request: schemas.RouteDataRequest):
             )
             for s in sol["segments"]
         ]
+        combined_geom = []
+        for s in sol["segments"]:
+            if s.get("geometry"):
+                combined_geom.extend(s["geometry"])
+
+        origin_coords = (request.origin.lat, request.origin.lng) if (request.origin.lat is not None and request.origin.lng is not None) else None
+        dest_coords = (request.destination.lat, request.destination.lng) if (request.destination.lat is not None and request.destination.lng is not None) else None
+
+        risk_profile = evaluate_dispatch_risk(
+            origin=request.origin.address,
+            destination=request.destination.address,
+            travel_time_minutes=sol["total_time_minutes"],
+            vehicle_type=sol.get("vehicle_type", request.vehicle_type),
+            departure_time_str=request.departure_time,
+            geometry=combined_geom if combined_geom else None,
+            origin_coords=origin_coords,
+            dest_coords=dest_coords,
+            target_sla_delivery_time=request.target_sla_delivery_time,
+        )
         route_solutions.append(RouteSolution(
             id=sol["id"],
             segments=segments,
@@ -241,6 +285,8 @@ async def route_data_v1(request: schemas.RouteDataRequest):
             strategy=sol.get("strategy"),
             is_fastest=sol.get("is_fastest"),
             is_greenest=sol.get("is_greenest"),
+            iso_14083=sol.get("iso_14083"),
+            dispatch_risk=risk_profile,
         ))
     
     return ParetoFront(
@@ -326,6 +372,22 @@ async def optimize_fast(request: schemas.RouteDataRequest):
             )
             for s in sol["segments"]
         ]
+        combined_geom = []
+        for s in sol["segments"]:
+            if s.get("geometry"):
+                combined_geom.extend(s["geometry"])
+
+        risk_profile = evaluate_dispatch_risk(
+            origin=request.origin.address,
+            destination=request.destination.address,
+            travel_time_minutes=sol["total_time_minutes"],
+            vehicle_type=sol.get("vehicle_type", request.vehicle_type),
+            departure_time_str=request.departure_time,
+            geometry=combined_geom if combined_geom else None,
+            origin_coords=(origin_lat, origin_lng),
+            dest_coords=(dest_lat, dest_lng),
+            target_sla_delivery_time=request.target_sla_delivery_time,
+        )
         route_solutions.append(RouteSolution(
             id=sol["id"],
             segments=segments,
@@ -339,6 +401,8 @@ async def optimize_fast(request: schemas.RouteDataRequest):
             strategy=sol.get("strategy"),
             is_fastest=sol.get("is_fastest"),
             is_greenest=sol.get("is_greenest"),
+            iso_14083=sol.get("iso_14083"),
+            dispatch_risk=risk_profile,
         ))
 
     return ParetoFront(
@@ -706,6 +770,21 @@ async def get_emissions_stats():
         return stats
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# ─── Optional Frontend Static Mount for Monolith / Docker Deployments ────
+from fastapi.staticfiles import StaticFiles
+
+dist_candidates = [
+    os.path.join(os.path.dirname(__file__), "..", "frontend", "dist"),
+    os.path.join(os.path.dirname(__file__), "static"),
+    "/app/frontend/dist",
+]
+for dist in dist_candidates:
+    if os.path.exists(dist) and os.path.isdir(dist):
+        app.mount("/", StaticFiles(directory=dist, html=True), name="static_frontend")
+        print(f"[EcoKernel] Mounted static frontend from {dist}")
+        break
 
 
 if __name__ == "__main__":

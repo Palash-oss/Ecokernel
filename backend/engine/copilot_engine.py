@@ -58,6 +58,16 @@ class CopilotRAGEngine:
             context_parts.append(
                 f"Currently Selected UI Route: Vehicle={mode}, Distance={dist:.1f}km, CO2={co2:.2f}kg, Cost=₹{cost:,.2f}"
             )
+            if active_route.get("dispatch_risk"):
+                dr = active_route["dispatch_risk"]
+                curf = dr.get("curfew", {})
+                adv = dr.get("optimal_departure", {})
+                chks = [c.get("name") for c in dr.get("choke_points", [])]
+                context_parts.append(
+                    f"Corridor Dispatch Risk: Departure={dr.get('planned_departure')}, P50={dr.get('arrival_p50_nominal')}, "
+                    f"P90={dr.get('arrival_p90_buffered')}, Curfew Hit={curf.get('is_curfew_hit')}, Gate={curf.get('border_gate')}, "
+                    f"Detention={curf.get('detention_minutes')}m, Choke Points={chks}, Advisory={adv.get('advisory_headline')}."
+                )
 
         if active_priority is not None:
             green_weight = active_priority * 100

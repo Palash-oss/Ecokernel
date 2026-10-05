@@ -81,7 +81,7 @@ const ParticleCanvas = () => {
         p.y = (p.y + p.vy + H()) % H();
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(0, 229, 153, ${p.alpha})`;
+        ctx.fillStyle = `rgba(68, 214, 44, ${p.alpha})`;
         ctx.fill();
       });
 
@@ -94,7 +94,7 @@ const ParticleCanvas = () => {
             ctx.beginPath();
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.strokeStyle = `rgba(0, 229, 153, ${0.12 * (1 - d / 110)})`;
+            ctx.strokeStyle = `rgba(68, 214, 44, ${0.15 * (1 - d / 110)})`;
             ctx.lineWidth = 0.65;
             ctx.stroke();
           }
@@ -266,9 +266,9 @@ const InteractiveCorridorViz = () => {
               </feMerge>
             </filter>
             <linearGradient id="corridor-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#00e599" stopOpacity="0.9" />
-              <stop offset="50%" stopColor="#10b981" stopOpacity="1" />
-              <stop offset="100%" stopColor="#34d399" stopOpacity="0.8" />
+              <stop offset="0%" stopColor="#44D62C" stopOpacity="0.95" />
+              <stop offset="50%" stopColor="#35c220" stopOpacity="1" />
+              <stop offset="100%" stopColor="#44D62C" stopOpacity="0.85" />
             </linearGradient>
             <linearGradient id="inactive-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#cbd5e1" stopOpacity="0.25" />
@@ -277,18 +277,18 @@ const InteractiveCorridorViz = () => {
           </defs>
 
           {/* Tactical Radar Grid Lines */}
-          <line x1="40" y1="90" x2="500" y2="90" stroke="rgba(4, 120, 87, 0.08)" strokeDasharray="4 4" />
-          <line x1="40" y1="180" x2="500" y2="180" stroke="rgba(4, 120, 87, 0.08)" strokeDasharray="4 4" />
-          <line x1="40" y1="270" x2="500" y2="270" stroke="rgba(4, 120, 87, 0.08)" strokeDasharray="4 4" />
-          <line x1="160" y1="35" x2="160" y2="340" stroke="rgba(4, 120, 87, 0.08)" strokeDasharray="4 4" />
-          <line x1="280" y1="35" x2="280" y2="340" stroke="rgba(4, 120, 87, 0.08)" strokeDasharray="4 4" />
-          <line x1="400" y1="35" x2="400" y2="340" stroke="rgba(4, 120, 87, 0.08)" strokeDasharray="4 4" />
+          <line x1="40" y1="90" x2="500" y2="90" stroke="rgba(68, 214, 44, 0.12)" strokeDasharray="4 4" />
+          <line x1="40" y1="180" x2="500" y2="180" stroke="rgba(68, 214, 44, 0.12)" strokeDasharray="4 4" />
+          <line x1="40" y1="270" x2="500" y2="270" stroke="rgba(68, 214, 44, 0.12)" strokeDasharray="4 4" />
+          <line x1="160" y1="35" x2="160" y2="340" stroke="rgba(68, 214, 44, 0.12)" strokeDasharray="4 4" />
+          <line x1="280" y1="35" x2="280" y2="340" stroke="rgba(68, 214, 44, 0.12)" strokeDasharray="4 4" />
+          <line x1="400" y1="35" x2="400" y2="340" stroke="rgba(68, 214, 44, 0.12)" strokeDasharray="4 4" />
 
           {/* Header Indicators inside SVG */}
-          <text x="45" y="32" fill="#047857" fontSize="10" fontWeight="700" fontFamily="JetBrains Mono, monospace">
+          <text x="45" y="32" fill="#44D62C" fontSize="10" fontWeight="800" fontFamily="JetBrains Mono, monospace">
             INDIA FREIGHT CORRIDOR RADAR · TOPOGRAPHY GRADE
           </text>
-          <text x="495" y="32" textAnchor="end" fill="#64748b" fontSize="9" fontWeight="600" fontFamily="JetBrains Mono, monospace">
+          <text x="495" y="32" textAnchor="end" fill="#94a3b8" fontSize="9" fontWeight="700" fontFamily="JetBrains Mono, monospace">
             GLEC v3.2 AUDITED
           </text>
 
@@ -323,8 +323,8 @@ const InteractiveCorridorViz = () => {
                 cx={pt.x}
                 cy={pt.y}
                 r="18"
-                fill="rgba(0, 229, 153, 0.08)"
-                stroke="rgba(0, 229, 153, 0.25)"
+                fill="rgba(68, 214, 44, 0.1)"
+                stroke="rgba(68, 214, 44, 0.35)"
                 strokeWidth="1"
                 className="node-ring-pulse"
               />
@@ -332,7 +332,7 @@ const InteractiveCorridorViz = () => {
                 cx={pt.x}
                 cy={pt.y}
                 r="6"
-                fill="#00e599"
+                fill="#44D62C"
                 filter="url(#emerald-glow)"
               />
               <text
@@ -425,38 +425,71 @@ const TelemetryTicker = () => {
   );
 };
 
-/* ─── Fixed-Frame Typewriter Component ────────────────────── */
-const TYPEWRITER_WORDS = ['Decarbonize', 'Optimize', 'Accelerate', 'Transform'];
+/* ─── Quantum Scramble / Matrix Decrypt Component ─────────── */
+const QUANTUM_WORDS = [
+  'Optimize',
+  'Decarbonize',
+  'Quantum-Route',
+  'Zero-Carbon',
+  'Accelerate'
+];
 
-const TypewriterWord = () => {
-  const [idx, setIdx] = useState(0);
-  const [text, setText] = useState('Decarbonize');
-  const [deleting, setDeleting] = useState(false);
+const GLYPHS = '01ΣΨλΩ∆⚡∯∇§⌘XZK#%&*0x8F94';
+
+const QuantumScrambleWord = () => {
+  const [wordIndex, setWordIndex] = useState(0);
+  const [displayText, setDisplayText] = useState(QUANTUM_WORDS[0]);
+  const [isScrambling, setIsScrambling] = useState(false);
+  const frameRef = useRef(null);
 
   useEffect(() => {
-    const word = TYPEWRITER_WORDS[idx];
-    let timer;
+    let timeoutId;
+    const targetWord = QUANTUM_WORDS[wordIndex];
+    let iteration = 0;
+    setIsScrambling(true);
 
-    if (!deleting && text.length < word.length) {
-      timer = setTimeout(() => setText(word.slice(0, text.length + 1)), 85);
-    } else if (!deleting && text.length === word.length) {
-      timer = setTimeout(() => setDeleting(true), 2100);
-    } else if (deleting && text.length > 0) {
-      timer = setTimeout(() => setText(text.slice(0, -1)), 45);
-    } else if (deleting && text.length === 0) {
-      setDeleting(false);
-      setIdx((prev) => (prev + 1) % TYPEWRITER_WORDS.length);
-    }
+    const scramble = () => {
+      setDisplayText(
+        targetWord
+          .split('')
+          .map((char, index) => {
+            if (index < Math.floor(iteration)) {
+              return targetWord[index];
+            }
+            return GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
+          })
+          .join('')
+      );
 
-    return () => clearTimeout(timer);
-  }, [text, deleting, idx]);
+      if (iteration < targetWord.length) {
+        iteration += 0.35; // Controls how fast letters lock in smoothly
+        frameRef.current = requestAnimationFrame(scramble);
+      } else {
+        setIsScrambling(false);
+        // Wait before transitioning to next word
+        timeoutId = setTimeout(() => {
+          setWordIndex((prev) => (prev + 1) % QUANTUM_WORDS.length);
+        }, 2600);
+      }
+    };
+
+    frameRef.current = requestAnimationFrame(scramble);
+
+    return () => {
+      cancelAnimationFrame(frameRef.current);
+      clearTimeout(timeoutId);
+    };
+  }, [wordIndex]);
 
   return (
-    <div className="typewriter-container">
-      <span className="typewriter-word text-emerald-gradient">
-        {text}
+    <div className="quantum-scramble-container">
+      <span className={`quantum-scramble-word text-emerald-gradient ${isScrambling ? 'scrambling' : 'resolved'}`}>
+        {displayText}
       </span>
-      <span className="typewriter-cursor">|</span>
+      <span className="quantum-spark-badge">
+        <span className="spark-pulse-dot" />
+        <span className="spark-tag">{isScrambling ? 'DECRYPTING...' : 'SOLVER READY'}</span>
+      </span>
     </div>
   );
 };
@@ -687,7 +720,7 @@ const LandingPage = ({ onEnter }) => {
             </div>
 
             <h1 className="hero-h1">
-              <TypewriterWord />
+              <QuantumScrambleWord />
               <span className="hero-h1-line2">Indian Freight.</span>
               <span className="hero-h1-sub">Zero-Carbon Physics.</span>
             </h1>

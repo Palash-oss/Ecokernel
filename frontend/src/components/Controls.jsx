@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Settings2, MapPin, Navigation, Search, Truck, Zap, Sliders, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Settings2, MapPin, Navigation, Search, Truck, Zap, Sliders, ArrowRight, CheckCircle2, Clock } from 'lucide-react';
 import api from '../api/client';
 import './Controls.css';
 
@@ -145,12 +145,51 @@ const CustomLocationInput = ({ label, value, onChange, onSelect, placeholder, is
   );
 };
 
-const Controls = ({ vehicles, onOptimize, isOptimizing }) => {
+const Controls = ({ vehicles, onOptimize, isOptimizing, externalDepartureTime, onDepartureTimeChange }) => {
   const [origin, setOrigin] = useState({ name: 'Mumbai', lat: 19.0760, lng: 72.8777 });
   const [destination, setDestination] = useState({ name: 'Delhi', lat: 28.7041, lng: 77.1025 });
   const [vehicleId, setVehicleId] = useState('ashok_leyland_euro6');
   const [priority, setPriority] = useState(50);
   const [load, setLoad] = useState(10.0);
+  const [departureTime, setDepartureTime] = useState(externalDepartureTime || '');
+  const [dispatchMode, setDispatchMode] = useState('departure'); // 'departure' | 'sla_target'
+  const [targetSlaTime, setTargetSlaTime] = useState('');
+
+  const getMinutesFromTime = (str) => {
+    if (!str) return 360;
+    const parts = str.split(':');
+    if (parts.length >= 2) return parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
+    return 360;
+  };
+
+  const getTimeFromMinutes = (mins) => {
+    const h = Math.floor(mins / 60) % 24;
+    const m = mins % 60;
+    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+  };
+
+  const [sliderMinutes, setSliderMinutes] = useState(getMinutesFromTime(externalDepartureTime));
+
+  useEffect(() => {
+    if (externalDepartureTime !== undefined) {
+      setDepartureTime(externalDepartureTime);
+      setSliderMinutes(getMinutesFromTime(externalDepartureTime));
+    }
+  }, [externalDepartureTime]);
+
+  const handleTimeChange = (t) => {
+    setDepartureTime(t);
+    setSliderMinutes(getMinutesFromTime(t));
+    if (onDepartureTimeChange) onDepartureTimeChange(t);
+  };
+
+  const handleSliderChange = (val) => {
+    const mins = Number(val);
+    setSliderMinutes(mins);
+    const timeStr = getTimeFromMinutes(mins);
+    setDepartureTime(timeStr);
+    if (onDepartureTimeChange) onDepartureTimeChange(timeStr);
+  };
 
   const handleApplyPreset = (preset) => {
     setOrigin(preset.origin);
@@ -186,7 +225,9 @@ const Controls = ({ vehicles, onOptimize, isOptimizing }) => {
       destination: { address: finalDest.name, lat: finalDest.lat ?? null, lng: finalDest.lng ?? null },
       vehicle_type: vehicleId,
       load_tonnes: Number(load),
-      priority: priority / 100.0
+      priority: priority / 100.0,
+      departure_time: dispatchMode === 'departure' ? (departureTime ? departureTime : null) : null,
+      target_sla_delivery_time: dispatchMode === 'sla_target' ? (targetSlaTime ? targetSlaTime : null) : null
     });
   };
 
@@ -231,6 +272,122 @@ const Controls = ({ vehicles, onOptimize, isOptimizing }) => {
             placeholder="Search delivery destination..."
             isOrigin={false}
           />
+        </div>
+
+        {/* Dynamic 24-Hour Dispatch Horizon & SLA Delivery Mode */}
+        <div className="dispatch-schedule-box">
+          <div className="dispatch-schedule-header">
+            <div className="flex-center gap-1">
+              <Clock size={13} className="text-emerald" />
+              <label className="dispatch-lbl">DISPATCH PLANNING MODE</label>
+            </div>
+            <div className="mode-toggle-group">
+              <button
+                type="button"
+                className={`mode-btn ${dispatchMode === 'departure' ? 'active' : ''}`}
+                onClick={() => setDispatchMode('departure')}
+              >
+                Depart At
+              </button>
+              <button
+                type="button"
+                className={`mode-btn ${dispatchMode === 'sla_target' ? 'active' : ''}`}
+                onClick={() => setDispatchMode('sla_target')}
+              >
+                Deliver By (SLA)
+              </button>
+            </div>
+          </div>
+
+          {dispatchMode === 'departure' ? (
+            <div className="dispatch-controls-flow">
+              {/* 24-Hour Continuous Timeline Slider */}
+              <div className="timeline-slider-row">
+                <div className="slider-label-row">
+                  <span className="slider-lbl">24-Hour Dispatch Timeline:</span>
+                  <span className="slider-time-badge">
+                    {departureTime ? departureTime : 'Live (Now)'}
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min="0"
+                  max="1425"
+                  step="15"
+                  value={sliderMinutes}
+                  onChange={e => handleSliderChange(e.target.value)}
+                  className="timeline-scrubber"
+                />
+              </div>
+
+              {/* Quick Period Buttons & Precise Input */}
+              <div className="dispatch-time-row">
+                <div className="dispatch-quick-chips">
+                  <button
+                    type="button"
+                    className={`dispatch-chip ${!departureTime ? 'active' : ''}`}
+                    onClick={() => handleTimeChange('')}
+                  >
+                    Now
+                  </button>
+                  <button
+                    type="button"
+                    className={`dispatch-chip ${departureTime === '04:00' ? 'active' : ''}`}
+                    onClick={() => handleTimeChange('04:00')}
+                  >
+                    04:00
+                  </button>
+                  <button
+                    type="button"
+                    className={`dispatch-chip ${departureTime === '08:00' ? 'active' : ''}`}
+                    onClick={() => handleTimeChange('08:00')}
+                  >
+                    08:00
+                  </button>
+                  <button
+                    type="button"
+                    className={`dispatch-chip ${departureTime === '14:00' ? 'active' : ''}`}
+                    onClick={() => handleTimeChange('14:00')}
+                  >
+                    14:00
+                  </button>
+                  <button
+                    type="button"
+                    className={`dispatch-chip ${departureTime === '22:00' ? 'active' : ''}`}
+                    onClick={() => handleTimeChange('22:00')}
+                  >
+                    22:00
+                  </button>
+                </div>
+
+                <div className="dispatch-custom-time">
+                  <input
+                    type="time"
+                    value={departureTime}
+                    onChange={e => handleTimeChange(e.target.value)}
+                    className="time-picker-input"
+                    title="Enter custom planned departure time"
+                  />
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="sla-target-flow">
+              <span className="sla-desc-text">
+                Target warehouse dock appointment. EcoKernel will reverse-engineer the optimum green departure.
+              </span>
+              <div className="sla-input-row">
+                <label className="sla-lbl">Required Dock Arrival:</label>
+                <input
+                  type="time"
+                  value={targetSlaTime}
+                  onChange={e => setTargetSlaTime(e.target.value)}
+                  className="time-picker-input"
+                  required
+                />
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Fleet & Payload */}

@@ -1,7 +1,7 @@
 /* ================================================================
-   LandingPage.css — UNIFIED WHITE & EMERALD GREEN DESIGN
+   LandingPage.css — Crisp White (#FFFFFF) & Figure Neon Green (#44D62C)
    EcoKernel Green Logistics Engine
-   Color Palette: Pure White (#ffffff), Light Canvas (#f8fafc), Emerald Green (#047857, #10b981)
+   Color Palette: Pure White (#FFFFFF), Snow Canvas (#F8FAFC), Figure Neon Green (#44D62C)
    Typography: Plus Jakarta Sans (Headings), Outfit (Body), JetBrains Mono
    ================================================================ */
 
@@ -32,8 +32,8 @@ html.lenis, html.lenis body {
 .lp-root {
   width: 100%;
   min-height: 100vh;
-  background-color: #f8fafc;
-  color: #0f172a;
+  background-color: #F8FAFC;
+  color: #0F172A;
   font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
@@ -42,12 +42,12 @@ html.lenis, html.lenis body {
 }
 
 ::selection {
-  background: #a7f3d0;
-  color: #064e3b;
+  background: #44D62C;
+  color: #0F172A;
 }
 
 .lp-container {
-  max-width: 1240px;
+  max-width: 1280px;
   margin: 0 auto;
   padding: 0 32px;
   width: 100%;
@@ -56,20 +56,21 @@ html.lenis, html.lenis body {
 
 /* ─── Text & Accent Utilities ────────────────────────────── */
 .text-emerald {
-  color: #047857 !important;
+  color: #15803d !important;
+  font-weight: 700;
 }
 
 .text-white {
-  color: #0f172a !important;
+  color: #0F172A !important;
 }
 
 .text-glow-emerald {
-  color: #047857 !important;
+  color: #15803d !important;
   font-weight: 800;
 }
 
 .text-emerald-gradient {
-  background: linear-gradient(135deg, #047857 0%, #059669 50%, #10b981 100%);
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   display: inline-block;
@@ -92,12 +93,12 @@ html.lenis, html.lenis body {
   gap: 8px;
   padding: 6px 14px;
   border-radius: 100px;
-  background: #ecfdf5;
-  border: 1px solid #a7f3d0;
-  color: #047857;
+  background: rgba(68, 214, 44, 0.12);
+  border: 1px solid rgba(68, 214, 44, 0.4);
+  color: #15803d;
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.72rem;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   margin-bottom: 20px;
@@ -106,8 +107,8 @@ html.lenis, html.lenis body {
 .section-h2 {
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: clamp(2.2rem, 4vw, 3.2rem);
-  font-weight: 800;
-  color: #0f172a;
+  font-weight: 900;
+  color: #0F172A;
   letter-spacing: -0.035em;
   line-height: 1.15;
   margin: 0 0 16px 0;
@@ -115,7 +116,7 @@ html.lenis, html.lenis body {
 
 .section-sub {
   font-size: 1.05rem;
-  color: #64748b;
+  color: #475569;
   line-height: 1.6;
   margin: 0;
 }
@@ -128,22 +129,22 @@ html.lenis, html.lenis body {
   right: 0;
   z-index: 200;
   transition: all 0.3s ease;
-  padding: 14px 0;
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  padding: 16px 0;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid #E2E8F0;
 }
 
 .lp-nav-scrolled {
-  background: rgba(255, 255, 255, 0.96);
-  border-bottom: 1px solid #e2e8f0;
-  box-shadow: 0 4px 20px rgba(4, 120, 87, 0.06);
-  padding: 10px 0;
+  background: rgba(255, 255, 255, 0.98);
+  border-bottom: 1px solid rgba(68, 214, 44, 0.4);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  padding: 12px 0;
 }
 
 .lp-nav-inner {
-  max-width: 1240px;
+  max-width: 1280px;
   margin: 0 auto;
   padding: 0 32px;
   height: 52px;
@@ -164,13 +165,13 @@ html.lenis, html.lenis body {
 .lp-brand-icon {
   width: 38px;
   height: 38px;
-  background: linear-gradient(135deg, #047857 0%, #059669 100%);
+  background: linear-gradient(135deg, #44D62C 0%, #2bb815 100%);
   border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ffffff;
-  box-shadow: 0 4px 12px rgba(4, 120, 87, 0.25);
+  color: #0F172A;
+  box-shadow: 0 4px 14px rgba(68, 214, 44, 0.4);
 }
 
 .lp-brand-info {
@@ -181,18 +182,19 @@ html.lenis, html.lenis body {
 .lp-brand-name {
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-weight: 800;
-  font-size: 1.15rem;
-  color: #0f172a;
+  font-size: 1.2rem;
+  color: #0F172A;
   line-height: 1.1;
   letter-spacing: -0.02em;
 }
 
 .lp-brand-tag {
   font-size: 0.68rem;
-  color: #047857;
+  color: #15803d;
   font-weight: 700;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
+  font-family: 'JetBrains Mono', monospace;
 }
 
 .lp-nav-links {
@@ -202,7 +204,7 @@ html.lenis, html.lenis body {
 }
 
 .lp-nav-link {
-  color: #475569;
+  color: #334155;
   text-decoration: none;
   font-size: 0.9rem;
   font-weight: 600;
@@ -213,32 +215,33 @@ html.lenis, html.lenis body {
 }
 
 .lp-nav-link:hover {
-  color: #047857;
-  background: #ecfdf5;
+  color: #15803d;
+  background: rgba(68, 214, 44, 0.1);
 }
 
 .lp-cta-btn {
-  background: linear-gradient(135deg, #047857 0%, #059669 100%);
-  color: #ffffff;
+  background: linear-gradient(135deg, #44D62C 0%, #2bb815 100%);
+  color: #0F172A;
   border: none;
-  padding: 10px 22px;
+  padding: 11px 24px;
   border-radius: 40px;
   font-size: 0.88rem;
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 8px;
   transition: all 0.25s ease;
-  box-shadow: 0 4px 14px rgba(4, 120, 87, 0.25);
+  box-shadow: 0 4px 16px rgba(68, 214, 44, 0.35);
   white-space: nowrap;
   flex-shrink: 0;
+  font-family: var(--font-body);
 }
 
 .lp-cta-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(4, 120, 87, 0.35);
-  background: linear-gradient(135deg, #064e3b 0%, #047857 100%);
+  box-shadow: 0 6px 24px rgba(68, 214, 44, 0.55);
+  background: linear-gradient(135deg, #57F03E 0%, #44D62C 100%);
 }
 
 @media (max-width: 860px) {
@@ -248,14 +251,14 @@ html.lenis, html.lenis body {
 /* ─── Hero Section ───────────────────────────────────────── */
 .lp-hero {
   position: relative;
-  min-height: 85vh;
+  min-height: 88vh;
   display: flex;
   align-items: center;
-  padding: 110px 0 60px 0;
+  padding: 120px 0 70px 0;
   overflow: hidden;
-  background: #ffffff;
+  background: #F8FAFC;
   box-sizing: border-box;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid #E2E8F0;
 }
 
 .lp-canvas {
@@ -265,23 +268,23 @@ html.lenis, html.lenis body {
   height: 100%;
   pointer-events: none;
   z-index: 1;
-  opacity: 0.6;
+  opacity: 0.5;
 }
 
-/* Ambient Ambient Energy Beams */
+/* Ambient Energy Beams */
 .beam {
   position: absolute;
   border-radius: 50%;
   filter: blur(140px);
   pointer-events: none;
   z-index: 0;
-  opacity: 0.35;
+  opacity: 0.15;
 }
 
 .beam-1 {
   width: 500px;
   height: 500px;
-  background: radial-gradient(circle, rgba(167, 243, 208, 0.45) 0%, rgba(209, 250, 229, 0.2) 60%, transparent 80%);
+  background: radial-gradient(circle, rgba(68, 214, 44, 0.4) 0%, transparent 70%);
   top: -100px;
   left: -80px;
 }
@@ -289,7 +292,7 @@ html.lenis, html.lenis body {
 .beam-2 {
   width: 580px;
   height: 580px;
-  background: radial-gradient(circle, rgba(167, 243, 208, 0.4) 0%, rgba(236, 253, 245, 0.2) 60%, transparent 80%);
+  background: radial-gradient(circle, rgba(68, 214, 44, 0.35) 0%, transparent 70%);
   top: 15%;
   right: -100px;
 }
@@ -298,24 +301,25 @@ html.lenis, html.lenis body {
   position: absolute;
   inset: 0;
   background-image: 
-    linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
+    linear-gradient(#E2E8F0 1px, transparent 1px),
+    linear-gradient(90deg, #E2E8F0 1px, transparent 1px);
   background-size: 48px 48px;
   mask-image: radial-gradient(ellipse at 50% 50%, black 40%, transparent 80%);
   -webkit-mask-image: radial-gradient(ellipse at 50% 50%, black 40%, transparent 80%);
   pointer-events: none;
   z-index: 1;
+  opacity: 0.6;
 }
 
 .lp-hero-inner {
-  max-width: 1380px;
+  max-width: 1420px;
   margin: 0 auto;
-  padding: 0 32px;
+  padding: 0 36px;
   width: 100%;
   display: grid;
-  grid-template-columns: 530px minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
   align-items: center;
-  gap: 48px;
+  gap: 52px;
   position: relative;
   z-index: 10;
 }
@@ -323,7 +327,7 @@ html.lenis, html.lenis body {
 @media (max-width: 1100px) {
   .lp-hero-inner {
     grid-template-columns: 1fr;
-    gap: 40px;
+    gap: 44px;
   }
 }
 
@@ -337,14 +341,14 @@ html.lenis, html.lenis body {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 7px 15px;
+  padding: 7px 16px;
   border-radius: 100px;
-  background: #ecfdf5;
-  border: 1px solid #a7f3d0;
-  color: #047857;
+  background: rgba(68, 214, 44, 0.12);
+  border: 1px solid rgba(68, 214, 44, 0.4);
+  color: #15803d;
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.74rem;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 0.06em;
   margin-bottom: 24px;
 }
@@ -352,9 +356,9 @@ html.lenis, html.lenis body {
 .eyebrow-dot {
   width: 7px;
   height: 7px;
-  background: #047857;
+  background: #44D62C;
   border-radius: 50%;
-  box-shadow: 0 0 8px rgba(4, 120, 87, 0.5);
+  box-shadow: 0 0 8px #44D62C;
   animation: pulse-dot 1.8s infinite;
 }
 
@@ -365,58 +369,85 @@ html.lenis, html.lenis body {
 
 .hero-h1 {
   font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: clamp(2.4rem, 4.2vw, 3.6rem);
+  font-size: clamp(2.4rem, 4.2vw, 3.8rem);
   font-weight: 900;
-  line-height: 1.08;
+  line-height: 1.12;
   letter-spacing: -0.035em;
-  color: #0f172a;
+  color: #0F172A;
   margin: 0 0 24px 0;
 }
 
-.typewriter-container {
+.quantum-scramble-container {
   display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
-  height: 1.15em;
+  gap: 14px;
+  min-height: 1.2em;
   line-height: 1.1;
-  white-space: nowrap;
-  overflow: visible;
+  margin-bottom: 6px;
 }
 
-.typewriter-word {
+.quantum-scramble-word {
   display: inline-block;
-  white-space: nowrap;
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-weight: 900;
   letter-spacing: -0.035em;
+  transition: all 0.25s ease;
+  color: #0F172A;
 }
 
-.typewriter-cursor {
-  display: inline-block;
-  color: #047857;
-  font-weight: 300;
-  margin-left: 2px;
-  animation: blink 0.9s infinite;
+.quantum-scramble-word.scrambling {
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: -0.01em;
+  color: #15803d !important;
 }
 
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
+.quantum-scramble-word.resolved {
+  color: #15803d;
+}
+
+.quantum-spark-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: rgba(68, 214, 44, 0.12);
+  border: 1px solid rgba(68, 214, 44, 0.4);
+  border-radius: 999px;
+  font-size: 0.62rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 800;
+  color: #15803d;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+.spark-pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #44D62C;
+  box-shadow: 0 0 8px #44D62C;
+  animation: pulse-scale 1.8s ease-in-out infinite;
+}
+
+.spark-tag {
+  line-height: 1;
 }
 
 .hero-h1-line2 {
   display: block;
-  color: #0f172a;
-  white-space: nowrap;
+  color: #0F172A;
 }
 
 .hero-h1-sub {
   display: block;
   font-size: 0.72em;
-  font-weight: 700;
-  color: #64748b;
+  font-weight: 800;
+  color: #475569;
   letter-spacing: -0.02em;
   margin-top: 6px;
-  white-space: nowrap;
 }
 
 .hero-p {
@@ -436,32 +467,32 @@ html.lenis, html.lenis body {
 }
 
 .hero-btn-primary {
-  background: linear-gradient(135deg, #047857 0%, #059669 100%);
-  color: #ffffff;
-  border: 1px solid #10b981;
+  background: linear-gradient(135deg, #44D62C 0%, #2bb815 100%);
+  color: #0F172A;
+  border: none;
   padding: 14px 28px;
   border-radius: 12px;
   font-family: 'Outfit', sans-serif;
   font-size: 1rem;
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 10px;
   transition: all 0.25s ease;
-  box-shadow: 0 4px 20px rgba(4, 120, 87, 0.28);
+  box-shadow: 0 4px 18px rgba(68, 214, 44, 0.4);
 }
 
 .hero-btn-primary:hover {
-  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+  background: linear-gradient(135deg, #57F03E 0%, #44D62C 100%);
   transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(4, 120, 87, 0.4);
+  box-shadow: 0 6px 26px rgba(68, 214, 44, 0.6);
 }
 
 .hero-btn-ghost {
-  background: #ffffff;
-  border: 1px solid #a7f3d0;
-  color: #047857;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  color: #0F172A;
   padding: 14px 24px;
   border-radius: 12px;
   font-family: 'Outfit', sans-serif;
@@ -472,11 +503,13 @@ html.lenis, html.lenis body {
   align-items: center;
   gap: 8px;
   transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .hero-btn-ghost:hover {
-  background: #ecfdf5;
-  border-color: #047857;
+  background: #F8FAFC;
+  border-color: #44D62C;
+  color: #15803d;
 }
 
 .hero-proof {
@@ -492,11 +525,12 @@ html.lenis, html.lenis body {
   gap: 6px;
   font-size: 0.8rem;
   font-weight: 600;
-  color: #047857;
-  background: #ecfdf5;
+  color: #475569;
+  background: #FFFFFF;
   padding: 6px 14px;
   border-radius: 100px;
-  border: 1px solid #a7f3d0;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 /* ─── Interactive Multi-Modal Corridor Visualizer ─────────── */
@@ -508,11 +542,11 @@ html.lenis, html.lenis body {
 }
 
 .corridor-viz-wrapper {
-  background: #ffffff;
-  border: 1px solid #a7f3d0;
+  background: #FFFFFF;
+  border: 1.5px solid rgba(68, 214, 44, 0.4);
   border-radius: 24px;
   padding: 24px 28px;
-  box-shadow: 0 16px 48px rgba(4, 120, 87, 0.08);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.06), 0 0 24px rgba(68, 214, 44, 0.12);
   position: relative;
   overflow: hidden;
   width: 100%;
@@ -534,9 +568,9 @@ html.lenis, html.lenis body {
 }
 
 .corridor-pill-btn {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  color: #64748b;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  color: #475569;
   padding: 7px 15px;
   border-radius: 100px;
   font-family: 'JetBrains Mono', monospace;
@@ -552,29 +586,29 @@ html.lenis, html.lenis body {
 }
 
 .corridor-pill-btn:hover {
-  color: #047857;
-  border-color: #a7f3d0;
-  background: #f0fdf4;
+  color: #15803d;
+  border-color: rgba(68, 214, 44, 0.5);
+  background: rgba(68, 214, 44, 0.08);
 }
 
 .corridor-pill-btn.active {
-  background: #ecfdf5;
-  border-color: #047857;
-  color: #047857;
-  box-shadow: 0 0 16px rgba(4, 120, 87, 0.15);
+  background: rgba(68, 214, 44, 0.15);
+  border-color: #44D62C;
+  color: #15803d;
+  box-shadow: 0 2px 10px rgba(68, 214, 44, 0.2);
 }
 
 .corridor-pill-dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #94a3b8;
+  background: #CBD5E1;
   transition: all 0.2s ease;
 }
 
 .corridor-pill-btn.active .corridor-pill-dot {
-  background: #047857;
-  box-shadow: 0 0 8px rgba(4, 120, 87, 0.6);
+  background: #44D62C;
+  box-shadow: 0 0 8px #44D62C;
 }
 
 .corridor-stage {
@@ -587,13 +621,13 @@ html.lenis, html.lenis body {
   height: 350px;
   display: block;
   border-radius: 16px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
 }
 
 .corridor-pulse-traveler {
   animation: pulse-stream 2.8s linear infinite;
-  stroke: #047857 !important;
+  stroke: #44D62C !important;
 }
 
 @keyframes pulse-stream {
@@ -614,17 +648,18 @@ html.lenis, html.lenis body {
 
 .node-label {
   letter-spacing: 0.05em;
-  fill: #0f172a !important;
+  fill: #0F172A !important;
   font-weight: 800;
 }
 
 /* Live Corridor Telemetry HUD */
 .corridor-hud {
   margin-top: 18px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 14px;
   padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .corridor-hud-header {
@@ -633,7 +668,7 @@ html.lenis, html.lenis body {
   align-items: center;
   margin-bottom: 12px;
   padding-bottom: 10px;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid #E2E8F0;
 }
 
 .hud-badge-live {
@@ -643,22 +678,23 @@ html.lenis, html.lenis body {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.7rem;
   font-weight: 700;
-  color: #047857;
+  color: #15803d;
   letter-spacing: 0.05em;
 }
 
 .hud-live-dot {
   width: 6px;
   height: 6px;
-  background: #047857;
+  background: #44D62C;
   border-radius: 50%;
+  box-shadow: 0 0 6px #44D62C;
   animation: pulse-dot 1.5s infinite;
 }
 
 .hud-compliance {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.68rem;
-  color: #64748b;
+  color: #64748B;
 }
 
 .corridor-hud-grid {
@@ -671,7 +707,7 @@ html.lenis, html.lenis body {
 .hud-stat-lbl {
   font-size: 0.68rem;
   font-weight: 700;
-  color: #64748b;
+  color: #64748B;
   letter-spacing: 0.04em;
   margin-bottom: 2px;
 }
@@ -680,7 +716,7 @@ html.lenis, html.lenis body {
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 1.05rem;
   font-weight: 800;
-  color: #0f172a;
+  color: #0F172A;
 }
 
 .corridor-hud-footer {
@@ -689,9 +725,9 @@ html.lenis, html.lenis body {
   gap: 8px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.7rem;
-  color: #64748b;
+  color: #64748B;
   padding-top: 10px;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid #E2E8F0;
 }
 
 /* Scroll Cue */
@@ -705,7 +741,7 @@ html.lenis, html.lenis body {
   align-items: center;
   gap: 6px;
   cursor: pointer;
-  color: #64748b;
+  color: #64748B;
   font-size: 0.72rem;
   font-family: 'JetBrains Mono', monospace;
   letter-spacing: 0.06em;
@@ -715,13 +751,13 @@ html.lenis, html.lenis body {
 }
 
 .scroll-indicator:hover {
-  color: #047857;
+  color: #15803d;
 }
 
 .scroll-mouse {
   width: 18px;
   height: 28px;
-  border: 1.5px solid #cbd5e1;
+  border: 1.5px solid #CBD5E1;
   border-radius: 12px;
   display: flex;
   justify-content: center;
@@ -731,7 +767,7 @@ html.lenis, html.lenis body {
 .scroll-wheel {
   width: 3px;
   height: 5px;
-  background: #047857;
+  background: #44D62C;
   border-radius: 2px;
   animation: mouse-scroll 1.6s ease-in-out infinite;
 }
@@ -744,24 +780,25 @@ html.lenis, html.lenis body {
 /* ─── Live Telemetry Ribbon (Marquee) ────────────────────── */
 .telemetry-ribbon {
   width: 100%;
-  background: #ecfdf5;
-  border-top: 1px solid #a7f3d0;
-  border-bottom: 1px solid #a7f3d0;
+  background: #FFFFFF;
+  border-top: 1px solid rgba(68, 214, 44, 0.35);
+  border-bottom: 1px solid rgba(68, 214, 44, 0.35);
   display: flex;
   align-items: center;
   overflow: hidden;
   height: 48px;
   position: relative;
   z-index: 20;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
 }
 
 .telemetry-ribbon-tag {
-  background: #d1fae5;
-  border-right: 1px solid #a7f3d0;
-  color: #047857;
+  background: rgba(68, 214, 44, 0.15);
+  border-right: 1px solid rgba(68, 214, 44, 0.3);
+  color: #15803d;
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.72rem;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 0.06em;
   padding: 0 20px;
   height: 100%;
@@ -807,48 +844,48 @@ html.lenis, html.lenis body {
   gap: 10px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.74rem;
-  color: #334155;
+  color: #475569;
 }
 
 .chip-corridor {
-  color: #0f172a;
+  color: #0F172A;
   font-weight: 700;
 }
 
 .chip-mode {
-  color: #047857;
-  font-weight: 600;
-}
-
-.chip-speed, .chip-co2 {
-  color: #475569;
-}
-
-.chip-status {
-  background: #d1fae5;
-  border: 1px solid #a7f3d0;
-  color: #047857;
-  padding: 2px 7px;
-  border-radius: 4px;
-  font-size: 0.65rem;
+  color: #15803d;
   font-weight: 700;
 }
 
+.chip-speed, .chip-co2 {
+  color: #64748B;
+}
+
+.chip-status {
+  background: rgba(68, 214, 44, 0.15);
+  border: 1px solid rgba(68, 214, 44, 0.4);
+  color: #15803d;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-weight: 800;
+}
+
 .chip-bullet {
-  color: #cbd5e1;
+  color: #CBD5E1;
 }
 
 /* ─── Stats Belt ─────────────────────────────────────────── */
 .lp-stats-belt {
-  background: #ffffff;
-  border-bottom: 1px solid #e2e8f0;
+  background: #FFFFFF;
+  border-bottom: 1px solid #E2E8F0;
   padding: 56px 0;
   position: relative;
   z-index: 10;
 }
 
 .stats-belt-grid {
-  max-width: 1240px;
+  max-width: 1280px;
   margin: 0 auto;
   padding: 0 32px;
   display: grid;
@@ -865,7 +902,7 @@ html.lenis, html.lenis body {
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: clamp(2.4rem, 3.6vw, 3.4rem);
   font-weight: 900;
-  color: #047857;
+  color: #15803d;
   letter-spacing: -0.03em;
   line-height: 1;
   margin-bottom: 10px;
@@ -873,7 +910,7 @@ html.lenis, html.lenis body {
 
 .belt-lbl {
   font-size: 0.9rem;
-  color: #64748b;
+  color: #64748B;
   font-weight: 600;
   letter-spacing: 0.01em;
 }
@@ -881,14 +918,14 @@ html.lenis, html.lenis body {
 /* ─── Spotlight Cards (Bento Grid) ───────────────────────── */
 .spotlight-card {
   position: relative;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
   border-radius: 20px;
   padding: 36px;
   overflow: hidden;
   transition: all 0.3s ease;
   box-sizing: border-box;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
 .spotlight-glass {
@@ -896,7 +933,7 @@ html.lenis, html.lenis body {
   inset: 0;
   background: radial-gradient(
     550px circle at var(--mouse-x, -500px) var(--mouse-y, -500px),
-    rgba(167, 243, 208, 0.25),
+    rgba(68, 214, 44, 0.12),
     transparent 40%
   );
   pointer-events: none;
@@ -911,16 +948,16 @@ html.lenis, html.lenis body {
 }
 
 .spotlight-card:hover {
-  border-color: #a7f3d0;
+  border-color: rgba(68, 214, 44, 0.45);
   transform: translateY(-3px);
-  box-shadow: 0 16px 40px rgba(4, 120, 87, 0.1);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08), 0 0 20px rgba(68, 214, 44, 0.15);
 }
 
 /* ─── Enterprise Bento Grid ──────────────────────────────── */
 .lp-bento-section {
   padding: 90px 0;
   position: relative;
-  background: #f8fafc;
+  background: #F8FAFC;
 }
 
 .bento-grid {
@@ -950,20 +987,21 @@ html.lenis, html.lenis body {
   width: 48px;
   height: 48px;
   border-radius: 12px;
-  background: #ecfdf5;
-  border: 1px solid #a7f3d0;
+  background: rgba(68, 214, 44, 0.12);
+  border: 1px solid rgba(68, 214, 44, 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
+  color: #16a34a;
 }
 
 .bento-tag {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.68rem;
   font-weight: 700;
-  color: #047857;
-  background: #ecfdf5;
-  border: 1px solid #a7f3d0;
+  color: #15803d;
+  background: rgba(68, 214, 44, 0.12);
+  border: 1px solid rgba(68, 214, 44, 0.35);
   padding: 4px 10px;
   border-radius: 6px;
   letter-spacing: 0.05em;
@@ -973,7 +1011,7 @@ html.lenis, html.lenis body {
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 1.45rem;
   font-weight: 800;
-  color: #0f172a;
+  color: #0F172A;
   letter-spacing: -0.02em;
   margin: 0 0 12px 0;
   position: relative;
@@ -991,8 +1029,8 @@ html.lenis, html.lenis body {
 
 /* Physics Demo Slider Inside Bento */
 .physics-interactive-demo {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
   border-radius: 14px;
   padding: 20px;
   position: relative;
@@ -1012,7 +1050,7 @@ html.lenis, html.lenis body {
 .lp-range {
   width: 100%;
   height: 6px;
-  background: #e2e8f0;
+  background: #E2E8F0;
   border-radius: 4px;
   outline: none;
   -webkit-appearance: none;
@@ -1025,9 +1063,9 @@ html.lenis, html.lenis body {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: #047857;
-  border: 2px solid #ffffff;
-  box-shadow: 0 0 10px rgba(4, 120, 87, 0.4);
+  background: #44D62C;
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   cursor: pointer;
   transition: transform 0.15s ease;
 }
@@ -1042,13 +1080,13 @@ html.lenis, html.lenis body {
   gap: 12px;
   margin-top: 14px;
   padding-top: 14px;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid #E2E8F0;
 }
 
 .phys-lbl {
   display: block;
   font-size: 0.68rem;
-  color: #64748b;
+  color: #64748B;
   margin-bottom: 3px;
   font-weight: 600;
 }
@@ -1056,8 +1094,8 @@ html.lenis, html.lenis body {
 .phys-val {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.95rem;
-  font-weight: 700;
-  color: #0f172a;
+  font-weight: 800;
+  color: #15803d;
 }
 
 /* ESG Certificate Pill Preview */
@@ -1065,8 +1103,8 @@ html.lenis, html.lenis body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #f8fafc;
-  border: 1px solid #a7f3d0;
+  background: #F8FAFC;
+  border: 1px solid rgba(68, 214, 44, 0.4);
   padding: 12px 16px;
   border-radius: 10px;
   position: relative;
@@ -1077,11 +1115,12 @@ html.lenis, html.lenis body {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.65rem;
   font-weight: 800;
-  color: #ffffff;
-  background: #047857;
+  color: #0F172A;
+  background: #44D62C;
   padding: 3px 8px;
   border-radius: 4px;
   letter-spacing: 0.06em;
+  box-shadow: 0 2px 8px rgba(68, 214, 44, 0.3);
 }
 
 /* Intermodal Graph Preview */
@@ -1090,8 +1129,8 @@ html.lenis, html.lenis body {
   align-items: center;
   justify-content: center;
   gap: 12px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
   padding: 16px;
   border-radius: 12px;
   position: relative;
@@ -1102,19 +1141,19 @@ html.lenis, html.lenis body {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: #cbd5e1;
+  background: #CBD5E1;
 }
 
 .graph-dot.active {
-  background: #047857;
-  box-shadow: 0 0 10px rgba(4, 120, 87, 0.4);
+  background: #44D62C;
+  box-shadow: 0 0 10px #44D62C;
   animation: pulse-dot 1.5s infinite;
 }
 
 .graph-line {
   height: 2px;
   flex: 1;
-  background: linear-gradient(90deg, #047857, #a7f3d0);
+  background: linear-gradient(90deg, #44D62C, rgba(68, 214, 44, 0.2));
 }
 
 /* Radar Preview Bar */
@@ -1122,8 +1161,8 @@ html.lenis, html.lenis body {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 12px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
   padding: 16px;
   border-radius: 12px;
   position: relative;
@@ -1140,14 +1179,14 @@ html.lenis, html.lenis body {
 .radar-day {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.68rem;
-  color: #64748b;
+  color: #64748B;
   font-weight: 700;
 }
 
 .radar-meter {
   width: 14px;
   height: 60px;
-  background: #e2e8f0;
+  background: #E2E8F0;
   border-radius: 6px;
   display: flex;
   align-items: flex-end;
@@ -1156,31 +1195,31 @@ html.lenis, html.lenis body {
 
 .radar-fill {
   width: 100%;
-  background: #94a3b8;
+  background: #94A3B8;
   border-radius: 4px;
   transition: height 0.5s ease;
 }
 
 .radar-fill.optimal {
-  background: #047857;
+  background: #44D62C;
 }
 
 .radar-fill.caution {
-  background: #64748b;
+  background: #fbbf24;
 }
 
 .radar-score {
   font-size: 0.72rem;
   font-weight: 700;
-  color: #475569;
+  color: #334155;
 }
 
 /* ─── Comparison Section: Consumer Maps vs EcoKernel ──────── */
 .lp-compare-section {
   padding: 90px 0;
   position: relative;
-  background: #ffffff;
-  border-top: 1px solid #e2e8f0;
+  background: #FFFFFF;
+  border-top: 1px solid #E2E8F0;
 }
 
 .compare-grid {
@@ -1199,14 +1238,14 @@ html.lenis, html.lenis body {
 }
 
 .compare-card-bad {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
 }
 
 .compare-card-good {
-  background: #ffffff;
-  border: 2px solid #047857;
-  box-shadow: 0 10px 40px rgba(4, 120, 87, 0.12);
+  background: #FFFFFF;
+  border: 2px solid #44D62C;
+  box-shadow: 0 10px 40px rgba(68, 214, 44, 0.15);
 }
 
 .compare-header {
@@ -1225,21 +1264,21 @@ html.lenis, html.lenis body {
 }
 
 .compare-badge.bad {
-  background: #f1f5f9;
-  color: #64748b;
-  border: 1px solid #cbd5e1;
+  background: #E2E8F0;
+  color: #64748B;
+  border: 1px solid #CBD5E1;
 }
 
 .compare-badge.good {
-  background: #ecfdf5;
-  color: #047857;
-  border: 1px solid #a7f3d0;
+  background: rgba(68, 214, 44, 0.15);
+  color: #15803d;
+  border: 1px solid rgba(68, 214, 44, 0.45);
 }
 
 .compare-subtitle {
   display: block;
   font-size: 0.95rem;
-  color: #64748b;
+  color: #64748B;
   font-weight: 600;
 }
 
@@ -1270,7 +1309,7 @@ html.lenis, html.lenis body {
 }
 
 .cmp-icon-check {
-  color: #047857;
+  color: #15803d;
   font-weight: 800;
   font-size: 1.1rem;
   flex-shrink: 0;
@@ -1283,43 +1322,43 @@ html.lenis, html.lenis body {
 
 .compare-cta-btn {
   width: 100%;
-  background: linear-gradient(135deg, #047857 0%, #059669 100%);
-  color: #ffffff;
+  background: linear-gradient(135deg, #44D62C 0%, #2bb815 100%);
+  color: #0F172A;
   border: none;
   padding: 14px 24px;
   border-radius: 12px;
   font-family: 'Outfit', sans-serif;
   font-size: 0.95rem;
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   transition: all 0.25s ease;
-  box-shadow: 0 4px 20px rgba(4, 120, 87, 0.25);
+  box-shadow: 0 4px 18px rgba(68, 214, 44, 0.35);
 }
 
 .compare-cta-btn:hover {
-  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+  background: linear-gradient(135deg, #57F03E 0%, #44D62C 100%);
   transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(4, 120, 87, 0.35);
+  box-shadow: 0 6px 24px rgba(68, 214, 44, 0.55);
 }
 
 /* ─── ROI Calculator Section ─────────────────────────────── */
 .lp-calc-section {
   padding: 90px 0;
   position: relative;
-  background: #f8fafc;
+  background: #F8FAFC;
 }
 
 .calc-card {
   position: relative;
-  background: #ffffff;
-  border: 1px solid #a7f3d0;
+  background: #FFFFFF;
+  border: 1.5px solid rgba(68, 214, 44, 0.4);
   border-radius: 24px;
   overflow: hidden;
-  box-shadow: 0 10px 40px rgba(4, 120, 87, 0.08);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.06);
 }
 
 .calc-glow {
@@ -1328,7 +1367,7 @@ html.lenis, html.lenis body {
   right: 0;
   width: 400px;
   height: 400px;
-  background: radial-gradient(circle, rgba(167, 243, 208, 0.3) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(68, 214, 44, 0.12) 0%, transparent 70%);
   pointer-events: none;
 }
 
@@ -1341,21 +1380,21 @@ html.lenis, html.lenis body {
 
 .calc-controls {
   padding: 48px;
-  border-right: 1px solid #e2e8f0;
+  border-right: 1px solid #E2E8F0;
 }
 
 .calc-h2 {
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 1.85rem;
   font-weight: 800;
-  color: #0f172a;
+  color: #0F172A;
   letter-spacing: -0.025em;
   margin: 0 0 10px 0;
 }
 
 .calc-p {
   font-size: 0.95rem;
-  color: #64748b;
+  color: #475569;
   margin: 0 0 32px 0;
 }
 
@@ -1375,14 +1414,14 @@ html.lenis, html.lenis body {
 
 .slider-val {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: #047857;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #15803d;
 }
 
 .calc-results {
   padding: 48px;
-  background: #f8fafc;
+  background: #F8FAFC;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -1393,27 +1432,29 @@ html.lenis, html.lenis body {
   display: flex;
   align-items: center;
   gap: 16px;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
   padding: 16px 20px;
   border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .calc-result-icon {
   width: 44px;
   height: 44px;
   border-radius: 10px;
-  background: #ecfdf5;
-  border: 1px solid #a7f3d0;
+  background: rgba(68, 214, 44, 0.12);
+  border: 1px solid rgba(68, 214, 44, 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  color: #16a34a;
 }
 
 .calc-result-lbl {
   font-size: 0.78rem;
-  color: #64748b;
+  color: #64748B;
   font-weight: 600;
   margin-bottom: 2px;
 }
@@ -1422,40 +1463,40 @@ html.lenis, html.lenis body {
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 1.35rem;
   font-weight: 800;
-  color: #047857;
+  color: #15803d;
 }
 
 .calc-apply-btn {
-  background: linear-gradient(135deg, #047857 0%, #059669 100%);
-  color: #ffffff;
+  background: linear-gradient(135deg, #44D62C 0%, #2bb815 100%);
+  color: #0F172A;
   border: none;
   padding: 14px 22px;
   border-radius: 12px;
   font-family: 'Outfit', sans-serif;
   font-size: 0.95rem;
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   transition: all 0.25s ease;
-  box-shadow: 0 4px 20px rgba(4, 120, 87, 0.25);
+  box-shadow: 0 4px 18px rgba(68, 214, 44, 0.35);
   margin-top: 8px;
 }
 
 .calc-apply-btn:hover {
-  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+  background: linear-gradient(135deg, #57F03E 0%, #44D62C 100%);
   transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(4, 120, 87, 0.35);
+  box-shadow: 0 6px 24px rgba(68, 214, 44, 0.55);
 }
 
 /* ─── Technical FAQ Section ──────────────────────────────── */
 .lp-faq-section {
   padding: 90px 0;
   position: relative;
-  background: #ffffff;
-  border-top: 1px solid #e2e8f0;
+  background: #FFFFFF;
+  border-top: 1px solid #E2E8F0;
 }
 
 .faq-accordion-list {
@@ -1467,8 +1508,8 @@ html.lenis, html.lenis body {
 }
 
 .faq-item {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
   border-radius: 16px;
   padding: 22px 26px;
   cursor: pointer;
@@ -1476,14 +1517,14 @@ html.lenis, html.lenis body {
 }
 
 .faq-item:hover {
-  border-color: #a7f3d0;
-  background: #ffffff;
+  border-color: rgba(68, 214, 44, 0.45);
+  background: #FFFFFF;
 }
 
 .faq-item.open {
-  background: #ffffff;
-  border-color: #047857;
-  box-shadow: 0 4px 20px rgba(4, 120, 87, 0.08);
+  background: #FFFFFF;
+  border-color: #44D62C;
+  box-shadow: 0 4px 20px rgba(68, 214, 44, 0.15);
 }
 
 .faq-question-row {
@@ -1497,18 +1538,18 @@ html.lenis, html.lenis body {
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 1.05rem;
   font-weight: 700;
-  color: #0f172a;
+  color: #0F172A;
 }
 
 .faq-chevron {
-  color: #64748b;
+  color: #64748B;
   transition: transform 0.3s ease, color 0.3s ease;
   flex-shrink: 0;
 }
 
 .faq-item.open .faq-chevron {
   transform: rotate(180deg);
-  color: #047857;
+  color: #16a34a;
 }
 
 .faq-answer-row {
@@ -1521,23 +1562,23 @@ html.lenis, html.lenis body {
   line-height: 1.65;
   margin: 14px 0 0 0;
   padding-top: 14px;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid #E2E8F0;
 }
 
 /* ─── Final CTA ──────────────────────────────────────────── */
 .lp-final-cta {
   position: relative;
   padding: 100px 0;
-  background: #f8fafc;
+  background: #F8FAFC;
   overflow: hidden;
   text-align: center;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid #E2E8F0;
 }
 
 .beam-cta-1 {
   width: 500px;
   height: 500px;
-  background: radial-gradient(circle, rgba(167, 243, 208, 0.4) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(68, 214, 44, 0.15) 0%, transparent 70%);
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -1557,12 +1598,12 @@ html.lenis, html.lenis body {
   gap: 8px;
   padding: 6px 14px;
   border-radius: 100px;
-  background: #ecfdf5;
-  border: 1px solid #a7f3d0;
-  color: #047857;
+  background: rgba(68, 214, 44, 0.12);
+  border: 1px solid rgba(68, 214, 44, 0.4);
+  color: #15803d;
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.72rem;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 0.06em;
   margin-bottom: 24px;
 }
@@ -1571,7 +1612,7 @@ html.lenis, html.lenis body {
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: clamp(2.4rem, 4.4vw, 3.6rem);
   font-weight: 900;
-  color: #0f172a;
+  color: #0F172A;
   letter-spacing: -0.035em;
   line-height: 1.12;
   margin: 0 0 20px 0;
@@ -1586,27 +1627,27 @@ html.lenis, html.lenis body {
 }
 
 .final-cta-btn {
-  background: linear-gradient(135deg, #047857 0%, #059669 100%);
-  color: #ffffff;
-  border: 1px solid #10b981;
+  background: linear-gradient(135deg, #44D62C 0%, #2bb815 100%);
+  color: #0F172A;
+  border: none;
   padding: 16px 36px;
   border-radius: 12px;
   font-family: 'Outfit', sans-serif;
   font-size: 1.05rem;
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 10px;
   transition: all 0.25s ease;
-  box-shadow: 0 4px 20px rgba(4, 120, 87, 0.3);
+  box-shadow: 0 4px 20px rgba(68, 214, 44, 0.4);
   letter-spacing: 0.01em;
 }
 
 .final-cta-btn:hover {
-  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+  background: linear-gradient(135deg, #57F03E 0%, #44D62C 100%);
   transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(4, 120, 87, 0.45);
+  box-shadow: 0 6px 28px rgba(68, 214, 44, 0.6);
 }
 
 .final-proof-bar {
@@ -1618,14 +1659,14 @@ html.lenis, html.lenis body {
   margin-top: 36px;
   font-size: 0.8rem;
   font-weight: 600;
-  color: #64748b;
+  color: #64748B;
   font-family: 'JetBrains Mono', monospace;
 }
 
 /* ─── Footer ─────────────────────────────────────────────── */
 .lp-footer {
-  background: #ffffff;
-  border-top: 1px solid #e2e8f0;
+  background: #FFFFFF;
+  border-top: 1px solid #E2E8F0;
   padding: 36px 0;
 }
 
@@ -1647,12 +1688,12 @@ html.lenis, html.lenis body {
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 1.15rem;
   font-weight: 800;
-  color: #0f172a;
+  color: #0F172A;
 }
 
 .footer-copy {
   font-size: 0.82rem;
-  color: #64748b;
+  color: #64748B;
   margin-left: 12px;
 }
 
@@ -1665,9 +1706,9 @@ html.lenis, html.lenis body {
 .footer-tag {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.68rem;
-  color: #047857;
-  background: #ecfdf5;
-  border: 1px solid #a7f3d0;
+  color: #15803d;
+  background: rgba(68, 214, 44, 0.12);
+  border: 1px solid rgba(68, 214, 44, 0.35);
   padding: 3px 8px;
   border-radius: 6px;
 }
@@ -1689,7 +1730,7 @@ html.lenis, html.lenis body {
   }
   .calc-controls {
     border-right: none;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid #E2E8F0;
   }
   .stats-belt-grid {
     grid-template-columns: repeat(2, 1fr);

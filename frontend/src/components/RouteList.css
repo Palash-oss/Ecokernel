@@ -1,110 +1,138 @@
+/* ─── Route List — Crisp White & Figure Neon Green (#44D62C) ──────────── */
+
 .route-list {
-  padding: 20px;
+  padding: 22px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  background: #ffffff;
-  border-radius: 16px;
+  gap: 16px;
+  background: var(--bg-card);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-radius: var(--radius-lg);
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-card);
+  transition: all 0.25s ease;
+}
+
+.route-list:hover {
+  border-color: rgba(68, 214, 44, 0.45);
 }
 
 .list-header {
   display: flex;
   align-items: center;
   gap: 10px;
-  border-bottom: 1px solid #f1f5f9;
-  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 14px;
 }
 
 .list-header h2 {
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 800;
   margin: 0;
-  color: #0f172a;
+  color: var(--text-main);
   letter-spacing: -0.01em;
+  text-transform: uppercase;
 }
 
 .icon-emerald {
-  color: #047857;
+  color: #16a34a;
 }
 
 .list-scroll {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  max-height: 380px;
+  gap: 12px;
+  max-height: 480px;
   overflow-y: auto;
-  padding-right: 4px;
+  padding-right: 6px;
 }
 
 .route-item {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 14px 16px;
+  background: #FFFFFF;
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  padding: 16px;
   cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-xs);
 }
 
 .route-item:hover {
-  border-color: #a7f3d0;
-  background: #f0fdf4;
-  transform: translateY(-1px);
+  border-color: rgba(68, 214, 44, 0.5);
+  background: #F8FAFC;
+  transform: translateX(3px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06), 0 0 12px rgba(68, 214, 44, 0.15);
 }
 
 .route-item.active {
-  background: #ecfdf5;
-  border: 1.5px solid #047857;
-  box-shadow: 0 4px 16px rgba(4, 120, 87, 0.15);
+  background: rgba(68, 214, 44, 0.08);
+  border: 1.5px solid #44D62C;
+  box-shadow: 0 4px 20px rgba(68, 214, 44, 0.18);
+}
+
+.route-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: #44D62C;
+  box-shadow: 0 0 8px #44D62C;
 }
 
 .route-item-title {
   font-weight: 700;
-  color: #0f172a;
-  font-size: 0.95rem;
+  color: var(--text-main);
+  font-size: 0.94rem;
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 4px;
+  margin-bottom: 5px;
 }
 
 .badge-best-green {
-  font-size: 0.68rem;
-  background: #ecfdf5;
-  color: #047857;
-  border: 1px solid #a7f3d0;
-  padding: 3px 10px;
+  font-size: 0.65rem;
+  background: rgba(68, 214, 44, 0.15);
+  color: #15803d;
+  border: 1px solid rgba(68, 214, 44, 0.45);
+  padding: 3px 9px;
   border-radius: 20px;
   font-weight: 800;
+  font-family: var(--font-mono);
 }
 
 .badge-best-cost {
-  font-size: 0.68rem;
-  background: #ecfdf5;
-  color: #047857;
-  border: 1px solid #a7f3d0;
-  padding: 3px 10px;
+  font-size: 0.65rem;
+  background: rgba(14, 165, 233, 0.12);
+  color: #0284c7;
+  border: 1px solid rgba(14, 165, 233, 0.35);
+  padding: 3px 9px;
   border-radius: 20px;
   font-weight: 800;
+  font-family: var(--font-mono);
 }
 
 .badge-best-time {
-  font-size: 0.68rem;
-  background: #f0fdf4;
-  color: #065f46;
-  border: 1px solid #a7f3d0;
-  padding: 3px 10px;
+  font-size: 0.65rem;
+  background: rgba(245, 158, 11, 0.12);
+  color: #d97706;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  padding: 3px 9px;
   border-radius: 20px;
   font-weight: 800;
+  font-family: var(--font-mono);
 }
 
 .route-item-modes {
   font-size: 0.78rem;
-  color: #64748b;
+  color: var(--text-muted);
   font-weight: 500;
 }
 
@@ -119,10 +147,32 @@
   display: flex;
   align-items: center;
   gap: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
   font-weight: 700;
-  font-size: 0.88rem;
+  color: var(--text-muted);
 }
 
-.text-emerald { color: #047857; }
-.text-amber { color: #047857; }
+.metric.emissions {
+  color: #15803d;
+}
 
+.metric.emissions svg {
+  color: #16a34a;
+}
+
+.metric.cost {
+  color: var(--text-main);
+}
+
+.metric.cost svg {
+  color: var(--text-muted);
+}
+
+.metric.time {
+  color: var(--text-muted);
+}
+
+.metric.time svg {
+  color: var(--text-muted);
+}

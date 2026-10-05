@@ -1,15 +1,19 @@
+/* ─── Carbon Badge — Crisp White & Figure Neon Green (#44D62C) ──────────── */
+
 .carbon-badge {
   margin-top: 1rem;
   padding: 16px 20px;
   display: flex;
   align-items: center;
   gap: 16px;
-  background: #ffffff;
-  border-radius: 16px;
+  background: var(--bg-card);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-radius: var(--radius-lg);
   border: 1px solid var(--border-color);
   border-left: 4px solid var(--border-color);
   box-shadow: var(--shadow-card);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .carbon-badge:hover {
@@ -18,13 +22,18 @@
 }
 
 .badge-icon {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.carbon-badge:hover .badge-icon {
+  transform: scale(1.08);
 }
 
 .badge-info {
@@ -34,24 +43,26 @@
 .badge-label {
   display: block;
   font-size: 0.68rem;
-  color: #64748b;
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   font-weight: 700;
   margin-bottom: 2px;
+  font-family: var(--font-heading);
 }
 
 .badge-value {
-  font-size: 1.35rem;
+  font-size: 1.4rem;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--text-main);
   letter-spacing: -0.01em;
+  font-family: 'JetBrains Mono', monospace;
 }
 
 .badge-value span {
   font-size: 0.8rem;
   font-weight: 600;
-  color: #64748b;
+  color: var(--text-muted);
   margin-left: 4px;
 }
 
@@ -60,36 +71,31 @@
   border-radius: 20px;
   font-size: 0.72rem;
   font-weight: 800;
+  text-transform: uppercase;
   letter-spacing: 0.05em;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  font-family: var(--font-mono);
 }
 
-/* Status colors */
-.badge-green { --border-color: #047857; }
-.badge-green .badge-icon {
-  color: #047857;
-  background: #ecfdf5;
-  border: 1px solid #a7f3d0;
-  box-shadow: 0 0 14px rgba(4, 120, 87, 0.15);
+.badge-status.excellent {
+  background: rgba(68, 214, 44, 0.15);
+  color: #15803d;
+  border: 1px solid rgba(68, 214, 44, 0.4);
 }
-.badge-green .badge-status { color: #047857; border-color: #a7f3d0; background: #ecfdf5; }
 
-.badge-amber { --border-color: #059669; }
-.badge-amber .badge-icon {
-  color: #059669;
-  background: #ecfdf5;
-  border: 1px solid #a7f3d0;
-  box-shadow: 0 0 14px rgba(5, 150, 105, 0.15);
+.badge-status.good {
+  background: rgba(14, 165, 233, 0.12);
+  color: #0284c7;
+  border: 1px solid rgba(14, 165, 233, 0.35);
 }
-.badge-amber .badge-status { color: #059669; border-color: #a7f3d0; background: #ecfdf5; }
 
-.badge-red { --border-color: #065f46; }
-.badge-red .badge-icon {
-  color: #065f46;
-  background: #f0fdf4;
-  border: 1px solid #86efac;
-  box-shadow: 0 0 14px rgba(6, 95, 70, 0.15);
+.badge-status.moderate {
+  background: rgba(245, 158, 11, 0.12);
+  color: #d97706;
+  border: 1px solid rgba(245, 158, 11, 0.35);
 }
-.badge-red .badge-status { color: #065f46; border-color: #86efac; background: #f0fdf4; }
 
+.badge-status.high {
+  background: rgba(239, 68, 68, 0.12);
+  color: #dc2626;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+}

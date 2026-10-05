@@ -41,7 +41,13 @@ const RouteList = ({ solutions, activeId, onSelect }) => {
                   {badgeLabel && <span className={badgeClass}>{badgeLabel}</span>}
                 </div>
                 <div className="route-item-modes">
-                  {route.modes_used.join(' + ')} · {Math.round(route.total_time_minutes)} min
+                  <span>{route.modes_used.join(' + ')} · {Math.round(route.total_time_minutes)} min</span>
+                  {route.dispatch_risk?.curfew?.is_curfew_hit && (
+                    <span className="route-curfew-tag">+{route.dispatch_risk.curfew.detention_minutes}m Curfew</span>
+                  )}
+                  {route.dispatch_risk?.curfew?.is_buffer_risk && (
+                    <span className="route-buffer-tag">Buffer Risk</span>
+                  )}
                 </div>
               </div>
               <div className="route-item-metrics">

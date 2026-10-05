@@ -1,4 +1,4 @@
-/* ─── EcoKernel AI Copilot Chat Widget ────────────────────── */
+/* ─── EcoKernel AI Copilot Chat Widget — Crisp White & Figure Neon Green (#44D62C) ──────────── */
 
 /* Toggle Button */
 .copilot-toggle {
@@ -7,23 +7,24 @@
   right: 28px;
   width: 58px;
   height: 58px;
-  background: #ffffff;
-  border: 2px solid var(--accent-primary);
+  background: #FFFFFF;
+  backdrop-filter: blur(20px);
+  border: 1.5px solid #44D62C;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   z-index: 1000;
-  box-shadow: 0 10px 30px rgba(4, 120, 87, 0.25), 0 4px 10px rgba(0,0,0,0.06);
-  transition: var(--transition-normal);
-  color: var(--accent-primary);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1), 0 0 20px rgba(68, 214, 44, 0.35);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  color: #16a34a;
 }
 
 .copilot-toggle:hover {
   transform: scale(1.1) rotate(6deg);
-  background: var(--accent-light);
-  box-shadow: 0 14px 36px rgba(4, 120, 87, 0.35);
+  background: #F0FDF4;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.15), 0 0 30px rgba(68, 214, 44, 0.5);
 }
 
 /* Pulsing Ring */
@@ -33,7 +34,7 @@
   left: -5px;
   right: -5px;
   bottom: -5px;
-  border: 2px solid rgba(4, 120, 87, 0.4);
+  border: 2px solid rgba(68, 214, 44, 0.5);
   border-radius: 50%;
   animation: glow-pulse 2.5s ease-in-out infinite;
 }
@@ -48,17 +49,19 @@
   position: fixed;
   bottom: 96px;
   right: 28px;
-  width: 380px;
-  height: 540px;
-  background: #ffffff;
-  border: 1.5px solid var(--accent-subtle);
+  width: 390px;
+  height: 550px;
+  background: #FFFFFF;
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1.5px solid var(--border-color);
   border-radius: 20px;
   z-index: 1001;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 24px 56px rgba(4, 120, 87, 0.15), 0 8px 20px rgba(0,0,0,0.06);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.15), 0 0 35px rgba(68, 214, 44, 0.15);
   overflow: hidden;
-  animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1) both;
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 @keyframes slideUp {
@@ -68,43 +71,47 @@
 
 /* Header */
 .copilot-header {
-  padding: 16px 18px;
-  background: linear-gradient(135deg, var(--accent-light) 0%, #d1fae5 100%);
+  padding: 16px 20px;
+  background: #F8FAFC;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid var(--accent-subtle);
+  border-bottom: 1px solid var(--border-color);
   flex-shrink: 0;
 }
 
 .copilot-header-title {
   font-weight: 800;
-  font-size: 0.9rem;
+  font-size: 0.92rem;
   color: var(--text-main);
   font-family: var(--font-heading);
   letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .status-dot-active {
   font-size: 0.65rem;
   font-weight: 800;
-  color: var(--accent-primary);
-  background: #ffffff;
-  border: 1px solid var(--accent-subtle);
+  color: #15803d;
+  background: rgba(68, 214, 44, 0.12);
+  border: 1px solid rgba(68, 214, 44, 0.4);
   padding: 3px 10px;
   border-radius: 12px;
   letter-spacing: 0.04em;
+  font-family: var(--font-mono);
 }
 
 /* Messages Area */
 .copilot-messages {
   flex: 1;
-  padding: 16px;
+  padding: 18px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  background: var(--bg-inset);
+  gap: 14px;
+  background: #F8FAFC;
 }
 
 /* Message Bubbles */
@@ -122,32 +129,32 @@
 .msg-icon {
   width: 28px;
   height: 28px;
-  background: var(--accent-light);
-  border: 1px solid var(--accent-subtle);
+  background: rgba(68, 214, 44, 0.15);
+  border: 1px solid rgba(68, 214, 44, 0.4);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  color: var(--accent-primary);
+  color: #16a34a;
 }
 
 .msg-text {
-  background: #ffffff;
+  background: #FFFFFF;
   border: 1px solid var(--border-color);
   padding: 10px 14px;
   border-radius: 14px;
   font-size: 0.85rem;
   line-height: 1.55;
   color: var(--text-main);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-xs);
   font-family: var(--font-body);
 }
 
 .message-bubble.user .msg-text {
-  background: var(--accent-light);
-  border-color: var(--accent-subtle);
-  color: var(--accent-primary);
+  background: #F0FDF4;
+  border-color: rgba(68, 214, 44, 0.4);
+  color: var(--text-main);
   font-weight: 600;
 }
 
@@ -155,7 +162,7 @@
 .copilot-md-h4 {
   font-size: 0.9rem;
   font-weight: 700;
-  color: #10b981;
+  color: #15803d;
   margin-top: 6px;
   margin-bottom: 4px;
 }
@@ -163,18 +170,19 @@
 .copilot-md-h3 {
   font-size: 0.95rem;
   font-weight: 800;
-  color: #059669;
+  color: #15803d;
   margin-top: 8px;
   margin-bottom: 6px;
 }
 
 .copilot-code-tag {
-  background: #111827;
-  color: #34d399;
+  background: #F1F5F9;
+  color: #15803d;
   padding: 2px 6px;
   border-radius: 4px;
   font-family: monospace;
   font-size: 0.78rem;
+  border: 1px solid var(--border-color);
 }
 
 .copilot-paragraph {
@@ -190,18 +198,19 @@
 .copilot-engine-badge {
   font-size: 0.62rem;
   font-weight: 700;
-  color: #059669;
-  background: rgba(16, 185, 129, 0.1);
-  border: 1px solid rgba(16, 185, 129, 0.25);
+  color: #15803d;
+  background: rgba(68, 214, 44, 0.12);
+  border: 1px solid rgba(68, 214, 44, 0.3);
   padding: 2px 8px;
   border-radius: 10px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  font-family: var(--font-mono);
 }
 
 .typing-indicator {
   font-size: 0.78rem;
-  color: var(--text-dim);
+  color: var(--text-muted);
   font-style: italic;
   display: flex;
   align-items: center;
@@ -214,30 +223,32 @@
   gap: 6px;
   overflow-x: auto;
   padding: 8px 14px;
-  background: #ffffff;
-  border-top: 1px solid var(--border-muted);
+  background: #FFFFFF;
+  border-top: 1px solid var(--border-color);
   flex-shrink: 0;
 }
 
 .copilot-prompts-bar::-webkit-scrollbar { height: 0; }
 
 .quick-prompt-btn {
-  background: var(--bg-inset);
-  border: 1px solid var(--accent-subtle);
-  color: var(--accent-primary);
+  background: #F8FAFC;
+  border: 1px solid var(--border-color);
+  color: #15803d;
   padding: 5px 12px;
   border-radius: 12px;
   font-size: 0.72rem;
-  font-weight: 600;
+  font-weight: 700;
   white-space: nowrap;
   cursor: pointer;
-  transition: var(--transition-fast);
+  transition: all 0.2s ease;
   font-family: var(--font-body);
   flex-shrink: 0;
 }
 
 .quick-prompt-btn:hover {
-  background: var(--accent-light);
+  background: #F0FDF4;
+  border-color: #44D62C;
+  box-shadow: 0 2px 8px rgba(68, 214, 44, 0.2);
   transform: translateY(-1px);
 }
 
@@ -246,14 +257,14 @@
   padding: 12px 14px;
   display: flex;
   gap: 10px;
-  background: #ffffff;
+  background: #FFFFFF;
   border-top: 1px solid var(--border-color);
   flex-shrink: 0;
 }
 
 .copilot-input input {
   flex: 1;
-  background: var(--bg-inset);
+  background: #F8FAFC;
   border: 1.5px solid var(--border-color);
   border-radius: 11px;
   padding: 9px 14px;
@@ -261,22 +272,22 @@
   font-size: 0.85rem;
   font-weight: 500;
   outline: none;
-  transition: var(--transition-fast);
+  transition: all 0.2s ease;
   font-family: var(--font-body);
 }
 
 .copilot-input input:focus {
-  border-color: var(--accent-primary);
-  box-shadow: 0 0 0 3px rgba(4, 120, 87, 0.1);
-  background: #ffffff;
+  border-color: #44D62C;
+  box-shadow: 0 0 0 2px rgba(68, 214, 44, 0.15);
+  background: #FFFFFF;
 }
 
 .copilot-input input::placeholder {
-  color: var(--text-dim);
+  color: var(--text-muted);
 }
 
 .send-btn {
-  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+  background: linear-gradient(135deg, #44D62C 0%, #2bb815 100%);
   border: none;
   border-radius: 11px;
   padding: 0 16px;
@@ -284,14 +295,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ffffff;
-  transition: var(--transition-fast);
+  color: #0F172A;
+  transition: all 0.2s ease;
   flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(4, 120, 87, 0.25);
+  box-shadow: 0 4px 14px rgba(68, 214, 44, 0.35);
 }
 
 .send-btn:hover {
-  background: linear-gradient(135deg, var(--accent-dark) 0%, var(--accent-primary) 100%);
+  background: linear-gradient(135deg, #57F03E 0%, #44D62C 100%);
   transform: scale(1.05);
-  box-shadow: 0 6px 16px rgba(4, 120, 87, 0.35);
+  box-shadow: 0 6px 20px rgba(68, 214, 44, 0.5);
 }

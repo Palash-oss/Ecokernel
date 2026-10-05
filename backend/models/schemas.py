@@ -40,6 +40,8 @@ class OptimizeRequest(BaseModel):
         description="0.0 = pure cost, 1.0 = pure green"
     )
     max_solutions: int = Field(default=10, ge=1, le=50)
+    departure_time: Optional[str] = Field(None, description="Planned departure time (HH:MM or ISO)")
+    target_sla_delivery_time: Optional[str] = Field(None, description="Target required arrival deadline (HH:MM or ISO)")
 
 
 class LocationCoord(BaseModel):
@@ -53,9 +55,71 @@ class RouteDataRequest(BaseModel):
     vehicle_type: str
     load_tonnes: float
     priority: float = 0.5
+    departure_time: Optional[str] = None
+    target_sla_delivery_time: Optional[str] = None
 
 
 # ─── Response Models ───────────────────────────────────────
+
+class ChokePointInfo(BaseModel):
+    name: str
+    risk_level: str
+    reason: str
+
+
+class CurfewAlert(BaseModel):
+    is_curfew_hit: bool
+    is_buffer_risk: bool = False
+    warning_note: Optional[str] = None
+    city: str
+    window_name: str
+    curfew_start: str
+    curfew_end: str
+    border_gate: str
+    detention_minutes: int
+    wasted_idle_units: float
+    wasted_idle_co2_kg: float
+
+
+class OptimalDepartureAdvisory(BaseModel):
+    recommended_departure: str
+    time_shift_minutes: int
+    detention_saved_minutes: int
+    fuel_saved_units: float
+    co2_saved_kg: float
+    advisory_headline: str
+    advisory_details: str
+    action_type: Optional[str] = "OPTIMAL"  # "ADVANCE" | "DELAY" | "OPTIMAL"
+
+
+class HourlyDispatchSlot(BaseModel):
+    hour: int
+    departure_time: str
+    arrival_nominal: str
+    arrival_buffered: str
+    status: str  # "CLEAR" | "BUFFER_RISK" | "CURFEW_HIT"
+    detention_minutes: int
+    wasted_units: float
+    wasted_co2_kg: float
+    recommendation: str
+
+
+class DispatchRiskProfile(BaseModel):
+    planned_departure: str
+    planned_departure_display: Optional[str] = None
+    arrival_p50_nominal: str
+    arrival_p50_display: Optional[str] = None
+    arrival_p90_buffered: str
+    arrival_p90_display: Optional[str] = None
+    nominal_travel_time_hours: float
+    buffer_minutes: int
+    risk_level: str  # "LOW" | "ELEVATED" | "CRITICAL"
+    curfew: CurfewAlert
+    optimal_departure: OptimalDepartureAdvisory
+    choke_points: List[ChokePointInfo] = Field(default_factory=list)
+    active_festival_surge: Optional[str] = None
+    timeline_24h: List[HourlyDispatchSlot] = Field(default_factory=list)
+
 
 class ISO14083Breakdown(BaseModel):
     wtw_co2: float = Field(..., description="Well-to-Wheel total emissions (kg CO2e)")
@@ -92,6 +156,7 @@ class RouteSolution(BaseModel):
     is_fastest: Optional[bool] = None
     is_greenest: Optional[bool] = None
     iso_14083: Optional[ISO14083Breakdown] = None
+    dispatch_risk: Optional[DispatchRiskProfile] = None
 
 
 class ParetoFront(BaseModel):

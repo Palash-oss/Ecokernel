@@ -1,10 +1,10 @@
-/* ─── Network Importer Modal Styling ────────────────── */
+/* ─── Network Importer Modal Styling — Crisp White & Figure Neon Green (#44D62C) ────────────────── */
 
 .importer-modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(3, 7, 18, 0.85);
-  backdrop-filter: blur(8px);
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(12px);
   z-index: 2000;
   display: flex;
   align-items: center;
@@ -15,10 +15,10 @@
 .importer-modal-container {
   width: 100%;
   max-width: 640px;
-  background: #030712;
-  border: 1.5px solid #10b981;
+  background: #FFFFFF;
+  border: 1.5px solid #44D62C;
   border-radius: 20px;
-  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.95), 0 0 45px rgba(16, 185, 129, 0.25);
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.15), 0 0 35px rgba(68, 214, 44, 0.15);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -26,13 +26,12 @@
 
 .importer-header {
   padding: 18px 24px;
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.18) 0%, rgba(0, 229, 153, 0.08) 100%);
-  border-bottom: 1px solid rgba(16, 185, 129, 0.2);
+  background: #F8FAFC;
+  border-bottom: 1px solid var(--border-color);
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
-
 
 .importer-title-group {
   display: flex;
@@ -43,14 +42,14 @@
 .importer-title-text {
   font-size: 1.05rem;
   font-weight: 800;
-  color: #ffffff !important;
+  color: var(--text-main) !important;
   letter-spacing: -0.01em;
 }
 
 .importer-close-btn {
   background: transparent;
   border: none;
-  color: #94a3b8;
+  color: var(--text-muted);
   cursor: pointer;
   padding: 6px;
   border-radius: 8px;
@@ -58,15 +57,15 @@
 }
 
 .importer-close-btn:hover {
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-main);
+  background: #F1F5F9;
 }
 
 .importer-tabs {
   display: flex;
-  background: #030712;
+  background: #F8FAFC;
   padding: 6px 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--border-color);
   gap: 8px;
 }
 
@@ -76,7 +75,7 @@
   border-radius: 10px;
   border: none;
   background: transparent;
-  color: #94a3b8;
+  color: var(--text-muted);
   font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
@@ -88,9 +87,10 @@
 }
 
 .importer-tab.active {
-  background: rgba(16, 185, 129, 0.15);
-  color: #34d399;
-  border: 1px solid rgba(52, 211, 153, 0.3);
+  background: #FFFFFF;
+  color: #15803d;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-xs);
 }
 
 .importer-body {
@@ -98,20 +98,21 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+  background: #FFFFFF;
 }
 
 .importer-dropzone {
-  border: 2px dashed rgba(52, 211, 153, 0.35);
+  border: 2px dashed rgba(68, 214, 44, 0.45);
   border-radius: 16px;
   padding: 32px 20px;
-  background: rgba(16, 185, 129, 0.04);
+  background: #F8FAFC;
   text-align: center;
   transition: all 0.2s ease;
 }
 
 .importer-dropzone:hover {
-  border-color: #34d399;
-  background: rgba(16, 185, 129, 0.08);
+  border-color: #44D62C;
+  background: #F0FDF4;
 }
 
 .dropzone-label {
@@ -125,16 +126,16 @@
 .dropzone-main-text {
   font-size: 0.92rem;
   font-weight: 700;
-  color: #ffffff !important;
+  color: var(--text-main) !important;
 }
 
 .dropzone-sub-text {
   font-size: 0.76rem;
-  color: #a7f3d0 !important;
+  color: var(--text-muted) !important;
 }
 
 .dropzone-icon {
-  color: #00e599;
+  color: #16a34a;
 }
 
 .preview-meta-row {
@@ -143,7 +144,7 @@
   align-items: center;
   font-size: 0.78rem;
   font-weight: 700;
-  color: #34d399;
+  color: #15803d;
   margin-bottom: 8px;
 }
 
@@ -154,29 +155,12 @@
 
 .table-hub-name {
   font-weight: 700;
-  color: #ffffff;
+  color: var(--text-main);
 }
 
 .table-hub-coords {
-  color: #94a3b8;
+  color: var(--text-muted);
 }
-
-.importer-footer {
-  padding: 16px 24px;
-  background: #030712;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.importer-action-btns {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-
 
 .importer-editor-wrap {
   width: 100%;
@@ -184,10 +168,10 @@
 
 .importer-textarea {
   width: 100%;
-  background: #030712;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #FFFFFF;
+  border: 1px solid var(--border-color);
   border-radius: 12px;
-  color: #34d399;
+  color: var(--text-main);
   font-family: monospace;
   font-size: 0.8rem;
   padding: 12px;
@@ -205,21 +189,21 @@
 }
 
 .importer-status-banner.success {
-  background: rgba(16, 185, 129, 0.12);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-  color: #34d399;
+  background: #F0FDF4;
+  border: 1px solid rgba(68, 214, 44, 0.4);
+  color: #15803d;
 }
 
 .importer-status-banner.error {
-  background: rgba(239, 68, 68, 0.12);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  color: #f87171;
+  background: #FEF2F2;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #dc2626;
 }
 
 .importer-preview-table-wrap {
   max-height: 160px;
   overflow-y: auto;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-color);
   border-radius: 10px;
 }
 
@@ -231,37 +215,46 @@
 }
 
 .importer-table th {
-  background: rgba(255, 255, 255, 0.04);
-  color: #94a3b8;
+  background: #F8FAFC;
+  color: var(--text-muted);
   padding: 8px 12px;
   font-weight: 600;
 }
 
 .importer-table td {
   padding: 8px 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  border-top: 1px solid var(--border-color);
+  color: var(--text-main);
 }
 
 .importer-badge {
-  background: rgba(16, 185, 129, 0.15);
-  color: #34d399;
+  background: rgba(68, 214, 44, 0.15);
+  color: #15803d;
   padding: 2px 6px;
   border-radius: 4px;
   font-size: 0.7rem;
   font-weight: 600;
 }
 
-
 .importer-footer {
   padding: 16px 24px;
-  background: #030712;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: #F8FAFC;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.importer-action-btns {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .importer-reset-btn {
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: #94a3b8;
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
   padding: 8px 14px;
   border-radius: 10px;
   font-size: 0.78rem;
@@ -271,33 +264,34 @@
 }
 
 .importer-reset-btn:hover {
-  color: #ffffff;
-  border-color: rgba(255, 255, 255, 0.3);
+  color: var(--text-main);
+  background: #F1F5F9;
 }
 
 .importer-cancel-btn {
   background: transparent;
   border: none;
-  color: #94a3b8;
+  color: var(--text-muted);
   padding: 8px 14px;
   font-size: 0.8rem;
   cursor: pointer;
 }
 
 .importer-deploy-btn {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: #ffffff;
+  background: linear-gradient(135deg, #44D62C 0%, #2bb815 100%);
+  color: #0F172A;
   border: none;
   padding: 8px 18px;
   border-radius: 10px;
   font-size: 0.8rem;
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 4px 14px rgba(68, 214, 44, 0.35);
   transition: all 0.2s ease;
 }
 
 .importer-deploy-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(16, 185, 129, 0.45);
+  background: linear-gradient(135deg, #57F03E 0%, #44D62C 100%);
+  box-shadow: 0 6px 18px rgba(68, 214, 44, 0.5);
 }

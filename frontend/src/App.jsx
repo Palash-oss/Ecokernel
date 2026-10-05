@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import api from './api/client';
+import React, { useState, useEffect, useCallback } from 'react';
+import api, { API_ROOT } from './api/client';
 import Navbar from './components/Navbar';
 import Controls from './components/Controls';
 import MapView from './components/MapView';
@@ -27,46 +27,17 @@ function App() {
 
   // Optimisation State
   const [isOptimizing, setIsOptimizing] = useState(false);
+  const [selectedDepartureTime, setSelectedDepartureTime] = useState('');
+  const [lastOptimizedParams, setLastOptimizedParams] = useState(null);
 
-  // Initial Run History Seed
-  const [runHistory, setRunHistory] = useState([
-    {
-      id: 101,
-      origin: 'Mumbai',
-      destination: 'Delhi',
-      vehicle: 'Ashok Leyland Euro 6 HGV',
-      load: 14.0,
-      timestamp: '14:20:05',
-      baselineCo2: 284.5,
-      optimizedCo2: 210.2,
-      savings: 74.3,
-    },
-    {
-      id: 102,
-      origin: 'Bangalore',
-      destination: 'Chennai',
-      vehicle: 'Volvo FH Electric Intercity',
-      load: 10.0,
-      timestamp: '11:05:42',
-      baselineCo2: 98.0,
-      optimizedCo2: 12.4,
-      savings: 85.6,
-    },
-    {
-      id: 103,
-      origin: 'Hyderabad',
-      destination: 'Pune',
-      vehicle: 'Tata Signa CNG Heavy Truck',
-      load: 12.5,
-      timestamp: '09:15:30',
-      baselineCo2: 165.0,
-      optimizedCo2: 118.5,
-      savings: 46.5,
-    }
-  ]);
+  // Active corridor for Weekly Forecast (set by last optimization)
+  const [activeCorridor, setActiveCorridor] = useState(null);
   const [paretoFront, setParetoFront] = useState(null);
   const [activeRouteId, setActiveRouteId] = useState(null);
   const [activeRoute, setActiveRoute] = useState(null);
+
+  // Emissions report refresh trigger — bumped after every save so EmissionsReport re-fetches
+  const [emissionsRefreshKey, setEmissionsRefreshKey] = useState(0);
 
   // Initial Data Load (Resilient non-blocking fetch)
   useEffect(() => {
@@ -108,6 +79,10 @@ function App() {
   // Handle Optimisation Request
   const handleOptimize = async (params) => {
     setIsOptimizing(true);
+    setLastOptimizedParams(params);
+    if (params.departure_time !== undefined) {
+      setSelectedDepartureTime(params.departure_time || '');
+    }
     
     try {
       const result = await api.optimizeFast(params);
@@ -115,32 +90,45 @@ function App() {
         setParetoFront(result);
         
         const defaultRoute = result.best_green || result.solutions[0];
-        const maxCo2InSolutions = Math.max(...result.solutions.map(s => s.total_co2_kg));
-        const baselineCo2 = maxCo2InSolutions > defaultRoute.total_co2_kg 
-          ? Number((maxCo2InSolutions * 1.15).toFixed(1)) 
-          : Number((defaultRoute.total_co2_kg * 1.32).toFixed(1));
-        const optimizedCo2 = Number(defaultRoute.total_co2_kg.toFixed(1));
-        const savings = Number(Math.max(12.5, baselineCo2 - optimizedCo2).toFixed(1));
-
         const cleanOrigin = cleanAddressString(params.origin?.address || 'Mumbai');
         const cleanDest = cleanAddressString(params.destination?.address || 'Delhi');
 
-        const runRecord = {
-          id: Date.now(),
+        // ── Update active corridor for Weekly Forecast ──────────────
+        setActiveCorridor({
           origin: cleanOrigin,
-          destination: cleanDest,
-          origin_lat: params.origin.lat,
-          origin_lng: params.origin.lng,
-          dest_lat: params.destination.lat,
-          dest_lng: params.destination.lng,
-          vehicle: params.vehicle_type,
-          load: params.load_tonnes,
-          timestamp: new Date().toLocaleTimeString(),
-          baselineCo2,
-          optimizedCo2,
-          savings,
+          dest: cleanDest,
+          lat1: params.origin?.lat,
+          lng1: params.origin?.lng,
+          lat2: params.destination?.lat,
+          lng2: params.destination?.lng,
+        });
+
+        // ── Persist route to DB (async, non-blocking) ───────────────
+        const savePayload = {
+          origin_address: cleanOrigin,
+          destination_address: cleanDest,
+          origin_lat: params.origin?.lat || 0,
+          origin_lng: params.origin?.lng || 0,
+          dest_lat: params.destination?.lat || 0,
+          dest_lng: params.destination?.lng || 0,
+          vehicle_type: params.vehicle_type || 'unknown',
+          load_tonnes: params.load_tonnes || 0,
+          total_distance_km: defaultRoute.total_distance_km || 0,
+          total_time_minutes: defaultRoute.total_time_minutes || 0,
+          total_cost_inr: defaultRoute.total_cost_inr || 0,
+          total_co2_kg: defaultRoute.total_co2_kg || 0,
+          green_score: defaultRoute.green_score || 0,
+          strategy: defaultRoute.strategy || 'balanced',
+          segments: defaultRoute.segments || [],
         };
-        setRunHistory(prev => [runRecord, ...prev]);
+
+        fetch(`${API_ROOT}/api/routes/save`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(savePayload),
+        })
+          .then(() => setEmissionsRefreshKey(k => k + 1))
+          .catch(err => console.warn('Route save failed (non-critical):', err?.message));
 
         setActiveRoute(defaultRoute);
         setActiveRouteId(defaultRoute.id);
@@ -149,6 +137,16 @@ function App() {
       console.error("Optimization error:", err);
     } finally {
       setIsOptimizing(false);
+    }
+  };
+
+  const handleApplyDepartureTime = (newTime) => {
+    setSelectedDepartureTime(newTime);
+    if (lastOptimizedParams) {
+      handleOptimize({
+        ...lastOptimizedParams,
+        departure_time: newTime
+      });
     }
   };
 
@@ -162,9 +160,8 @@ function App() {
     return <LandingPage onEnter={() => setShowDashboard(true)} />;
   }
 
-  const activeParams = runHistory[0] || null;
-  const rtOrigin = activeRoute ? activeRoute.segments[0].from_city : (activeParams?.origin || null);
-  const rtDest = activeRoute ? activeRoute.segments[activeRoute.segments.length - 1].to_city : (activeParams?.destination || null);
+  const rtOrigin = activeRoute ? activeRoute.segments[0].from_city : (activeCorridor?.origin || null);
+  const rtDest = activeRoute ? activeRoute.segments[activeRoute.segments.length - 1].to_city : (activeCorridor?.dest || null);
 
   return (
     <div className="app-container">
@@ -183,6 +180,8 @@ function App() {
                 vehicles={vehicles}
                 onOptimize={handleOptimize}
                 isOptimizing={isOptimizing}
+                externalDepartureTime={selectedDepartureTime}
+                onDepartureTimeChange={setSelectedDepartureTime}
               />
               <CarbonBadge gridIntensity={carbonLevel} />
               <QuantumMetricsCard />
@@ -196,7 +195,6 @@ function App() {
                   origin={rtOrigin}
                   destination={rtDest}
                   activeRoute={activeRoute}
-                  optimisationParams={activeParams}
                 />
               </div>
 
@@ -207,7 +205,12 @@ function App() {
                     activeId={activeRouteId}
                     onSelect={handleSelectRoute}
                   />
-                  {activeRoute && <RoutePanel route={activeRoute} />}
+                  {activeRoute && (
+                    <RoutePanel 
+                      route={activeRoute} 
+                      onApplyDepartureTime={handleApplyDepartureTime}
+                    />
+                  )}
                 </div>
               )}
             </div>
@@ -215,11 +218,15 @@ function App() {
         )}
 
         {currentView === 'weekly' && (
-          <WeeklyForecastRadar />
+          <WeeklyForecastRadar activeCorridor={activeCorridor} />
         )}
 
         {currentView === 'emissions' && (
-          <EmissionsReport paretoFront={paretoFront} activeRouteId={activeRouteId} runHistory={runHistory} />
+          <EmissionsReport
+            paretoFront={paretoFront}
+            activeRouteId={activeRouteId}
+            refreshKey={emissionsRefreshKey}
+          />
         )}
 
         {currentView === 'contracts' && (

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Upload, X, FileText, CheckCircle2, AlertCircle, RefreshCw, Download, Database, MapPin, Route } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { API_ROOT } from '../api/client';
 import './NetworkImporter.css';
 
 const SAMPLE_CSV = `type,name_from,lat_to,lng,region,capacity_tons,has_rail
@@ -98,7 +99,7 @@ const NetworkImporter = ({ isOpen, onClose, onNetworkImported }) => {
     setStatusMessage(null);
 
     try {
-      const res = await fetch('http://localhost:8001/api/network/import', {
+      const res = await fetch(`${API_ROOT}/api/network/import`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -128,7 +129,7 @@ const NetworkImporter = ({ isOpen, onClose, onNetworkImported }) => {
   const handleResetNetwork = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch('http://localhost:8001/api/network/reset', { method: 'POST' });
+      const res = await fetch(`${API_ROOT}/api/network/reset`, { method: 'POST' });
       const data = await res.json();
       setStatusMessage({ type: 'success', text: data.message });
       if (onNetworkImported) onNetworkImported();
@@ -154,7 +155,7 @@ const NetworkImporter = ({ isOpen, onClose, onNetworkImported }) => {
         >
           <div className="importer-header">
             <div className="importer-title-group">
-              <Database size={20} color="#00e599" />
+              <Database size={20} color="#44D62C" />
               <span className="importer-title-text">Dynamic Supply Chain Importer</span>
             </div>
             <button className="importer-close-btn" onClick={onClose}>
@@ -182,7 +183,7 @@ const NetworkImporter = ({ isOpen, onClose, onNetworkImported }) => {
               <div className="importer-dropzone">
                 <input type="file" accept=".csv,.json" onChange={handleFileUpload} id="csv-input" hidden />
                 <label htmlFor="csv-input" className="dropzone-label">
-                  <Upload className="dropzone-icon" size={36} color="#00e599" />
+                  <Upload className="dropzone-icon" size={36} color="#44D62C" />
                   <span className="dropzone-main-text">Click or drag CSV / JSON supply chain dataset</span>
                   <span className="dropzone-sub-text">Supports custom hubs, coordinates, capacity & rail routes</span>
                 </label>

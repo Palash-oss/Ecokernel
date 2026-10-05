@@ -1,12 +1,17 @@
 import React from 'react';
-import { Route, Train, Leaf, Clock, IndianRupee } from 'lucide-react';
+import { Route, Train, Leaf, Clock, IndianRupee, AlertTriangle, ShieldAlert, Zap, Compass, CheckCircle2, ChevronRight } from 'lucide-react';
 import './RoutePanel.css';
 
-const RoutePanel = ({ route }) => {
+const RoutePanel = ({ route, onApplyDepartureTime }) => {
   if (!route) return null;
+
+  const dr = route.dispatch_risk;
+  const isEv = (route.vehicle_type || '').toLowerCase().includes('electric') || (route.vehicle_type || '').toLowerCase().includes('ev');
+  const unitName = isEv ? 'kWh (Aux Chiller)' : 'L (Diesel Idling)';
 
   return (
     <div className="route-panel panel">
+      {/* Route Header */}
       <div className="route-header">
         <div className="route-title">
           <Route size={18} className="icon-emerald" />
@@ -19,6 +24,7 @@ const RoutePanel = ({ route }) => {
         </div>
       </div>
 
+      {/* Primary Metrics Grid */}
       <div className="route-metrics">
         <div className="metric-box">
           <Clock size={16} />
@@ -46,6 +52,181 @@ const RoutePanel = ({ route }) => {
         </div>
       </div>
 
+      {/* ─── STEP 1: SMART DISPATCH & CORRIDOR RISK ENGINE ─── */}
+      {dr && (
+        <div className={`dispatch-risk-card ${dr.curfew.is_curfew_hit ? 'is-curfew' : dr.curfew.is_buffer_risk ? 'is-buffer' : 'is-clear'}`}>
+          {/* Card Title & Status Badge */}
+          <div className="risk-card-header">
+            <div className="risk-header-title">
+              <Compass size={16} className="text-emerald" />
+              <span className="risk-title-text">CORRIDOR DISPATCH & BORDER CURFEW ANALYSIS</span>
+            </div>
+            <div className={`risk-status-pill pill-${dr.risk_level.toLowerCase()}`}>
+              {dr.curfew.is_curfew_hit ? (
+                <>
+                  <ShieldAlert size={12} />
+                  <span>CURFEW DETENTION</span>
+                </>
+              ) : dr.curfew.is_buffer_risk ? (
+                <>
+                  <AlertTriangle size={12} />
+                  <span>RAZOR-THIN MARGIN</span>
+                </>
+              ) : (
+                <>
+                  <CheckCircle2 size={12} />
+                  <span>TRANSIT CLEAR</span>
+                </>
+              )}
+            </div>
+          </div>
+
+          {/* Curfew Collision Alert */}
+          {dr.curfew.is_curfew_hit && (
+            <div className="curfew-alert-banner">
+              <div className="curfew-alert-top">
+                <span className="curfew-badge">HGV Entry Ban Active</span>
+                <span className="curfew-gate-name">{dr.curfew.border_gate}</span>
+              </div>
+              <div className="curfew-alert-desc">
+                Heavy vehicles prohibited: <strong>{dr.curfew.curfew_start} – {dr.curfew.curfew_end}</strong> ({dr.curfew.window_name}).
+                Traffic police enforce border halt until curfew lift.
+              </div>
+              <div className="curfew-penalties-grid">
+                <div className="penalty-cell">
+                  <span className="pen-lbl">Highway Detention</span>
+                  <span className="pen-val">{dr.curfew.detention_minutes} min wait</span>
+                </div>
+                <div className="penalty-cell">
+                  <span className="pen-lbl">Idling Loss</span>
+                  <span className="pen-val">{dr.curfew.wasted_idle_units} {unitName}</span>
+                </div>
+                <div className="penalty-cell">
+                  <span className="pen-lbl">Idle Waste CO₂</span>
+                  <span className="pen-val">+{dr.curfew.wasted_idle_co2_kg} kg</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Razor-Thin Margin Alert */}
+          {dr.curfew.is_buffer_risk && (
+            <div className="buffer-alert-banner">
+              <div className="buffer-alert-top">
+                <AlertTriangle size={14} className="text-emerald" />
+                <span className="buffer-title">Razor-Thin Arrival Buffer Detected</span>
+              </div>
+              <div className="buffer-alert-desc">
+                {dr.curfew.warning_note}
+              </div>
+            </div>
+          )}
+
+          {/* Probabilistic Window Grid (P50 vs P90) */}
+          <div className="arrival-window-grid">
+            <div className="window-cell">
+              <span className="w-lbl">Planned Departure</span>
+              <span className="w-val">{dr.planned_departure_display || dr.planned_departure}</span>
+            </div>
+            <div className="window-cell">
+              <span className="w-lbl">Nominal Arrival (P50)</span>
+              <span className="w-val">{dr.arrival_p50_display || dr.arrival_p50_nominal}</span>
+            </div>
+            <div className="window-cell highlight-p90">
+              <span className="w-lbl">Risk-Buffered Arrival (P90)</span>
+              <span className="w-val">{dr.arrival_p90_display || dr.arrival_p90_buffered}</span>
+              <span className="w-hint">+{dr.buffer_minutes}m highway buffer</span>
+            </div>
+          </div>
+
+          {/* 24-Hour Continuous Corridor Horizon Strip */}
+          {dr.timeline_24h && dr.timeline_24h.length > 0 && (
+            <div className="timeline-24h-box">
+              <div className="timeline-header">
+                <div className="flex-center gap-1">
+                  <Clock size={13} className="text-emerald" />
+                  <span className="timeline-title">24-HOUR CORRIDOR RISK HORIZON</span>
+                </div>
+                <div className="timeline-legend">
+                  <span className="leg-item leg-clear">● Clear Ingress</span>
+                  <span className="leg-item leg-buffer">● Buffer Risk</span>
+                  <span className="leg-item leg-curfew">● Curfew Lock</span>
+                </div>
+              </div>
+
+              <div className="timeline-strip-scroll">
+                {dr.timeline_24h.map((slot) => {
+                  const currentHour = parseInt((dr.planned_departure || '06:00').split(':')[0], 10);
+                  const isCurrent = slot.hour === currentHour;
+                  return (
+                    <button
+                      key={slot.hour}
+                      type="button"
+                      className={`timeline-slot-btn status-${slot.status.toLowerCase()} ${isCurrent ? 'is-selected' : ''}`}
+                      onClick={() => onApplyDepartureTime && onApplyDepartureTime(slot.departure_time)}
+                      title={`${slot.departure_time} Departure → Arrive ${slot.arrival_nominal} (${slot.recommendation})`}
+                    >
+                      <span className="slot-num">{slot.hour}h</span>
+                      <div className="slot-indicator" />
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="timeline-hint-text">
+                💡 Click any hour block above to simulate and lock that departure window.
+              </div>
+            </div>
+          )}
+
+          {/* Mountain Ghats & Corridor Choke Points */}
+          {dr.choke_points && dr.choke_points.length > 0 && (
+            <div className="choke-points-box">
+              <span className="choke-box-lbl">Identified Mountain Ghats & Corridor Bottlenecks:</span>
+              <div className="choke-chips-list">
+                {dr.choke_points.map((cp, idx) => (
+                  <div key={idx} className="choke-chip">
+                    <span className={`cp-sev-badge sev-${cp.risk_level.toLowerCase()}`}>{cp.risk_level}</span>
+                    <span className="cp-chip-name">{cp.name}</span>
+                    <span className="cp-chip-reason">— {cp.reason}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Actionable Smart Departure Advisory */}
+          {dr.optimal_departure && (
+            <div className="smart-advisory-banner">
+              <div className="advisory-top">
+                <div className="flex-center gap-2">
+                  <Zap size={15} className="text-emerald" />
+                  <span className="advisory-headline">{dr.optimal_departure.advisory_headline}</span>
+                </div>
+                {dr.optimal_departure.co2_saved_kg > 0 && (
+                  <span className="advisory-saving-tag">
+                    Saves {dr.optimal_departure.fuel_saved_units} {unitName.split(' ')[0]} & {dr.optimal_departure.co2_saved_kg} kg CO₂
+                  </span>
+                )}
+              </div>
+              <p className="advisory-detail-text">
+                {dr.optimal_departure.advisory_details}
+              </p>
+              {dr.optimal_departure.time_shift_minutes !== 0 && onApplyDepartureTime && (
+                <button
+                  type="button"
+                  className="btn-apply-departure"
+                  onClick={() => onApplyDepartureTime(dr.optimal_departure.recommended_departure)}
+                >
+                  <span>Apply Recommended Departure ({dr.optimal_departure.recommended_departure})</span>
+                  <ChevronRight size={15} />
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ISO 14083 Breakdown Card */}
       {route.iso_14083 && (
         <div className="iso-breakdown-card">
           <div className="iso-header">
@@ -92,7 +273,7 @@ const RoutePanel = ({ route }) => {
         </div>
       </div>
 
-
+      {/* Segment Breakdown */}
       <div className="segments-list">
         <h3>Segment Breakdown</h3>
         <div className="segments-scroll">

@@ -38,14 +38,14 @@ const ParetoChart = ({ paretoFront, activeRouteId, onSelectRoute }) => {
           
           // Color based on Green Score
           const score = context.raw?.score || 0;
-          if (score > 80) return '#00e599'; // Bright emerald
-          if (score > 50) return '#10b981'; // Mint emerald
-          if (score > 20) return '#059669'; // Deep emerald
-          return '#047857'; // Forest emerald
+          if (score > 80) return '#44D62C'; // Figure Neon Green
+          if (score > 50) return '#35c220'; // Bright Green Glow
+          if (score > 20) return '#2bb815'; // Mid Green
+          return '#228b12';
         },
         borderColor: (context) => {
           const id = context.raw?.id;
-          return id === activeRouteId ? '#00d97e' : 'transparent';
+          return id === activeRouteId ? '#44D62C' : 'transparent';
         },
         borderWidth: (context) => {
           const id = context.raw?.id;
@@ -78,9 +78,9 @@ const ParetoChart = ({ paretoFront, activeRouteId, onSelectRoute }) => {
             return `Route ${context.raw.id} | Cost: ₹${context.raw.x.toLocaleString()} | CO₂: ${context.raw.y.toFixed(1)}kg | Score: ${context.raw.score.toFixed(1)}`;
           }
         },
-        backgroundColor: 'rgba(10, 14, 39, 0.9)',
-        titleColor: '#00d97e',
-        bodyColor: '#fff',
+        backgroundColor: 'rgba(10, 16, 11, 0.96)',
+        titleColor: '#44D62C',
+        bodyColor: '#ffffff',
         borderColor: 'rgba(255,255,255,0.1)',
         borderWidth: 1,
         padding: 10,

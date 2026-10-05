@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MessageSquare, Send, X, Bot, User, Sparkles, ShieldCheck, Zap, Cpu } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { API_ROOT } from '../api/client';
 import './CopilotChat.css';
 
 const QUICK_PROMPTS = [
@@ -84,7 +85,7 @@ const CopilotChat = () => {
     setIsTyping(true);
 
     try {
-      const response = await fetch('http://localhost:8001/api/copilot/chat', {
+      const response = await fetch(`${API_ROOT}/api/copilot/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
